@@ -1,0 +1,59 @@
+{{- define "common/web/atom" -}}
+    <?xml version="1.0" encoding="utf-8"?>
+    <feed xmlns="http://www.w3.org/2005/Atom">
+        {{if .category}}
+            <title type="text">分类：{{.category.Name}} - {{.blog_title}}</title>
+        {{else}}
+            <title type="text">{{.blog_title}}</title>
+        {{end}}
+
+        {{if .category}}
+            {{if .category.Description}}
+                <subtitle type="text">{{.category.Description}}</subtitle>
+            {{end}}
+        {{else}}
+            {{if .user.Description}}
+                <subtitle type="text">{{.user.Description}}</subtitle>
+            {{end}}
+        {{end}}
+        <updated>{{ .lastModified.Format "2006-01-02T15:04:05Z07:00"}}</updated>
+
+        {{if .category}}
+            <id>{{.category.FullPath}}</id>
+        {{else}}
+            <id>{{.blog_url}}</id>
+        {{end}}
+        {{if .category}}
+            <link rel="alternate" type="text/html" href="{{.category.FullPath}}"/>
+            <link rel="self" type="application/atom+xml" href="{{.blog_url}}/feed/categories/{{.category.Slug}}.xml"/>
+        {{else}}
+            <link rel="alternate" type="text/html" href="{{.blog_url}}"/>
+            <link rel="self" type="application/atom+xml" href="{{.atom_url}}"/>
+        {{end}}
+        <rights>Copyright © {{.now.Format "2006"}}, {{.blog_title}}</rights>
+        <generator uri="https://go-sonic.org/" version="{{.version}}">Sonic</generator>
+        {{if .posts }}
+            {{range $post :=.posts}}
+                <entry>
+                    <title><![CDATA[{{$post.Title}}]]></title>
+                    <link rel="alternate" type="text/html"
+                          href="{{- if $.globalAbsolutePathEnabled}}{{$.blog_url}}{{end}}{{$post.FullPath}}"/>
+                    <id>tag:{{$.blog_url}},{{unix_milli_time_format "2006-01-02" $post.CreateTime}}:{{$post.Slug}}</id>
+                    <published>{{unix_milli_time_format  "2006-01-02T15:04:05Z07:00" $post.CreateTime}}</published>
+                    <updated>{{unix_milli_time_format  "2006-01-02T15:04:05Z07:00" $post.EditTime}}</updated>
+                    <author>
+                        <name>{{$.user.Nickname}}</name>
+                        <uri>{{$.blog_url}}</uri>
+                    </author>
+                    <content type="html">
+                        {{if (eq $.options.rss_content_type "full")}}
+                            <![CDATA[{{$post.Content}}]]>
+                        {{else}}
+                            <![CDATA[{{$post.Summary}}]]>
+                        {{end}}
+                    </content>
+                </entry>
+            {{end}}
+        {{end}}
+    </feed>
+{{end}}

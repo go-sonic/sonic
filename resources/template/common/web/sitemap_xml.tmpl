@@ -1,0 +1,35 @@
+{{- define "common/web/sitemap_xml" -}}
+    <?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url>
+            <loc>{{.blog_url}}</loc>
+            <lastmod>{{unix_milli_time_format "2006-01-02T15:04:05Z07:00" .options.birthday}}</lastmod>
+        </url>
+        {{if (gt (len .posts) 0)}}
+            {{range $post := .posts}}
+                <url>
+                    <loc>{{- if $.globalAbsolutePathEnabled}}{{$.blog_url}}{{end}}{{$post.FullPath}}</loc>
+                    <lastmod>{{unix_milli_time_format "2006-01-02T15:04:05Z07:00" $post.CreateTime}}</lastmod>
+                </url>
+            {{end}}
+        {{end}}
+        {{$categorys := listCategory}}
+        {{if (gt (len $categorys) 0)}}
+            {{range $category := $categorys}}
+                <url>
+                    <loc>{{- if $.globalAbsolutePathEnabled}}{{$.blog_url}}{{end}}{{$category.FullPath}}</loc>
+                    <lastmod>{{unix_milli_time_format "2006-01-02T15:04:05Z07:00" $category.CreateTime}}</lastmod>
+                </url>
+            {{end}}
+        {{end}}
+        {{ $tags := getAllTag }}
+        {{if (gt (len $tags) 0)}}
+            {{range $tag := $tags}}
+                <url>
+                    <loc>{{- if $.globalAbsolutePathEnabled}}{{$.blog_url}}{{end}}{{$tag.FullPath}}</loc>
+                    <lastmod>{{unix_milli_time_format "2006-01-02T15:04:05Z07:00" $tag.CreateTime}}</lastmod>
+                </url>
+            {{end}}
+        {{end}}
+    </urlset>
+{{end}}

@@ -1,0 +1,15 @@
+{{define "global.custom_content_head"}}
+    {{if or .is_post .is_sheet}}
+        {{.options.blog_custom_content_head}}
+    {{end}}
+{{end}}
+
+
+
+
+{{define "global.comment"}}
+    {{if or (eq .type "journal") (not .target.DisallowComment)}}
+        <script src="{{or .options.comment_internal_plugin_js "https://cdn.jsdelivr.net/npm/halo-comment@latest/dist/halo-comment.min.js"}}"></script>
+        <halo-comment id="{{.target.ID}}" type="{{.type}}"/>
+    {{end}}
+{{end}}

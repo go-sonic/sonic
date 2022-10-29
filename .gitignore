@@ -1,0 +1,7 @@
+/.idea
+/logs
+.DS_Store
+/upload
+/.vscode
+sonic.db
+__debug_bin

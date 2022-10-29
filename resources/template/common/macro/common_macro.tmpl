@@ -1,0 +1,40 @@
+{{- /* 统计代码 */ -}}
+{{define "global.statistics"}}
+    {{.options.blog_statistics_code}}
+{{end}}
+
+{{- /* 页脚信息 */ -}}
+
+{{define "global.footer_info"}}
+    {{.options.blog_footer_info}}
+{{end }}
+
+{{- /* 页眉信息 */ -}}
+
+{{define "global.custom_head"}}
+    {{.options.blog_custom_head}}
+{{end}}
+
+{{- /* favicon */ -}}
+
+{{define "global.favicon"}}
+    {{if .options.blog_favicon}}
+        <link rel="shortcut icon" type="images/x-icon" href="{{.options.blog_favicon}}">
+    {{end}}
+{{end}}
+
+{{define "global.head"}}
+    {{if .options.seo_spider_disabled }}
+        <meta name="robots" content="none">
+    {{else}}
+        <meta name="generator" content="Sonic {{.version}}"/>
+        {{template "global.custom_head" .}}
+        {{template "global.favicon" .}}
+    {{end}}
+{{end}}}
+
+
+{{define "global.footer"}}
+    {{template "global.footer_info" .}}
+    {{template "global.statistics" .}}
+{{end}}

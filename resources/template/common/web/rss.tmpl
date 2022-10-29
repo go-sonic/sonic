@@ -1,0 +1,46 @@
+{{- define "common/web/rss" -}}
+    <?xml version="1.0" encoding="utf-8"?>
+    <rss version="2.0">
+        <channel>
+            {{if .category}}
+                <title>分类：{{.category.Name}} - {{.blog_title}}</title>
+            {{else}}
+                <title>{{.blog_title}}</title>
+            {{end}}
+            {{if .category}}
+                <link>{{.category.FullPath}}</link>
+            {{else}}
+                <link>{{.blog_url}}</link>
+            {{end}}
+            {{if .category}}
+                {{if .category.Description}}
+                    <description>{{.category.Description}}</description>
+                {{end}}
+            {{else}}
+                {{if .user.Description}}
+                    <description>{{.user.Description}}</description>
+                {{end}}
+            {{end}}
+            <generator>Sonic {{.version}}</generator>
+            <lastBuildDate>{{.lastModified.Format "Mon, 02 Jan 2006 15:04:05 GMT"}}</lastBuildDate>
+            {{if (gt (len .posts) 0)}}
+                {{ range $post := .posts }}
+                    <item>
+                        <title>
+                            <![CDATA[{{$post.Title}}]]>
+                        </title>
+                        <link>{{- if $.globalAbsolutePathEnabled}}{{$.blog_url}}{{end}}{{$post.FullPath}}</link>
+                        <description>
+                            {{- if (eq $.options.rss_content_type "full") -}}
+                                <![CDATA[{{$post.Content}}]]>
+                            {{- else -}}
+                                <![CDATA[{{$post.Summary}}]]>
+                            {{- end -}}
+                        </description>
+                        <pubDate>{{unix_milli_time_format "Mon, 02 Jan 2006 15:04:05 GMT" $post.CreateTime }}</pubDate>
+                    </item>
+                {{end}}
+            {{end}}
+        </channel>
+    </rss>
+{{end}}
