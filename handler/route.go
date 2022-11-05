@@ -199,7 +199,7 @@ func (s *Server) RegisterRouters() {
 					linkRouter.GET("/teams", s.wrapHandler(s.LinkHandler.ListLinkTeams))
 				}
 				{
-					menuRouter := authRouter.Group("/menu")
+					menuRouter := authRouter.Group("/menus")
 					menuRouter.GET("", s.wrapHandler(s.MenuHandler.ListMenus))
 					menuRouter.GET("/tree_view", s.wrapHandler(s.MenuHandler.ListMenusAsTree))
 					menuRouter.GET("/team/tree_view", s.wrapHandler(s.MenuHandler.ListMenusAsTreeByTeam))
@@ -300,6 +300,8 @@ func (s *Server) RegisterRouters() {
 			contentRouter.GET("/install", s.ViewHandler.Install)
 			contentRouter.GET("/logo", s.wrapHandler(s.ViewHandler.Logo))
 			contentRouter.GET("/favicon", s.wrapHandler(s.ViewHandler.Favicon))
+			contentRouter.GET("/search", s.wrapHTMLHandler(s.ContentSearchHandler.Search))
+			contentRouter.GET("/search/page/:page", s.wrapHTMLHandler(s.ContentSearchHandler.PageSearch))
 			err := s.registerDynamicRouters(contentRouter)
 			if err != nil {
 				s.logger.DPanic("regiterDynamicRouters err", zap.Error(err))

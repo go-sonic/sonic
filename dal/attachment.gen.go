@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newAttachment(db *gorm.DB) attachment {
+func newAttachment(db *gorm.DB, opts ...gen.DOOption) attachment {
 	_attachment := attachment{}
 
-	_attachment.attachmentDo.UseDB(db)
+	_attachment.attachmentDo.UseDB(db, opts...)
 	_attachment.attachmentDo.UseModel(&entity.Attachment{})
 
 	tableName := _attachment.attachmentDo.TableName()
@@ -131,6 +131,11 @@ func (a *attachment) fillFieldMap() {
 }
 
 func (a attachment) clone(db *gorm.DB) attachment {
+	a.attachmentDo.ReplaceConnPool(db.Statement.ConnPool)
+	return a
+}
+
+func (a attachment) replaceDB(db *gorm.DB) attachment {
 	a.attachmentDo.ReplaceDB(db)
 	return a
 }
@@ -151,6 +156,10 @@ func (a attachmentDo) ReadDB() *attachmentDo {
 
 func (a attachmentDo) WriteDB() *attachmentDo {
 	return a.Clauses(dbresolver.Write)
+}
+
+func (a attachmentDo) Session(config *gorm.Session) *attachmentDo {
+	return a.withDO(a.DO.Session(config))
 }
 
 func (a attachmentDo) Clauses(conds ...clause.Expression) *attachmentDo {

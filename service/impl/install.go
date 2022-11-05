@@ -172,9 +172,8 @@ func (i installServiceImpl) createDefaultPost(ctx context.Context, category *ent
 
 ## 相关链接
 
-- 官网：[https://go-sonic.org](https://go-sonic.org)
-- 文档：[https://docs.go-sonic.org](https://docs.go-sonic.org)
-- 主题仓库：[https://sonic.run/themes.html](https://sonic.run/themes.html)
+- 官网：[https://github.com/go-sonic](https://github.com/go-sonic)
+- 主题仓库：[https://github.com/go-sonic/default-theme-anatole](https://github.com/go-sonic/default-theme-anatole)
 - 开源地址：[https://github.com/go-sonic/sonic](https://github.com/go-sonic/sonic)
 
 在使用过程中，有任何问题都可以通过以上链接找寻答案，或者联系我们。

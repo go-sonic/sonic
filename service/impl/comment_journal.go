@@ -21,10 +21,10 @@ func NewJournalCommentService(baseCommentService service.BaseCommentService) ser
 }
 
 func (j *journalCommentServiceImpl) CountByStatusAndJournalID(ctx context.Context, status consts.CommentStatus, journalIDs []int32) (map[int32]int64, error) {
-	return j.CountByStatusAndPostIDs(ctx, status, journalIDs)
+	return j.CountByStatusAndContentIDs(ctx, status, journalIDs)
 }
 
-func (j *journalCommentServiceImpl) UpdateBy(ctx context.Context, commentID int64, commentParam *param.Comment) (*entity.Comment, error) {
+func (j *journalCommentServiceImpl) UpdateBy(ctx context.Context, commentID int32, commentParam *param.Comment) (*entity.Comment, error) {
 	if commentID == 0 {
 		return nil, nil
 	}

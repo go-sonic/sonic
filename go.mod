@@ -29,7 +29,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.4.3
 	gorm.io/driver/sqlite v1.4.3
-	gorm.io/gen v0.3.17
+	gorm.io/gen v0.3.18
 	gorm.io/gorm v1.24.0
 	gorm.io/plugin/dbresolver v1.3.0
 )

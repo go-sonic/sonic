@@ -40,7 +40,7 @@ var (
 	}
 	CommentInternalPluginJs = Property{
 		KeyValue:     "comment_internal_plugin_js",
-		DefaultValue: "//cdn.jsdelivr.net/npm/sonic-comment@latest/dist/sonic-comment.min.js",
+		DefaultValue: "//cdn.jsdelivr.net/npm/halo-comment@latest/dist/halo-comment.min.js",
 		Kind:         reflect.String,
 	}
 	CommentGravatarSource = Property{

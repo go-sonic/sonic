@@ -3,6 +3,7 @@ package assembler
 import (
 	"context"
 
+	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/model/entity"
 	"github.com/go-sonic/sonic/service"
@@ -94,7 +95,7 @@ func (p *basePostAssembler) ConvertToDetailDTO(ctx context.Context, post *entity
 		OriginalContent: post.OriginalContent,
 		Content:         post.FormatContent,
 	}
-	commentCount, err := p.BaseCommentService.CountByPostID(ctx, post.ID)
+	commentCount, err := p.BaseCommentService.CountByContentID(ctx, post.ID, consts.CommentTypePost, consts.CommentStatusPublished)
 	if err != nil {
 		return nil, err
 	}

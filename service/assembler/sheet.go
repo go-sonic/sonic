@@ -3,6 +3,7 @@ package assembler
 import (
 	"context"
 
+	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/model/entity"
 	"github.com/go-sonic/sonic/model/vo"
@@ -45,7 +46,7 @@ func (s *sheetAssembler) ConvertToDetailVO(ctx context.Context, sheet *entity.Po
 	if err != nil {
 		return nil, err
 	}
-	metaIDs := make([]int64, 0, len(metas))
+	metaIDs := make([]int32, 0, len(metas))
 	metaDTOs := make([]*dto.Meta, 0, len(metas))
 	for _, meta := range metas {
 		metaIDs = append(metaIDs, meta.ID)
@@ -67,7 +68,7 @@ func (s *sheetAssembler) ConvertToListVO(ctx context.Context, sheets []*entity.P
 		if err != nil {
 			return nil, err
 		}
-		commentCount, err := s.SheetCommentService.CountByPostID(ctx, sheet.ID)
+		commentCount, err := s.SheetCommentService.CountByContentID(ctx, sheet.ID, consts.CommentTypeSheet, consts.CommentStatusPublished)
 		if err != nil {
 			return nil, err
 		}

@@ -16,6 +16,6 @@ type PostDetailVO struct {
 	Tags        []*dto.Tag         `json:"tags"`
 	CategoryIDs []int32            `json:"categoryIds"`
 	Categories  []*dto.CategoryDTO `json:"categories"`
-	MetaIDs     []int64            `json:"metaIds"`
+	MetaIDs     []int32            `json:"metaIds"`
 	Metas       []*dto.Meta        `json:"metas"`
 }

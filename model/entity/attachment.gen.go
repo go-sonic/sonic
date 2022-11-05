@@ -25,7 +25,7 @@ type Attachment struct {
 	Size       int64                 `gorm:"column:size;type:bigint;not null" json:"size"`
 	Suffix     string                `gorm:"column:suffix;type:varchar(50);not null" json:"suffix"`
 	ThumbPath  string                `gorm:"column:thumb_path;type:varchar(1023);not null" json:"thumb_path"`
-	Type       consts.AttachmentType `gorm:"column:type;type:int;not null" json:"type"`
+	Type       consts.AttachmentType `gorm:"column:type;type:bigint;not null" json:"type"`
 	Width      int32                 `gorm:"column:width;type:int;not null" json:"width"`
 }
 

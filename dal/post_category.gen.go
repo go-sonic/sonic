@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newPostCategory(db *gorm.DB) postCategory {
+func newPostCategory(db *gorm.DB, opts ...gen.DOOption) postCategory {
 	_postCategory := postCategory{}
 
-	_postCategory.postCategoryDo.UseDB(db)
+	_postCategory.postCategoryDo.UseDB(db, opts...)
 	_postCategory.postCategoryDo.UseModel(&entity.PostCategory{})
 
 	tableName := _postCategory.postCategoryDo.TableName()
@@ -99,6 +99,11 @@ func (p *postCategory) fillFieldMap() {
 }
 
 func (p postCategory) clone(db *gorm.DB) postCategory {
+	p.postCategoryDo.ReplaceConnPool(db.Statement.ConnPool)
+	return p
+}
+
+func (p postCategory) replaceDB(db *gorm.DB) postCategory {
 	p.postCategoryDo.ReplaceDB(db)
 	return p
 }
@@ -119,6 +124,10 @@ func (p postCategoryDo) ReadDB() *postCategoryDo {
 
 func (p postCategoryDo) WriteDB() *postCategoryDo {
 	return p.Clauses(dbresolver.Write)
+}
+
+func (p postCategoryDo) Session(config *gorm.Session) *postCategoryDo {
+	return p.withDO(p.DO.Session(config))
 }
 
 func (p postCategoryDo) Clauses(conds ...clause.Expression) *postCategoryDo {

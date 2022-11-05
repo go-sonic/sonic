@@ -77,11 +77,11 @@ func (p *PostHandler) ListChildren(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	parentID, err := util.ParamInt64(ctx, "parentID")
+	parentID, err := util.ParamInt32(ctx, "parentID")
 	if err != nil {
 		return nil, err
 	}
-	children, err := p.PostCommentService.GetChildren(ctx, parentID, postID)
+	children, err := p.PostCommentService.GetChildren(ctx, parentID, postID, consts.CommentTypePost)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (p *PostHandler) ListCommentTree(ctx *gin.Context) (interface{}, error) {
 	commentQuery.PageSize = pageSize
 	commentQuery.ParentID = util.Int32Ptr(0)
 
-	allComments, err := p.PostCommentService.GetByContentID(ctx, postID, commentQuery.Sort)
+	allComments, err := p.PostCommentService.GetByContentID(ctx, postID, consts.CommentTypePost, commentQuery.Sort)
 	if err != nil {
 		return nil, err
 	}

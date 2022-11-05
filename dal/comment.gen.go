@@ -17,15 +17,15 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newComment(db *gorm.DB) comment {
+func newComment(db *gorm.DB, opts ...gen.DOOption) comment {
 	_comment := comment{}
 
-	_comment.commentDo.UseDB(db)
+	_comment.commentDo.UseDB(db, opts...)
 	_comment.commentDo.UseModel(&entity.Comment{})
 
 	tableName := _comment.commentDo.TableName()
 	_comment.ALL = field.NewAsterisk(tableName)
-	_comment.ID = field.NewInt64(tableName, "id")
+	_comment.ID = field.NewInt32(tableName, "id")
 	_comment.Type = field.NewField(tableName, "type")
 	_comment.CreateTime = field.NewTime(tableName, "create_time")
 	_comment.UpdateTime = field.NewTime(tableName, "update_time")
@@ -37,7 +37,7 @@ func newComment(db *gorm.DB) comment {
 	_comment.GravatarMd5 = field.NewString(tableName, "gravatar_md5")
 	_comment.IPAddress = field.NewString(tableName, "ip_address")
 	_comment.IsAdmin = field.NewBool(tableName, "is_admin")
-	_comment.ParentID = field.NewInt64(tableName, "parent_id")
+	_comment.ParentID = field.NewInt32(tableName, "parent_id")
 	_comment.PostID = field.NewInt32(tableName, "post_id")
 	_comment.Status = field.NewField(tableName, "status")
 	_comment.TopPriority = field.NewInt32(tableName, "top_priority")
@@ -52,7 +52,7 @@ type comment struct {
 	commentDo commentDo
 
 	ALL               field.Asterisk
-	ID                field.Int64
+	ID                field.Int32
 	Type              field.Field
 	CreateTime        field.Time
 	UpdateTime        field.Time
@@ -64,7 +64,7 @@ type comment struct {
 	GravatarMd5       field.String
 	IPAddress         field.String
 	IsAdmin           field.Bool
-	ParentID          field.Int64
+	ParentID          field.Int32
 	PostID            field.Int32
 	Status            field.Field
 	TopPriority       field.Int32
@@ -85,7 +85,7 @@ func (c comment) As(alias string) *comment {
 
 func (c *comment) updateTableName(table string) *comment {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewInt64(table, "id")
+	c.ID = field.NewInt32(table, "id")
 	c.Type = field.NewField(table, "type")
 	c.CreateTime = field.NewTime(table, "create_time")
 	c.UpdateTime = field.NewTime(table, "update_time")
@@ -97,7 +97,7 @@ func (c *comment) updateTableName(table string) *comment {
 	c.GravatarMd5 = field.NewString(table, "gravatar_md5")
 	c.IPAddress = field.NewString(table, "ip_address")
 	c.IsAdmin = field.NewBool(table, "is_admin")
-	c.ParentID = field.NewInt64(table, "parent_id")
+	c.ParentID = field.NewInt32(table, "parent_id")
 	c.PostID = field.NewInt32(table, "post_id")
 	c.Status = field.NewField(table, "status")
 	c.TopPriority = field.NewInt32(table, "top_priority")
@@ -145,6 +145,11 @@ func (c *comment) fillFieldMap() {
 }
 
 func (c comment) clone(db *gorm.DB) comment {
+	c.commentDo.ReplaceConnPool(db.Statement.ConnPool)
+	return c
+}
+
+func (c comment) replaceDB(db *gorm.DB) comment {
 	c.commentDo.ReplaceDB(db)
 	return c
 }
@@ -165,6 +170,10 @@ func (c commentDo) ReadDB() *commentDo {
 
 func (c commentDo) WriteDB() *commentDo {
 	return c.Clauses(dbresolver.Write)
+}
+
+func (c commentDo) Session(config *gorm.Session) *commentDo {
+	return c.withDO(c.DO.Session(config))
 }
 
 func (c commentDo) Clauses(conds ...clause.Expression) *commentDo {

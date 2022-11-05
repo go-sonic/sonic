@@ -77,11 +77,11 @@ func (j *SheetHandler) ListChildren(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	parentID, err := util.ParamInt64(ctx, "parentID")
+	parentID, err := util.ParamInt32(ctx, "parentID")
 	if err != nil {
 		return nil, err
 	}
-	children, err := j.SheetCommentService.GetChildren(ctx, parentID, sheetID)
+	children, err := j.SheetCommentService.GetChildren(ctx, parentID, sheetID, consts.CommentTypeSheet)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (p *SheetHandler) ListCommentTree(ctx *gin.Context) (interface{}, error) {
 	commentQuery.PageSize = pageSize
 	commentQuery.ParentID = util.Int32Ptr(0)
 
-	allComments, err := p.SheetCommentService.GetByContentID(ctx, sheetID, commentQuery.Sort)
+	allComments, err := p.SheetCommentService.GetByContentID(ctx, sheetID, consts.CommentTypeSheet, commentQuery.Sort)
 	if err != nil {
 		return nil, err
 	}

@@ -17,7 +17,18 @@ type Comment struct {
 	AuthorURL         string             `json:"authorUrl" form:"authorUrl" binding:"lte=255"`
 	Content           string             `json:"content" form:"content" binding:"gte=1,lte=1023"`
 	PostID            int32              `json:"postId" form:"postId" binding:"gte=1"`
-	ParentID          int64              `json:"parentId" form:"parentId" binding:"gte=0"`
+	ParentID          int32              `json:"parentId" form:"parentId" binding:"gte=0"`
 	AllowNotification bool               `json:"allowNotification" form:"allowNotification"`
+	CommentType       consts.CommentType `json:"-"`
+}
+
+type AdminComment struct {
+	Author            string             `json:"author" form:"author"`
+	Email             string             `json:"email" form:"email"`
+	AuthorURL         string             `json:"authorUrl" form:"authorUrl"`
+	Content           string             `json:"content" form:"content"`
+	PostID            int32              `json:"postId" form:"postId"`
+	ParentID          int32              `json:"parentId" form:"parentId"`
+	AllowNotification bool               `json:"allowNotification"`
 	CommentType       consts.CommentType `json:"-"`
 }

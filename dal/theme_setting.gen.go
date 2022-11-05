@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newThemeSetting(db *gorm.DB) themeSetting {
+func newThemeSetting(db *gorm.DB, opts ...gen.DOOption) themeSetting {
 	_themeSetting := themeSetting{}
 
-	_themeSetting.themeSettingDo.UseDB(db)
+	_themeSetting.themeSettingDo.UseDB(db, opts...)
 	_themeSetting.themeSettingDo.UseModel(&entity.ThemeSetting{})
 
 	tableName := _themeSetting.themeSettingDo.TableName()
@@ -103,6 +103,11 @@ func (t *themeSetting) fillFieldMap() {
 }
 
 func (t themeSetting) clone(db *gorm.DB) themeSetting {
+	t.themeSettingDo.ReplaceConnPool(db.Statement.ConnPool)
+	return t
+}
+
+func (t themeSetting) replaceDB(db *gorm.DB) themeSetting {
 	t.themeSettingDo.ReplaceDB(db)
 	return t
 }
@@ -123,6 +128,10 @@ func (t themeSettingDo) ReadDB() *themeSettingDo {
 
 func (t themeSettingDo) WriteDB() *themeSettingDo {
 	return t.Clauses(dbresolver.Write)
+}
+
+func (t themeSettingDo) Session(config *gorm.Session) *themeSettingDo {
+	return t.withDO(t.DO.Session(config))
 }
 
 func (t themeSettingDo) Clauses(conds ...clause.Expression) *themeSettingDo {

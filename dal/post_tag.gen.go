@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newPostTag(db *gorm.DB) postTag {
+func newPostTag(db *gorm.DB, opts ...gen.DOOption) postTag {
 	_postTag := postTag{}
 
-	_postTag.postTagDo.UseDB(db)
+	_postTag.postTagDo.UseDB(db, opts...)
 	_postTag.postTagDo.UseModel(&entity.PostTag{})
 
 	tableName := _postTag.postTagDo.TableName()
@@ -97,6 +97,11 @@ func (p *postTag) fillFieldMap() {
 }
 
 func (p postTag) clone(db *gorm.DB) postTag {
+	p.postTagDo.ReplaceConnPool(db.Statement.ConnPool)
+	return p
+}
+
+func (p postTag) replaceDB(db *gorm.DB) postTag {
 	p.postTagDo.ReplaceDB(db)
 	return p
 }
@@ -117,6 +122,10 @@ func (p postTagDo) ReadDB() *postTagDo {
 
 func (p postTagDo) WriteDB() *postTagDo {
 	return p.Clauses(dbresolver.Write)
+}
+
+func (p postTagDo) Session(config *gorm.Session) *postTagDo {
+	return p.withDO(p.DO.Session(config))
 }
 
 func (p postTagDo) Clauses(conds ...clause.Expression) *postTagDo {

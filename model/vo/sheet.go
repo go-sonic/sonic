@@ -4,7 +4,7 @@ import "github.com/go-sonic/sonic/model/dto"
 
 type SheetDetail struct {
 	dto.PostDetail
-	MetaIDs []int64     `json:"metaIds"`
+	MetaIDs []int32     `json:"metaIds"`
 	Metas   []*dto.Meta `json:"metas"`
 }
 

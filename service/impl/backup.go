@@ -153,7 +153,7 @@ func (b *backupServiceImpl) ImportMarkdown(ctx context.Context, fileHeader *mult
 
 func (b *backupServiceImpl) ExportData(ctx context.Context) (*dto.BackupDTO, error) {
 	data := make(map[string]interface{})
-	data["version"] = "unknown" // TODO
+	data["version"] = consts.SonicVersion
 	data["export_date"] = time.Now().Format("2006-01-02 15:04:05")
 	err := fillData(data, "attachments", dal.Use(dal.GetDBByCtx(ctx)).Attachment.WithContext(ctx).Find, nil)
 	err = fillData(data, "category", dal.Use(dal.GetDBByCtx(ctx)).Category.WithContext(ctx).Find, err)

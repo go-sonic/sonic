@@ -48,7 +48,7 @@ func (*baseCommentAssembler) ClearSensitiveField(ctx context.Context, comments [
 }
 
 func (b *baseCommentAssembler) ConvertToWithHasChildren(ctx context.Context, comments []*entity.Comment) ([]*vo.CommentWithHasChildren, error) {
-	parentIDs := make([]int64, 0)
+	parentIDs := make([]int32, 0)
 	for _, comment := range comments {
 		if comment.ParentID != 0 {
 			parentIDs = append(parentIDs, comment.ID)
@@ -59,6 +59,9 @@ func (b *baseCommentAssembler) ConvertToWithHasChildren(ctx context.Context, com
 		return nil, err
 	}
 	countMap, err := b.BaseCommentService.CountChildren(ctx, parentIDs)
+	if err != nil {
+		return nil, err
+	}
 	result := make([]*vo.CommentWithHasChildren, 0, len(comments))
 	for _, commentDTO := range dtos {
 		commentWithHasChildren := &vo.CommentWithHasChildren{
@@ -135,7 +138,7 @@ func (b *baseCommentAssembler) ConvertToDTOList(ctx context.Context, comments []
 }
 
 func (b *baseCommentAssembler) buildCommentTree(ctx context.Context, comments []*entity.Comment) ([]*vo.Comment, error) {
-	commentIDMap := make(map[int64]*vo.Comment)
+	commentIDMap := make(map[int32]*vo.Comment)
 	commentDTOs, err := b.ConvertToDTOList(ctx, comments)
 	if err != nil {
 		return nil, err
@@ -152,7 +155,8 @@ func (b *baseCommentAssembler) buildCommentTree(ctx context.Context, comments []
 		if comment.ParentID != 0 {
 			parentComment, ok := commentIDMap[comment.ParentID]
 			if !ok {
-				log.CtxWarn(ctx, "parent comment does not exist", zap.Int32("postID", comment.PostID), zap.Int64("parentID", comment.ParentID))
+				log.CtxWarn(ctx, "parent comment does not exist", zap.Int32("postID", comment.PostID), zap.Int32("parentID", comment.ParentID))
+				continue
 			}
 			parentComment.Children = append(parentComment.Children, commentIDMap[comment.ID])
 		} else {
@@ -179,7 +183,7 @@ func (b *baseCommentAssembler) PageConvertToVOs(ctx context.Context, allComments
 }
 
 func (b *baseCommentAssembler) ConvertToWithParentVO(ctx context.Context, comments []*entity.Comment) ([]*vo.CommentWithParent, error) {
-	parentIDs := make([]int64, 0)
+	parentIDs := make([]int32, 0)
 	for _, comment := range comments {
 		if comment.ParentID != 0 {
 			parentIDs = append(parentIDs, comment.ParentID)
@@ -189,7 +193,7 @@ func (b *baseCommentAssembler) ConvertToWithParentVO(ctx context.Context, commen
 	if err != nil {
 		return nil, err
 	}
-	parentDTOMap := make(map[int64]*dto.Comment)
+	parentDTOMap := make(map[int32]*dto.Comment)
 	if len(parentIDs) > 0 {
 		parents, err := b.BaseCommentService.LGetByIDs(ctx, parentIDs)
 		if err != nil {

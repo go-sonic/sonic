@@ -11,6 +11,6 @@ type JournalQuery struct {
 
 type Journal struct {
 	SourceContent string             `json:"sourceContent" form:"sourceContent" binding:"gte=1"`
-	Content       string             `json:"content" form:"content" binding:"gte=1"`
+	Content       string             `json:"content" form:"content"`
 	Type          consts.JournalType `json:"type" form:"type"`
 }

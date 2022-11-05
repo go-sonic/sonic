@@ -95,7 +95,7 @@ func (p *postAssembler) ConvertToListVO(ctx context.Context, posts []*entity.Pos
 		}
 	}
 
-	commentCountMap, err := p.PostCommentService.CountByStatusAndPostIDs(ctx, consts.CommentStatusPublished, postIDs)
+	commentCountMap, err := p.PostCommentService.CountByStatusAndContentIDs(ctx, consts.CommentStatusPublished, postIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -156,6 +156,9 @@ func (p *postAssembler) ConvertToDetailVO(ctx context.Context, post *entity.Post
 	postDetailVO.PostDetail = *postDetailDTO
 
 	tags, err := p.PostTagService.ListTagByPostID(ctx, post.ID)
+	if err != nil {
+		return nil, err
+	}
 	tagIDs := make([]int32, 0)
 	tagDTOs := make([]*dto.Tag, 0)
 	for _, tag := range tags {
@@ -191,7 +194,7 @@ func (p *postAssembler) ConvertToDetailVO(ctx context.Context, post *entity.Post
 		return nil, err
 	}
 	metaDTOs := make([]*dto.Meta, 0, len(postMetas))
-	metaIDs := make([]int64, 0, len(postMetas))
+	metaIDs := make([]int32, 0, len(postMetas))
 	for _, meta := range postMetas {
 		metaDTOs = append(metaDTOs, p.MetaService.ConvertToMetaDTO(meta))
 		metaIDs = append(metaIDs, meta.ID)
@@ -273,7 +276,7 @@ func (p *postAssembler) ConvertToDetailVOs(ctx context.Context, posts []*entity.
 		}
 		if metas, ok := postMetaMap[post.ID]; ok {
 			metaDTOs := make([]*dto.Meta, 0)
-			metaIDs := make([]int64, 0)
+			metaIDs := make([]int32, 0)
 			for _, meta := range metas {
 				metaDTOs = append(metaDTOs, p.MetaService.ConvertToMetaDTO(meta))
 				metaIDs = append(metaIDs, meta.ID)

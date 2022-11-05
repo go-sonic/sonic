@@ -25,6 +25,7 @@ create table if not exists category
     create_time datetime(6)              not null,
     update_time datetime(6)              null,
     description varchar(100)  default '' not null,
+    type        tinyint       default 0  not null,
     name        varchar(255)             not null,
     parent_id   int           default 0  not null,
     password    varchar(255)  default '' not null,
@@ -39,7 +40,7 @@ create table if not exists category
 
 create table if not exists comment_black
 (
-    id          bigint auto_increment primary key,
+    id          int auto_increment primary key,
     create_time datetime(6)  not null,
     update_time datetime(6)  null,
     ban_time    datetime(6)  not null,
@@ -49,7 +50,7 @@ create table if not exists comment_black
 
 create table if not exists comment
 (
-    id                 bigint auto_increment primary key,
+    id                 int auto_increment primary key,
     type               int          default 0  not null,
     create_time        datetime(6)             not null,
     update_time        datetime(6)             null,
@@ -61,7 +62,7 @@ create table if not exists comment
     gravatar_md5       varchar(127) default '' not null,
     ip_address         varchar(127) default '' not null,
     is_admin           tinyint(1)   default 0  not null,
-    parent_id          bigint       default 0  not null,
+    parent_id          int       default 0  not null,
     post_id            int                     not null,
     status             int          default 1  not null,
     top_priority       int          default 0  not null,
@@ -152,7 +153,7 @@ create table if not exists menu
 
 create table if not exists meta
 (
-    id          bigint auto_increment primary key,
+    id          int auto_increment primary key,
     type        int default 0 not null,
     create_time datetime(6)   not null,
     update_time datetime(6)   null,

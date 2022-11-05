@@ -122,7 +122,7 @@ func (j *journalServiceImpl) Update(ctx context.Context, journalID int32, journa
 	if err != nil {
 		return nil, err
 	}
-	updateResult, err := journalDAL.WithContext(ctx).UpdateSimple(journalDAL.SourceContent.Value(journal.SourceContent), journalDAL.Content.Value(journal.Content))
+	updateResult, err := journalDAL.WithContext(ctx).Where(journalDAL.ID.Eq(journalID)).UpdateSimple(journalDAL.SourceContent.Value(journal.SourceContent), journalDAL.Content.Value(journal.Content), journalDAL.Type.Value(journalParam.Type))
 	if err != nil {
 		return nil, WrapDBErr(err)
 	}

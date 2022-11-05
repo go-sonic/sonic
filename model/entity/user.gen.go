@@ -22,7 +22,7 @@ type User struct {
 	Email       string         `gorm:"column:email;type:varchar(127);not null" json:"email"`
 	ExpireTime  *time.Time     `gorm:"column:expire_time;type:datetime" json:"expire_time"`
 	MfaKey      string         `gorm:"column:mfa_key;type:varchar(64);not null" json:"mfa_key"`
-	MfaType     consts.MFAType `gorm:"column:mfa_type;type:int;not null" json:"mfa_type"`
+	MfaType     consts.MFAType `gorm:"column:mfa_type;type:bigint;not null" json:"mfa_type"`
 	Nickname    string         `gorm:"column:nickname;type:varchar(255);not null" json:"nickname"`
 	Password    string         `gorm:"column:password;type:varchar(255);not null" json:"password"`
 	Username    string         `gorm:"column:username;type:varchar(50);not null" json:"username"`

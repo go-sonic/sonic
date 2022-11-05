@@ -22,7 +22,6 @@ type PropertyScanner interface {
 	ReadThemeConfig(ctx context.Context, themePath string) ([]*dto.ThemeConfigGroup, error)
 	UnmarshalProperty(ctx context.Context, themePropertyContent []byte) (*dto.ThemeProperty, error)
 	UnmarshalConfig(ctx context.Context, themeSettingContent []byte) ([]*dto.ThemeConfigGroup, error)
-	GetThemeScreenshotFilename(ctx context.Context, themePath string) (string, error)
 }
 
 type propertyScannerImpl struct {
@@ -47,11 +46,6 @@ func (s *propertyScannerImpl) GetThemeByThemeID(ctx context.Context, themeID str
 		}
 	}
 	return nil, nil
-}
-
-func (s *propertyScannerImpl) GetThemeScreenshotFilename(ctx context.Context, themePath string) (string, error) {
-	// TODO implement me
-	panic("implement me")
 }
 
 func (s *propertyScannerImpl) ListAll(ctx context.Context, themeRootPath string) ([]*dto.ThemeProperty, error) {

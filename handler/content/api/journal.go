@@ -119,11 +119,11 @@ func (j *JournalHandler) ListChildren(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	parentID, err := util.ParamInt64(ctx, "parentID")
+	parentID, err := util.ParamInt32(ctx, "parentID")
 	if err != nil {
 		return nil, err
 	}
-	children, err := j.JournalCommentService.GetChildren(ctx, parentID, journalID)
+	children, err := j.JournalCommentService.GetChildren(ctx, parentID, journalID, consts.CommentTypeJournal)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func (j *JournalHandler) ListCommentTree(ctx *gin.Context) (interface{}, error) 
 	commentQuery.PageSize = pageSize
 	commentQuery.ParentID = util.Int32Ptr(0)
 
-	allComments, err := j.JournalCommentService.GetByContentID(ctx, journalID, commentQuery.Sort)
+	allComments, err := j.JournalCommentService.GetByContentID(ctx, journalID, consts.CommentTypeJournal, commentQuery.Sort)
 	if err != nil {
 		return nil, err
 	}
