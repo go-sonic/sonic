@@ -14,5 +14,6 @@ func init() {
 		NewLinkHandler,
 		NewPhotoHandler,
 		NewJournalHandler,
+		NewSearchHandler,
 	)
 }

@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newJournal(db *gorm.DB) journal {
+func newJournal(db *gorm.DB, opts ...gen.DOOption) journal {
 	_journal := journal{}
 
-	_journal.journalDo.UseDB(db)
+	_journal.journalDo.UseDB(db, opts...)
 	_journal.journalDo.UseModel(&entity.Journal{})
 
 	tableName := _journal.journalDo.TableName()
@@ -105,6 +105,11 @@ func (j *journal) fillFieldMap() {
 }
 
 func (j journal) clone(db *gorm.DB) journal {
+	j.journalDo.ReplaceConnPool(db.Statement.ConnPool)
+	return j
+}
+
+func (j journal) replaceDB(db *gorm.DB) journal {
 	j.journalDo.ReplaceDB(db)
 	return j
 }
@@ -125,6 +130,10 @@ func (j journalDo) ReadDB() *journalDo {
 
 func (j journalDo) WriteDB() *journalDo {
 	return j.Clauses(dbresolver.Write)
+}
+
+func (j journalDo) Session(config *gorm.Session) *journalDo {
+	return j.withDO(j.DO.Session(config))
 }
 
 func (j journalDo) Clauses(conds ...clause.Expression) *journalDo {

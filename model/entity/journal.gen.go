@@ -20,7 +20,7 @@ type Journal struct {
 	Content       string             `gorm:"column:content;type:text;not null" json:"content"`
 	Likes         int64              `gorm:"column:likes;type:bigint;not null" json:"likes"`
 	SourceContent string             `gorm:"column:source_content;type:longtext;not null" json:"source_content"`
-	Type          consts.JournalType `gorm:"column:type;type:int;not null" json:"type"`
+	Type          consts.JournalType `gorm:"column:type;type:bigint;not null" json:"type"`
 }
 
 // TableName Journal's table name

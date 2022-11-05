@@ -8,7 +8,7 @@ type Journal struct {
 	Content       string             `json:"content"`
 	Likes         int64              `json:"likes"`
 	CreateTime    int64              `json:"createTime"`
-	JournalType   consts.JournalType `json:"journalType"`
+	JournalType   consts.JournalType `json:"type"`
 }
 
 type JournalWithComment struct {

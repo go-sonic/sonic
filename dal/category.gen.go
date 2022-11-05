@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newCategory(db *gorm.DB) category {
+func newCategory(db *gorm.DB, opts ...gen.DOOption) category {
 	_category := category{}
 
-	_category.categoryDo.UseDB(db)
+	_category.categoryDo.UseDB(db, opts...)
 	_category.categoryDo.UseModel(&entity.Category{})
 
 	tableName := _category.categoryDo.TableName()
@@ -29,13 +29,13 @@ func newCategory(db *gorm.DB) category {
 	_category.CreateTime = field.NewTime(tableName, "create_time")
 	_category.UpdateTime = field.NewTime(tableName, "update_time")
 	_category.Description = field.NewString(tableName, "description")
+	_category.Type = field.NewField(tableName, "type")
 	_category.Name = field.NewString(tableName, "name")
 	_category.ParentID = field.NewInt32(tableName, "parent_id")
 	_category.Password = field.NewString(tableName, "password")
 	_category.Slug = field.NewString(tableName, "slug")
 	_category.Thumbnail = field.NewString(tableName, "thumbnail")
 	_category.Priority = field.NewInt32(tableName, "priority")
-	_category.Type = field.NewField(tableName, "type")
 
 	_category.fillFieldMap()
 
@@ -50,13 +50,13 @@ type category struct {
 	CreateTime  field.Time
 	UpdateTime  field.Time
 	Description field.String
+	Type        field.Field
 	Name        field.String
 	ParentID    field.Int32
 	Password    field.String
 	Slug        field.String
 	Thumbnail   field.String
 	Priority    field.Int32
-	Type        field.Field
 
 	fieldMap map[string]field.Expr
 }
@@ -77,13 +77,13 @@ func (c *category) updateTableName(table string) *category {
 	c.CreateTime = field.NewTime(table, "create_time")
 	c.UpdateTime = field.NewTime(table, "update_time")
 	c.Description = field.NewString(table, "description")
+	c.Type = field.NewField(table, "type")
 	c.Name = field.NewString(table, "name")
 	c.ParentID = field.NewInt32(table, "parent_id")
 	c.Password = field.NewString(table, "password")
 	c.Slug = field.NewString(table, "slug")
 	c.Thumbnail = field.NewString(table, "thumbnail")
 	c.Priority = field.NewInt32(table, "priority")
-	c.Type = field.NewField(table, "type")
 
 	c.fillFieldMap()
 
@@ -111,16 +111,21 @@ func (c *category) fillFieldMap() {
 	c.fieldMap["create_time"] = c.CreateTime
 	c.fieldMap["update_time"] = c.UpdateTime
 	c.fieldMap["description"] = c.Description
+	c.fieldMap["type"] = c.Type
 	c.fieldMap["name"] = c.Name
 	c.fieldMap["parent_id"] = c.ParentID
 	c.fieldMap["password"] = c.Password
 	c.fieldMap["slug"] = c.Slug
 	c.fieldMap["thumbnail"] = c.Thumbnail
 	c.fieldMap["priority"] = c.Priority
-	c.fieldMap["type"] = c.Type
 }
 
 func (c category) clone(db *gorm.DB) category {
+	c.categoryDo.ReplaceConnPool(db.Statement.ConnPool)
+	return c
+}
+
+func (c category) replaceDB(db *gorm.DB) category {
 	c.categoryDo.ReplaceDB(db)
 	return c
 }
@@ -141,6 +146,10 @@ func (c categoryDo) ReadDB() *categoryDo {
 
 func (c categoryDo) WriteDB() *categoryDo {
 	return c.Clauses(dbresolver.Write)
+}
+
+func (c categoryDo) Session(config *gorm.Session) *categoryDo {
+	return c.withDO(c.DO.Session(config))
 }
 
 func (c categoryDo) Clauses(conds ...clause.Expression) *categoryDo {

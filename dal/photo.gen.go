@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newPhoto(db *gorm.DB) photo {
+func newPhoto(db *gorm.DB, opts ...gen.DOOption) photo {
 	_photo := photo{}
 
-	_photo.photoDo.UseDB(db)
+	_photo.photoDo.UseDB(db, opts...)
 	_photo.photoDo.UseModel(&entity.Photo{})
 
 	tableName := _photo.photoDo.TableName()
@@ -121,6 +121,11 @@ func (p *photo) fillFieldMap() {
 }
 
 func (p photo) clone(db *gorm.DB) photo {
+	p.photoDo.ReplaceConnPool(db.Statement.ConnPool)
+	return p
+}
+
+func (p photo) replaceDB(db *gorm.DB) photo {
 	p.photoDo.ReplaceDB(db)
 	return p
 }
@@ -141,6 +146,10 @@ func (p photoDo) ReadDB() *photoDo {
 
 func (p photoDo) WriteDB() *photoDo {
 	return p.Clauses(dbresolver.Write)
+}
+
+func (p photoDo) Session(config *gorm.Session) *photoDo {
+	return p.withDO(p.DO.Session(config))
 }
 
 func (p photoDo) Clauses(conds ...clause.Expression) *photoDo {

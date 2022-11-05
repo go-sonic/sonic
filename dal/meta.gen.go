@@ -17,15 +17,15 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newMeta(db *gorm.DB) meta {
+func newMeta(db *gorm.DB, opts ...gen.DOOption) meta {
 	_meta := meta{}
 
-	_meta.metaDo.UseDB(db)
+	_meta.metaDo.UseDB(db, opts...)
 	_meta.metaDo.UseModel(&entity.Meta{})
 
 	tableName := _meta.metaDo.TableName()
 	_meta.ALL = field.NewAsterisk(tableName)
-	_meta.ID = field.NewInt64(tableName, "id")
+	_meta.ID = field.NewInt32(tableName, "id")
 	_meta.Type = field.NewField(tableName, "type")
 	_meta.CreateTime = field.NewTime(tableName, "create_time")
 	_meta.UpdateTime = field.NewTime(tableName, "update_time")
@@ -42,7 +42,7 @@ type meta struct {
 	metaDo metaDo
 
 	ALL        field.Asterisk
-	ID         field.Int64
+	ID         field.Int32
 	Type       field.Field
 	CreateTime field.Time
 	UpdateTime field.Time
@@ -65,7 +65,7 @@ func (m meta) As(alias string) *meta {
 
 func (m *meta) updateTableName(table string) *meta {
 	m.ALL = field.NewAsterisk(table)
-	m.ID = field.NewInt64(table, "id")
+	m.ID = field.NewInt32(table, "id")
 	m.Type = field.NewField(table, "type")
 	m.CreateTime = field.NewTime(table, "create_time")
 	m.UpdateTime = field.NewTime(table, "update_time")
@@ -105,6 +105,11 @@ func (m *meta) fillFieldMap() {
 }
 
 func (m meta) clone(db *gorm.DB) meta {
+	m.metaDo.ReplaceConnPool(db.Statement.ConnPool)
+	return m
+}
+
+func (m meta) replaceDB(db *gorm.DB) meta {
 	m.metaDo.ReplaceDB(db)
 	return m
 }
@@ -125,6 +130,10 @@ func (m metaDo) ReadDB() *metaDo {
 
 func (m metaDo) WriteDB() *metaDo {
 	return m.Clauses(dbresolver.Write)
+}
+
+func (m metaDo) Session(config *gorm.Session) *metaDo {
+	return m.withDO(m.DO.Session(config))
 }
 
 func (m metaDo) Clauses(conds ...clause.Expression) *metaDo {

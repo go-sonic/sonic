@@ -36,5 +36,6 @@ func (s *SheetHandler) SheetBySlug(ctx *gin.Context, model template.Model) (stri
 	if err != nil {
 		return "", err
 	}
-	return s.SheetModel.Content(ctx, sheet, model)
+	token, _ := ctx.Cookie("authentication")
+	return s.SheetModel.Content(ctx, sheet, token, model)
 }

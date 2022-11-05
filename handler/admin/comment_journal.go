@@ -12,6 +12,7 @@ import (
 	"github.com/go-sonic/sonic/model/property"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/service/assembler"
+	"github.com/go-sonic/sonic/service/impl"
 	"github.com/go-sonic/sonic/util"
 	"github.com/go-sonic/sonic/util/xerr"
 )
@@ -83,7 +84,7 @@ func (j *JournalCommentHandler) ListJournalCommentAsTree(ctx *gin.Context) (inte
 	}
 	page := param.Page{PageSize: pageSize.(int), PageNum: int(pageNum)}
 
-	allComments, err := j.JournalCommentService.GetByContentID(ctx, journalID, &param.Sort{Fields: []string{"createTime,desc"}})
+	allComments, err := j.JournalCommentService.GetByContentID(ctx, journalID, consts.CommentTypeJournal, &param.Sort{Fields: []string{"createTime,desc"}})
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +130,7 @@ func (j *JournalCommentHandler) ListJournalCommentWithParent(ctx *gin.Context) (
 }
 
 func (j *JournalCommentHandler) CreateJournalComment(ctx *gin.Context) (interface{}, error) {
-	var commentParam *param.Comment
+	var commentParam *param.AdminComment
 	err := ctx.ShouldBindJSON(&commentParam)
 	if err != nil {
 		if e, ok := err.(validator.ValidationErrors); ok {
@@ -137,14 +138,25 @@ func (j *JournalCommentHandler) CreateJournalComment(ctx *gin.Context) (interfac
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	if commentParam.AuthorURL != "" {
-		err = util.Validate.Var(commentParam.AuthorURL, "url")
-		if err != nil {
-			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("url is not available")
-		}
+	user, err := impl.MustGetAuthorizedUser(ctx)
+	if err != nil || user == nil {
+		return nil, err
 	}
-	commentParam.CommentType = consts.CommentTypeJournal
-	comment, err := j.JournalCommentService.CreateBy(ctx, commentParam)
+	blogURL, err := j.OptionService.GetBlogBaseURL(ctx)
+	if err != nil {
+		return nil, err
+	}
+	commonParam := param.Comment{
+		Author:            user.Username,
+		Email:             user.Email,
+		AuthorURL:         blogURL,
+		Content:           commentParam.Content,
+		PostID:            commentParam.PostID,
+		ParentID:          commentParam.ParentID,
+		AllowNotification: true,
+		CommentType:       consts.CommentTypeJournal,
+	}
+	comment, err := j.JournalCommentService.CreateBy(ctx, &commonParam)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +164,7 @@ func (j *JournalCommentHandler) CreateJournalComment(ctx *gin.Context) (interfac
 }
 
 func (j *JournalCommentHandler) UpdateJournalCommentStatus(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt64(ctx, "commentID")
+	commentID, err := util.ParamInt32(ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +180,7 @@ func (j *JournalCommentHandler) UpdateJournalCommentStatus(ctx *gin.Context) (in
 }
 
 func (j *JournalCommentHandler) UpdateJournalComment(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt64(ctx, "commentID")
+	commentID, err := util.ParamInt32(ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +211,7 @@ func (j *JournalCommentHandler) UpdateJournalStatusBatch(ctx *gin.Context) (inte
 		return nil, err
 	}
 
-	ids := make([]int64, 0)
+	ids := make([]int32, 0)
 	err = ctx.ShouldBindJSON(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
@@ -212,7 +224,7 @@ func (j *JournalCommentHandler) UpdateJournalStatusBatch(ctx *gin.Context) (inte
 }
 
 func (j *JournalCommentHandler) DeleteJournalComment(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt64(ctx, "commentID")
+	commentID, err := util.ParamInt32(ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +232,7 @@ func (j *JournalCommentHandler) DeleteJournalComment(ctx *gin.Context) (interfac
 }
 
 func (j *JournalCommentHandler) DeleteJournalCommentBatch(ctx *gin.Context) (interface{}, error) {
-	ids := make([]int64, 0)
+	ids := make([]int32, 0)
 	err := ctx.ShouldBindJSON(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")

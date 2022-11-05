@@ -16,6 +16,7 @@ import (
 	"github.com/go-sonic/sonic/model/vo"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/service/assembler"
+	"github.com/go-sonic/sonic/service/impl"
 	"github.com/go-sonic/sonic/util"
 	"github.com/go-sonic/sonic/util/xerr"
 )
@@ -98,7 +99,7 @@ func (s *SheetCommentHandler) ListSheetCommentAsTree(ctx *gin.Context) (interfac
 	}
 	page := param.Page{PageSize: pageSize.(int), PageNum: int(pageNum)}
 
-	allComments, err := s.SheetCommentService.GetByContentID(ctx, postID, &param.Sort{Fields: []string{"createTime,desc"}})
+	allComments, err := s.SheetCommentService.GetByContentID(ctx, postID, consts.CommentTypeSheet, &param.Sort{Fields: []string{"createTime,desc"}})
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +143,7 @@ func (s *SheetCommentHandler) ListSheetCommentWithParent(ctx *gin.Context) (inte
 }
 
 func (s *SheetCommentHandler) CreateSheetComment(ctx *gin.Context) (interface{}, error) {
-	var commentParam *param.Comment
+	var commentParam *param.AdminComment
 	err := ctx.ShouldBindJSON(&commentParam)
 	if err != nil {
 		if e, ok := err.(validator.ValidationErrors); ok {
@@ -150,14 +151,25 @@ func (s *SheetCommentHandler) CreateSheetComment(ctx *gin.Context) (interface{},
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	if commentParam.AuthorURL != "" {
-		err = util.Validate.Var(commentParam.AuthorURL, "url")
-		if err != nil {
-			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("url is not available")
-		}
+	user, err := impl.MustGetAuthorizedUser(ctx)
+	if err != nil || user == nil {
+		return nil, err
 	}
-	commentParam.CommentType = consts.CommentTypeSheet
-	comment, err := s.BaseCommentService.CreateBy(ctx, commentParam)
+	blogURL, err := s.OptionService.GetBlogBaseURL(ctx)
+	if err != nil {
+		return nil, err
+	}
+	commonParam := param.Comment{
+		Author:            user.Username,
+		Email:             user.Email,
+		AuthorURL:         blogURL,
+		Content:           commentParam.Content,
+		PostID:            commentParam.PostID,
+		ParentID:          commentParam.ParentID,
+		AllowNotification: true,
+		CommentType:       consts.CommentTypeSheet,
+	}
+	comment, err := s.BaseCommentService.CreateBy(ctx, &commonParam)
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +189,7 @@ func (s *SheetCommentHandler) UpdateSheetCommentStatus(ctx *gin.Context) (interf
 	if err != nil {
 		return nil, err
 	}
-	return s.SheetCommentService.UpdateStatus(ctx, int64(commentID), status)
+	return s.SheetCommentService.UpdateStatus(ctx, commentID, status)
 }
 
 func (s *SheetCommentHandler) UpdateSheetCommentStatusBatch(ctx *gin.Context) (interface{}, error) {
@@ -186,7 +198,7 @@ func (s *SheetCommentHandler) UpdateSheetCommentStatusBatch(ctx *gin.Context) (i
 		return nil, err
 	}
 
-	ids := make([]int64, 0)
+	ids := make([]int32, 0)
 	err = ctx.ShouldBindJSON(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
@@ -203,11 +215,11 @@ func (s *SheetCommentHandler) DeleteSheetComment(ctx *gin.Context) (interface{},
 	if err != nil {
 		return nil, err
 	}
-	return nil, s.SheetCommentService.Delete(ctx, int64(commentID))
+	return nil, s.SheetCommentService.Delete(ctx, commentID)
 }
 
 func (s *SheetCommentHandler) DeleteSheetCommentBatch(ctx *gin.Context) (interface{}, error) {
-	ids := make([]int64, 0)
+	ids := make([]int32, 0)
 	err := ctx.ShouldBindJSON(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")

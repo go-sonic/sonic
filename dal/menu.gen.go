@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newMenu(db *gorm.DB) menu {
+func newMenu(db *gorm.DB, opts ...gen.DOOption) menu {
 	_menu := menu{}
 
-	_menu.menuDo.UseDB(db)
+	_menu.menuDo.UseDB(db, opts...)
 	_menu.menuDo.UseModel(&entity.Menu{})
 
 	tableName := _menu.menuDo.TableName()
@@ -117,6 +117,11 @@ func (m *menu) fillFieldMap() {
 }
 
 func (m menu) clone(db *gorm.DB) menu {
+	m.menuDo.ReplaceConnPool(db.Statement.ConnPool)
+	return m
+}
+
+func (m menu) replaceDB(db *gorm.DB) menu {
 	m.menuDo.ReplaceDB(db)
 	return m
 }
@@ -137,6 +142,10 @@ func (m menuDo) ReadDB() *menuDo {
 
 func (m menuDo) WriteDB() *menuDo {
 	return m.Clauses(dbresolver.Write)
+}
+
+func (m menuDo) Session(config *gorm.Session) *menuDo {
+	return m.withDO(m.DO.Session(config))
 }
 
 func (m menuDo) Clauses(conds ...clause.Expression) *menuDo {

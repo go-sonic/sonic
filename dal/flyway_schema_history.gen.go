@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newFlywaySchemaHistory(db *gorm.DB) flywaySchemaHistory {
+func newFlywaySchemaHistory(db *gorm.DB, opts ...gen.DOOption) flywaySchemaHistory {
 	_flywaySchemaHistory := flywaySchemaHistory{}
 
-	_flywaySchemaHistory.flywaySchemaHistoryDo.UseDB(db)
+	_flywaySchemaHistory.flywaySchemaHistoryDo.UseDB(db, opts...)
 	_flywaySchemaHistory.flywaySchemaHistoryDo.UseModel(&entity.FlywaySchemaHistory{})
 
 	tableName := _flywaySchemaHistory.flywaySchemaHistoryDo.TableName()
@@ -119,6 +119,11 @@ func (f *flywaySchemaHistory) fillFieldMap() {
 }
 
 func (f flywaySchemaHistory) clone(db *gorm.DB) flywaySchemaHistory {
+	f.flywaySchemaHistoryDo.ReplaceConnPool(db.Statement.ConnPool)
+	return f
+}
+
+func (f flywaySchemaHistory) replaceDB(db *gorm.DB) flywaySchemaHistory {
 	f.flywaySchemaHistoryDo.ReplaceDB(db)
 	return f
 }
@@ -139,6 +144,10 @@ func (f flywaySchemaHistoryDo) ReadDB() *flywaySchemaHistoryDo {
 
 func (f flywaySchemaHistoryDo) WriteDB() *flywaySchemaHistoryDo {
 	return f.Clauses(dbresolver.Write)
+}
+
+func (f flywaySchemaHistoryDo) Session(config *gorm.Session) *flywaySchemaHistoryDo {
+	return f.withDO(f.DO.Session(config))
 }
 
 func (f flywaySchemaHistoryDo) Clauses(conds ...clause.Expression) *flywaySchemaHistoryDo {

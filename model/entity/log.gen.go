@@ -20,7 +20,7 @@ type Log struct {
 	Content    string         `gorm:"column:content;type:varchar(1023);not null" json:"content"`
 	IPAddress  string         `gorm:"column:ip_address;type:varchar(127);not null" json:"ip_address"`
 	LogKey     string         `gorm:"column:log_key;type:varchar(1023);not null" json:"log_key"`
-	Type       consts.LogType `gorm:"column:type;type:int;not null" json:"type"`
+	Type       consts.LogType `gorm:"column:type;type:bigint;not null" json:"type"`
 }
 
 // TableName Log's table name

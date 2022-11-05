@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newPost(db *gorm.DB) post {
+func newPost(db *gorm.DB, opts ...gen.DOOption) post {
 	_post := post{}
 
-	_post.postDo.UseDB(db)
+	_post.postDo.UseDB(db, opts...)
 	_post.postDo.UseModel(&entity.Post{})
 
 	tableName := _post.postDo.TableName()
@@ -32,9 +32,11 @@ func newPost(db *gorm.DB) post {
 	_post.DisallowComment = field.NewBool(tableName, "disallow_comment")
 	_post.EditTime = field.NewTime(tableName, "edit_time")
 	_post.EditorType = field.NewField(tableName, "editor_type")
+	_post.FormatContent = field.NewString(tableName, "format_content")
 	_post.Likes = field.NewInt64(tableName, "likes")
 	_post.MetaDescription = field.NewString(tableName, "meta_description")
 	_post.MetaKeywords = field.NewString(tableName, "meta_keywords")
+	_post.OriginalContent = field.NewString(tableName, "original_content")
 	_post.Password = field.NewString(tableName, "password")
 	_post.Slug = field.NewString(tableName, "slug")
 	_post.Status = field.NewField(tableName, "status")
@@ -45,9 +47,6 @@ func newPost(db *gorm.DB) post {
 	_post.TopPriority = field.NewInt32(tableName, "top_priority")
 	_post.Visits = field.NewInt64(tableName, "visits")
 	_post.WordCount = field.NewInt64(tableName, "word_count")
-	_post.Version = field.NewInt32(tableName, "version")
-	_post.FormatContent = field.NewString(tableName, "format_content")
-	_post.OriginalContent = field.NewString(tableName, "original_content")
 
 	_post.fillFieldMap()
 
@@ -65,9 +64,11 @@ type post struct {
 	DisallowComment field.Bool
 	EditTime        field.Time
 	EditorType      field.Field
+	FormatContent   field.String
 	Likes           field.Int64
 	MetaDescription field.String
 	MetaKeywords    field.String
+	OriginalContent field.String
 	Password        field.String
 	Slug            field.String
 	Status          field.Field
@@ -78,9 +79,6 @@ type post struct {
 	TopPriority     field.Int32
 	Visits          field.Int64
 	WordCount       field.Int64
-	Version         field.Int32
-	FormatContent   field.String
-	OriginalContent field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -104,9 +102,11 @@ func (p *post) updateTableName(table string) *post {
 	p.DisallowComment = field.NewBool(table, "disallow_comment")
 	p.EditTime = field.NewTime(table, "edit_time")
 	p.EditorType = field.NewField(table, "editor_type")
+	p.FormatContent = field.NewString(table, "format_content")
 	p.Likes = field.NewInt64(table, "likes")
 	p.MetaDescription = field.NewString(table, "meta_description")
 	p.MetaKeywords = field.NewString(table, "meta_keywords")
+	p.OriginalContent = field.NewString(table, "original_content")
 	p.Password = field.NewString(table, "password")
 	p.Slug = field.NewString(table, "slug")
 	p.Status = field.NewField(table, "status")
@@ -117,9 +117,6 @@ func (p *post) updateTableName(table string) *post {
 	p.TopPriority = field.NewInt32(table, "top_priority")
 	p.Visits = field.NewInt64(table, "visits")
 	p.WordCount = field.NewInt64(table, "word_count")
-	p.Version = field.NewInt32(table, "version")
-	p.FormatContent = field.NewString(table, "format_content")
-	p.OriginalContent = field.NewString(table, "original_content")
 
 	p.fillFieldMap()
 
@@ -142,7 +139,7 @@ func (p *post) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *post) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 23)
+	p.fieldMap = make(map[string]field.Expr, 22)
 	p.fieldMap["id"] = p.ID
 	p.fieldMap["type"] = p.Type
 	p.fieldMap["create_time"] = p.CreateTime
@@ -150,9 +147,11 @@ func (p *post) fillFieldMap() {
 	p.fieldMap["disallow_comment"] = p.DisallowComment
 	p.fieldMap["edit_time"] = p.EditTime
 	p.fieldMap["editor_type"] = p.EditorType
+	p.fieldMap["format_content"] = p.FormatContent
 	p.fieldMap["likes"] = p.Likes
 	p.fieldMap["meta_description"] = p.MetaDescription
 	p.fieldMap["meta_keywords"] = p.MetaKeywords
+	p.fieldMap["original_content"] = p.OriginalContent
 	p.fieldMap["password"] = p.Password
 	p.fieldMap["slug"] = p.Slug
 	p.fieldMap["status"] = p.Status
@@ -163,12 +162,14 @@ func (p *post) fillFieldMap() {
 	p.fieldMap["top_priority"] = p.TopPriority
 	p.fieldMap["visits"] = p.Visits
 	p.fieldMap["word_count"] = p.WordCount
-	p.fieldMap["version"] = p.Version
-	p.fieldMap["format_content"] = p.FormatContent
-	p.fieldMap["original_content"] = p.OriginalContent
 }
 
 func (p post) clone(db *gorm.DB) post {
+	p.postDo.ReplaceConnPool(db.Statement.ConnPool)
+	return p
+}
+
+func (p post) replaceDB(db *gorm.DB) post {
 	p.postDo.ReplaceDB(db)
 	return p
 }
@@ -189,6 +190,10 @@ func (p postDo) ReadDB() *postDo {
 
 func (p postDo) WriteDB() *postDo {
 	return p.Clauses(dbresolver.Write)
+}
+
+func (p postDo) Session(config *gorm.Session) *postDo {
+	return p.withDO(p.DO.Session(config))
 }
 
 func (p postDo) Clauses(conds ...clause.Expression) *postDo {

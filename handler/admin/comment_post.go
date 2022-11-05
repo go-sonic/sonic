@@ -12,6 +12,7 @@ import (
 	"github.com/go-sonic/sonic/model/property"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/service/assembler"
+	"github.com/go-sonic/sonic/service/impl"
 	"github.com/go-sonic/sonic/util"
 	"github.com/go-sonic/sonic/util/xerr"
 )
@@ -90,7 +91,7 @@ func (p *PostCommentHandler) ListPostCommentAsTree(ctx *gin.Context) (interface{
 		return nil, err
 	}
 	page := param.Page{PageSize: pageSize.(int), PageNum: int(pageNum)}
-	allComments, err := p.PostCommentService.GetByContentID(ctx, postID, &param.Sort{Fields: []string{"createTime,desc"}})
+	allComments, err := p.PostCommentService.GetByContentID(ctx, postID, consts.CommentTypePost, &param.Sort{Fields: []string{"createTime,desc"}})
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func (p *PostCommentHandler) ListPostCommentWithParent(ctx *gin.Context) (interf
 }
 
 func (p *PostCommentHandler) CreatePostComment(ctx *gin.Context) (interface{}, error) {
-	var commentParam *param.Comment
+	var commentParam *param.AdminComment
 	err := ctx.ShouldBindJSON(&commentParam)
 	if err != nil {
 		if e, ok := err.(validator.ValidationErrors); ok {
@@ -143,14 +144,25 @@ func (p *PostCommentHandler) CreatePostComment(ctx *gin.Context) (interface{}, e
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	if commentParam.AuthorURL != "" {
-		err = util.Validate.Var(commentParam.AuthorURL, "url")
-		if err != nil {
-			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("url is not available")
-		}
+	user, err := impl.MustGetAuthorizedUser(ctx)
+	if err != nil || user == nil {
+		return nil, err
 	}
-	commentParam.CommentType = consts.CommentTypeSheet
-	comment, err := p.PostCommentService.CreateBy(ctx, commentParam)
+	blogURL, err := p.OptionService.GetBlogBaseURL(ctx)
+	if err != nil {
+		return nil, err
+	}
+	commonParam := param.Comment{
+		Author:            user.Username,
+		Email:             user.Email,
+		AuthorURL:         blogURL,
+		Content:           commentParam.Content,
+		PostID:            commentParam.PostID,
+		ParentID:          commentParam.ParentID,
+		AllowNotification: true,
+		CommentType:       consts.CommentTypePost,
+	}
+	comment, err := p.PostCommentService.CreateBy(ctx, &commonParam)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +170,7 @@ func (p *PostCommentHandler) CreatePostComment(ctx *gin.Context) (interface{}, e
 }
 
 func (p *PostCommentHandler) UpdatePostComment(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt64(ctx, "commentID")
+	commentID, err := util.ParamInt32(ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +209,7 @@ func (p *PostCommentHandler) UpdatePostCommentStatus(ctx *gin.Context) (interfac
 	if err != nil {
 		return nil, err
 	}
-	return p.PostCommentService.UpdateStatus(ctx, int64(commentID), status)
+	return p.PostCommentService.UpdateStatus(ctx, commentID, status)
 }
 
 func (p *PostCommentHandler) UpdatePostCommentStatusBatch(ctx *gin.Context) (interface{}, error) {
@@ -206,7 +218,7 @@ func (p *PostCommentHandler) UpdatePostCommentStatusBatch(ctx *gin.Context) (int
 		return nil, err
 	}
 
-	ids := make([]int64, 0)
+	ids := make([]int32, 0)
 	err = ctx.ShouldBindJSON(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
@@ -219,7 +231,7 @@ func (p *PostCommentHandler) UpdatePostCommentStatusBatch(ctx *gin.Context) (int
 }
 
 func (p *PostCommentHandler) DeletePostComment(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt64(ctx, "commentID")
+	commentID, err := util.ParamInt32(ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +239,7 @@ func (p *PostCommentHandler) DeletePostComment(ctx *gin.Context) (interface{}, e
 }
 
 func (p *PostCommentHandler) DeletePostCommentBatch(ctx *gin.Context) (interface{}, error) {
-	ids := make([]int64, 0)
+	ids := make([]int32, 0)
 	err := ctx.ShouldBindJSON(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")

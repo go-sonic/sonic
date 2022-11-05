@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newOption(db *gorm.DB) option {
+func newOption(db *gorm.DB, opts ...gen.DOOption) option {
 	_option := option{}
 
-	_option.optionDo.UseDB(db)
+	_option.optionDo.UseDB(db, opts...)
 	_option.optionDo.UseModel(&entity.Option{})
 
 	tableName := _option.optionDo.TableName()
@@ -101,6 +101,11 @@ func (o *option) fillFieldMap() {
 }
 
 func (o option) clone(db *gorm.DB) option {
+	o.optionDo.ReplaceConnPool(db.Statement.ConnPool)
+	return o
+}
+
+func (o option) replaceDB(db *gorm.DB) option {
 	o.optionDo.ReplaceDB(db)
 	return o
 }
@@ -121,6 +126,10 @@ func (o optionDo) ReadDB() *optionDo {
 
 func (o optionDo) WriteDB() *optionDo {
 	return o.Clauses(dbresolver.Write)
+}
+
+func (o optionDo) Session(config *gorm.Session) *optionDo {
+	return o.withDO(o.DO.Session(config))
 }
 
 func (o optionDo) Clauses(conds ...clause.Expression) *optionDo {

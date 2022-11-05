@@ -15,18 +15,20 @@ const TableNamePost = "post"
 // Post mapped from table <post>
 type Post struct {
 	ID              int32             `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
-	Type            consts.PostType   `gorm:"column:type;type:int;not null;index:post_type_status,priority:1" json:"type"`
+	Type            consts.PostType   `gorm:"column:type;type:bigint;not null;index:post_type_status,priority:1" json:"type"`
 	CreateTime      time.Time         `gorm:"column:create_time;type:datetime;not null;index:post_create_time,priority:1" json:"create_time"`
 	UpdateTime      *time.Time        `gorm:"column:update_time;type:datetime" json:"update_time"`
 	DisallowComment bool              `gorm:"column:disallow_comment;type:tinyint(1);not null" json:"disallow_comment"`
 	EditTime        *time.Time        `gorm:"column:edit_time;type:datetime" json:"edit_time"`
-	EditorType      consts.EditorType `gorm:"column:editor_type;type:int;not null" json:"editor_type"`
+	EditorType      consts.EditorType `gorm:"column:editor_type;type:bigint;not null" json:"editor_type"`
+	FormatContent   string            `gorm:"column:format_content;type:longtext;not null" json:"format_content"`
 	Likes           int64             `gorm:"column:likes;type:bigint;not null" json:"likes"`
 	MetaDescription string            `gorm:"column:meta_description;type:varchar(1023);not null" json:"meta_description"`
 	MetaKeywords    string            `gorm:"column:meta_keywords;type:varchar(511);not null" json:"meta_keywords"`
+	OriginalContent string            `gorm:"column:original_content;type:longtext;not null" json:"original_content"`
 	Password        string            `gorm:"column:password;type:varchar(255);not null" json:"password"`
 	Slug            string            `gorm:"column:slug;type:varchar(255);not null;uniqueIndex:uniq_post_slug,priority:1" json:"slug"`
-	Status          consts.PostStatus `gorm:"column:status;type:int;not null;index:post_type_status,priority:2;default:1" json:"status"`
+	Status          consts.PostStatus `gorm:"column:status;type:bigint;not null;index:post_type_status,priority:2;default:1" json:"status"`
 	Summary         string            `gorm:"column:summary;type:longtext;not null" json:"summary"`
 	Template        string            `gorm:"column:template;type:varchar(255);not null" json:"template"`
 	Thumbnail       string            `gorm:"column:thumbnail;type:varchar(1023);not null" json:"thumbnail"`
@@ -34,9 +36,6 @@ type Post struct {
 	TopPriority     int32             `gorm:"column:top_priority;type:int;not null" json:"top_priority"`
 	Visits          int64             `gorm:"column:visits;type:bigint;not null" json:"visits"`
 	WordCount       int64             `gorm:"column:word_count;type:bigint;not null" json:"word_count"`
-	Version         int32             `gorm:"column:version;type:int;not null;default:1" json:"version"`
-	FormatContent   string            `gorm:"column:format_content;type:longtext;not null" json:"format_content"`
-	OriginalContent string            `gorm:"column:original_content;type:longtext;not null" json:"original_content"`
 }
 
 // TableName Post's table name

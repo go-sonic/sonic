@@ -17,10 +17,10 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newLink(db *gorm.DB) link {
+func newLink(db *gorm.DB, opts ...gen.DOOption) link {
 	_link := link{}
 
-	_link.linkDo.UseDB(db)
+	_link.linkDo.UseDB(db, opts...)
 	_link.linkDo.UseModel(&entity.Link{})
 
 	tableName := _link.linkDo.TableName()
@@ -113,6 +113,11 @@ func (l *link) fillFieldMap() {
 }
 
 func (l link) clone(db *gorm.DB) link {
+	l.linkDo.ReplaceConnPool(db.Statement.ConnPool)
+	return l
+}
+
+func (l link) replaceDB(db *gorm.DB) link {
 	l.linkDo.ReplaceDB(db)
 	return l
 }
@@ -133,6 +138,10 @@ func (l linkDo) ReadDB() *linkDo {
 
 func (l linkDo) WriteDB() *linkDo {
 	return l.Clauses(dbresolver.Write)
+}
+
+func (l linkDo) Session(config *gorm.Session) *linkDo {
+	return l.withDO(l.DO.Session(config))
 }
 
 func (l linkDo) Clauses(conds ...clause.Expression) *linkDo {

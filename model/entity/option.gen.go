@@ -18,7 +18,7 @@ type Option struct {
 	CreateTime  time.Time         `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime  *time.Time        `gorm:"column:update_time;type:datetime" json:"update_time"`
 	OptionKey   string            `gorm:"column:option_key;type:varchar(100);not null" json:"option_key"`
-	Type        consts.OptionType `gorm:"column:type;type:int;not null" json:"type"`
+	Type        consts.OptionType `gorm:"column:type;type:bigint;not null" json:"type"`
 	OptionValue string            `gorm:"column:option_value;type:longtext;not null" json:"option_value"`
 }
 

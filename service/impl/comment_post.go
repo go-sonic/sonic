@@ -38,7 +38,7 @@ func (p postCommentServiceImpl) CreateBy(ctx context.Context, commentParam *para
 	return p.BaseCommentService.CreateBy(ctx, commentParam)
 }
 
-func (p postCommentServiceImpl) UpdateBy(ctx context.Context, commentID int64, commentParam *param.Comment) (*entity.Comment, error) {
+func (p postCommentServiceImpl) UpdateBy(ctx context.Context, commentID int32, commentParam *param.Comment) (*entity.Comment, error) {
 	if commentID == 0 {
 		return nil, nil
 	}

@@ -58,7 +58,7 @@ func (p postServiceImpl) Page(ctx context.Context, postQuery param.PostQuery) ([
 	}
 
 	if postQuery.Keyword != nil {
-		postDo.Where(postDAL.Title.Like(*postQuery.Keyword))
+		postDo.Where(postDAL.Title.Like("%" + *postQuery.Keyword + "%")).Or(postDAL.OriginalContent.Like("%" + *postQuery.Keyword + "%"))
 	}
 
 	if postQuery.WithPassword != nil && !*postQuery.WithPassword {

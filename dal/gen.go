@@ -8,7 +8,9 @@ import (
 	"context"
 	"database/sql"
 
+	"gorm.io/gen"
 	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 var (
@@ -33,8 +35,8 @@ var (
 	User                *user
 )
 
-func SetDefault(db *gorm.DB) {
-	*Q = *Use(db)
+func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
+	*Q = *Use(db, opts...)
 	Attachment = &Q.Attachment
 	Category = &Q.Category
 	Comment = &Q.Comment
@@ -55,27 +57,27 @@ func SetDefault(db *gorm.DB) {
 	User = &Q.User
 }
 
-func Use(db *gorm.DB) *Query {
+func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                  db,
-		Attachment:          newAttachment(db),
-		Category:            newCategory(db),
-		Comment:             newComment(db),
-		CommentBlack:        newCommentBlack(db),
-		FlywaySchemaHistory: newFlywaySchemaHistory(db),
-		Journal:             newJournal(db),
-		Link:                newLink(db),
-		Log:                 newLog(db),
-		Menu:                newMenu(db),
-		Meta:                newMeta(db),
-		Option:              newOption(db),
-		Photo:               newPhoto(db),
-		Post:                newPost(db),
-		PostCategory:        newPostCategory(db),
-		PostTag:             newPostTag(db),
-		Tag:                 newTag(db),
-		ThemeSetting:        newThemeSetting(db),
-		User:                newUser(db),
+		Attachment:          newAttachment(db, opts...),
+		Category:            newCategory(db, opts...),
+		Comment:             newComment(db, opts...),
+		CommentBlack:        newCommentBlack(db, opts...),
+		FlywaySchemaHistory: newFlywaySchemaHistory(db, opts...),
+		Journal:             newJournal(db, opts...),
+		Link:                newLink(db, opts...),
+		Log:                 newLog(db, opts...),
+		Menu:                newMenu(db, opts...),
+		Meta:                newMeta(db, opts...),
+		Option:              newOption(db, opts...),
+		Photo:               newPhoto(db, opts...),
+		Post:                newPost(db, opts...),
+		PostCategory:        newPostCategory(db, opts...),
+		PostTag:             newPostTag(db, opts...),
+		Tag:                 newTag(db, opts...),
+		ThemeSetting:        newThemeSetting(db, opts...),
+		User:                newUser(db, opts...),
 	}
 }
 
@@ -125,6 +127,38 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Tag:                 q.Tag.clone(db),
 		ThemeSetting:        q.ThemeSetting.clone(db),
 		User:                q.User.clone(db),
+	}
+}
+
+func (q *Query) ReadDB() *Query {
+	return q.clone(q.db.Clauses(dbresolver.Read))
+}
+
+func (q *Query) WriteDB() *Query {
+	return q.clone(q.db.Clauses(dbresolver.Write))
+}
+
+func (q *Query) ReplaceDB(db *gorm.DB) *Query {
+	return &Query{
+		db:                  db,
+		Attachment:          q.Attachment.replaceDB(db),
+		Category:            q.Category.replaceDB(db),
+		Comment:             q.Comment.replaceDB(db),
+		CommentBlack:        q.CommentBlack.replaceDB(db),
+		FlywaySchemaHistory: q.FlywaySchemaHistory.replaceDB(db),
+		Journal:             q.Journal.replaceDB(db),
+		Link:                q.Link.replaceDB(db),
+		Log:                 q.Log.replaceDB(db),
+		Menu:                q.Menu.replaceDB(db),
+		Meta:                q.Meta.replaceDB(db),
+		Option:              q.Option.replaceDB(db),
+		Photo:               q.Photo.replaceDB(db),
+		Post:                q.Post.replaceDB(db),
+		PostCategory:        q.PostCategory.replaceDB(db),
+		PostTag:             q.PostTag.replaceDB(db),
+		Tag:                 q.Tag.replaceDB(db),
+		ThemeSetting:        q.ThemeSetting.replaceDB(db),
+		User:                q.User.replaceDB(db),
 	}
 }
 

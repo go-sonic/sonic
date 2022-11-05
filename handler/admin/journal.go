@@ -68,6 +68,9 @@ func (j *JournalHandler) CreateJournal(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
+	if journalParam.Content == "" {
+		journalParam.Content = journalParam.SourceContent
+	}
 	journal, err := j.JournalService.Create(ctx, &journalParam)
 	if err != nil {
 		return nil, err

@@ -17,15 +17,15 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 )
 
-func newCommentBlack(db *gorm.DB) commentBlack {
+func newCommentBlack(db *gorm.DB, opts ...gen.DOOption) commentBlack {
 	_commentBlack := commentBlack{}
 
-	_commentBlack.commentBlackDo.UseDB(db)
+	_commentBlack.commentBlackDo.UseDB(db, opts...)
 	_commentBlack.commentBlackDo.UseModel(&entity.CommentBlack{})
 
 	tableName := _commentBlack.commentBlackDo.TableName()
 	_commentBlack.ALL = field.NewAsterisk(tableName)
-	_commentBlack.ID = field.NewInt64(tableName, "id")
+	_commentBlack.ID = field.NewInt32(tableName, "id")
 	_commentBlack.CreateTime = field.NewTime(tableName, "create_time")
 	_commentBlack.UpdateTime = field.NewTime(tableName, "update_time")
 	_commentBlack.BanTime = field.NewTime(tableName, "ban_time")
@@ -40,7 +40,7 @@ type commentBlack struct {
 	commentBlackDo commentBlackDo
 
 	ALL        field.Asterisk
-	ID         field.Int64
+	ID         field.Int32
 	CreateTime field.Time
 	UpdateTime field.Time
 	BanTime    field.Time
@@ -61,7 +61,7 @@ func (c commentBlack) As(alias string) *commentBlack {
 
 func (c *commentBlack) updateTableName(table string) *commentBlack {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewInt64(table, "id")
+	c.ID = field.NewInt32(table, "id")
 	c.CreateTime = field.NewTime(table, "create_time")
 	c.UpdateTime = field.NewTime(table, "update_time")
 	c.BanTime = field.NewTime(table, "ban_time")
@@ -99,6 +99,11 @@ func (c *commentBlack) fillFieldMap() {
 }
 
 func (c commentBlack) clone(db *gorm.DB) commentBlack {
+	c.commentBlackDo.ReplaceConnPool(db.Statement.ConnPool)
+	return c
+}
+
+func (c commentBlack) replaceDB(db *gorm.DB) commentBlack {
 	c.commentBlackDo.ReplaceDB(db)
 	return c
 }
@@ -119,6 +124,10 @@ func (c commentBlackDo) ReadDB() *commentBlackDo {
 
 func (c commentBlackDo) WriteDB() *commentBlackDo {
 	return c.Clauses(dbresolver.Write)
+}
+
+func (c commentBlackDo) Session(config *gorm.Session) *commentBlackDo {
+	return c.withDO(c.DO.Session(config))
 }
 
 func (c commentBlackDo) Clauses(conds ...clause.Expression) *commentBlackDo {

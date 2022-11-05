@@ -66,6 +66,7 @@ type Server struct {
 	ContentLinkHandler        *content.LinkHandler
 	ContentPhotoHandler       *content.PhotoHandler
 	ContentJournalHandler     *content.JournalHandler
+	ContentSearchHandler      *content.SearchHandler
 	ContentAPIArchiveHandler  *api.ArchiveHandler
 	ContentAPICategoryHandler *api.CategoryHandler
 	ContentAPIJournalHandler  *api.JournalHandler
@@ -118,6 +119,7 @@ type ServerParams struct {
 	ContentLinkHandler        *content.LinkHandler
 	ContentPhotoHandler       *content.PhotoHandler
 	ContentJournalHandler     *content.JournalHandler
+	ContentSearchHandler      *content.SearchHandler
 	ContentAPIArchiveHandler  *api.ArchiveHandler
 	ContentAPICategoryHandler *api.CategoryHandler
 	ContentAPIJournalHandler  *api.JournalHandler
@@ -187,6 +189,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		ContentAPIPostHandler:     param.ContentAPIPostHandler,
 		ContentAPISheetHandler:    param.ContentAPISheetHandler,
 		ContentAPIOptionHander:    param.ContentAPIOptionHander,
+		ContentSearchHandler:      param.ContentSearchHandler,
 	}
 	lifecycle.Append(fx.Hook{
 		OnStop:  httpServer.Shutdown,
