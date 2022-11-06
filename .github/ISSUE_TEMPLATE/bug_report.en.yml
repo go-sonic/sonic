@@ -1,0 +1,77 @@
+name: Bug Report
+description: File a bug report
+labels: [bug]
+body:
+  - type: markdown
+    id: preface
+    attributes:
+      value: "Thanks for taking the time to fill out this bug report!"
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: To avoid duplicate issues, it is recommended to do the following first.
+      options:
+        - label: The issue has been searched in [GitHub Issues](https://github.com/go-sonic/sonic/issues)
+          required: true
+  - type: markdown
+    id: environment
+    attributes:
+      value: "## Environment"
+  - type: input
+    id: version
+    validations:
+      required: true
+    attributes:
+      label: What is version of Sonic has the issue?
+      description: "Can be found in backstage management system."
+  - type: dropdown
+    id: database
+    validations:
+      required: true
+    attributes:
+      label: "What database are you using?"
+      description: "Can be found in backstage management system."
+      options:
+        - SQLite3
+        - MySQL 8.x
+        - Other
+  - type: dropdown
+    id: deployment-method
+    validations:
+      required: true
+    attributes:
+      label: "What is your deployment method?"
+      options:
+        - Executable file
+        - Docker
+  - type: input
+    id: site-url
+    attributes:
+      label: "Your site address."
+      description: "Note your online address, if possible."
+      placeholder: "ex. https://go-sonic.com"
+    validations:
+      required: false
+  - type: markdown
+    id: details
+    attributes:
+      value: "## Details"
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: "What happened?"
+      description: "Also tell us, what did you expect to happen?"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant log output"
+      description: "Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks."
+      render: shell
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: "Additional information"
+      description: "If you have other information to note, you can fill it in here (screenshots, videos, etc.)."
