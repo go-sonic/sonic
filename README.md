@@ -11,7 +11,6 @@
 <a href="https://github.com/go-sonic/sonic/commits"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/go-sonic/sonic.svg?style=flat-square" /></a>
 <a href="https://github.com/go-sonic/sonic/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/go-sonic/sonic/Sonic%20CI?style=flat-square" /></a>
 <br />
-<a href="https://go-sonic.org">Website</a>
 <a href="https://t.me/go_sonic">Telegram Channel</a>
 </p>
 
