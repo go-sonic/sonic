@@ -32,6 +32,7 @@ type Server struct {
 	AuthMiddleware            *middleware.AuthMiddleware
 	LogMiddleware             *middleware.GinLoggerMiddleware
 	RecoveryMiddleware        *middleware.RecoveryMiddleware
+	InstallRedirectMiddleware *middleware.InstallRedirectMiddleware
 	OptionService             service.OptionService
 	ThemeService              service.ThemeService
 	SheetService              service.SheetService
@@ -85,6 +86,7 @@ type ServerParams struct {
 	AuthMiddleware            *middleware.AuthMiddleware
 	LogMiddleware             *middleware.GinLoggerMiddleware
 	RecoveryMiddleware        *middleware.RecoveryMiddleware
+	InstallRedirectMiddleware *middleware.InstallRedirectMiddleware
 	OptionService             service.OptionService
 	ThemeService              service.ThemeService
 	SheetService              service.SheetService
@@ -148,6 +150,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		AuthMiddleware:            param.AuthMiddleware,
 		LogMiddleware:             param.LogMiddleware,
 		RecoveryMiddleware:        param.RecoveryMiddleware,
+		InstallRedirectMiddleware: param.InstallRedirectMiddleware,
 		AdminHandler:              param.AdminHandler,
 		AttachmentHandler:         param.AttachmentHandler,
 		BackupHandler:             param.BackupHandler,

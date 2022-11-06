@@ -45,7 +45,7 @@ func (s *Server) RegisterRouters() {
 		}
 		{
 			adminApiRouter := router.Group("/api/admin")
-			adminApiRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger())
+			adminApiRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
 			adminApiRouter.GET("/is_installed", s.wrapHandler(s.AdminHandler.IsInstalled))
 			adminApiRouter.POST("/login/precheck", s.wrapHandler(s.AdminHandler.AuthPreCheck))
 			adminApiRouter.POST("/login", s.wrapHandler(s.AdminHandler.Auth))
@@ -278,7 +278,7 @@ func (s *Server) RegisterRouters() {
 		}
 		{
 			contentRouter := router.Group("")
-			contentRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger())
+			contentRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
 
 			contentRouter.POST("/content/:type/:slug/authentication", s.wrapHTMLHandler(s.ViewHandler.Authenticate))
 
