@@ -334,10 +334,20 @@ func (b basePostServiceImpl) CreateOrUpdate(ctx context.Context, post *entity.Po
 			if postCount > 0 {
 				return xerr.BadParam.New("").WithMsg("文章别名已存在(Article alias already exists)").WithStatus(xerr.StatusBadRequest)
 			}
+			status := post.Status
 			err = postDAL.WithContext(ctx).Create(post)
 			if err != nil {
 				return WrapDBErr(err)
 			}
+			// 😅gorm not insert zero value: https://gorm.io/docs/create.html
+			if status == consts.PostStatusPublished {
+				_, err = postDAL.WithContext(ctx).Where(postDAL.ID.Eq(post.ID)).UpdateColumnSimple(postDAL.Status.Value(status))
+				if err != nil {
+					return WrapDBErr(err)
+				}
+				post.Status = status
+			}
+
 		} else {
 			// update post
 			slugCount, err := postDAL.WithContext(ctx).Where(postDAL.Slug.Eq(post.Slug), postDAL.ID.Neq(post.ID)).Count()

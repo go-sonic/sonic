@@ -180,11 +180,25 @@ func (i installServiceImpl) createDefaultPost(ctx context.Context, category *ent
 
 > 这是一篇自动生成的文章，请删除这篇文章之后开始你的创作吧！
 `
+	formatContent := `<h2 id="hello-sonic" tabindex="-1">Hello Sonic</h2>
+	<p>如果你看到了这一篇文章，那么证明你已经安装成功了，感谢使用 <a href="https://go-sonic.org" target="_blank">Sonic</a> 进行创作，希望能够使用愉快。</p>
+	<h2 id="%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5" tabindex="-1">相关链接</h2>
+	<ul>
+	<li>官网：<a href="https://github.com/go-sonic" target="_blank">https://github.com/go-sonic</a></li>
+	<li>主题仓库：<a href="https://github.com/go-sonic/default-theme-anatole" target="_blank">https://github.com/go-sonic/default-theme-anatole</a></li>
+	<li>开源地址：<a href="https://github.com/go-sonic/sonic" target="_blank">https://github.com/go-sonic/sonic</a></li>
+	</ul>
+	<p>在使用过程中，有任何问题都可以通过以上链接找寻答案，或者联系我们。</p>
+	<blockquote>
+	<p>这是一篇自动生成的文章，请删除这篇文章之后开始你的创作吧！</p>
+	</blockquote>
+	`
 	postParam := param.Post{
 		Title:           "Hello Sonic",
 		Status:          consts.PostStatusPublished,
 		Slug:            "hello-sonic",
 		OriginalContent: content,
+		Content:         formatContent,
 		CategoryIDs:     []int32{category.ID},
 	}
 	return i.PostService.Create(ctx, &postParam)
