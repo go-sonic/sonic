@@ -32,6 +32,12 @@ Thanks [Halo](https://github.com/halo-dev) project team,this project is inspired
 - Object storage(MINIO、Google Cloud、AWS、AliYun)
 
 
+## 🎊 Preview
+
+![Default Theme](https://github.com/go-sonic/default-theme-anatole/raw/master/screenshot.png)
+
+![Console](https://github.com/go-sonic/resources/raw/master/console-screenshot.png)
+
 ## 🧰 How to install
 
 ### Download the latest installation package
