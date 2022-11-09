@@ -29,6 +29,11 @@ Sonic 意为声速的、声音的，正如它的名字一样, sonic 致力于成
 - 支持 Linux、Windows、Mac OS等主流操作系统，支持x86、x64、Arm、Arm64、MIPS等指令集架构
 - 支持对象存储(MINIO、Google Cloud、AWS、AliYun)
 
+## 🎊 Preview
+
+![默认主题](https://github.com/go-sonic/default-theme-anatole/raw/master/screenshot.png)
+
+![控制台](https://github.com/go-sonic/resources/raw/master/console-screenshot.png)
 
 ## 🧰 安装
 
