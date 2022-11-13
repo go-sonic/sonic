@@ -44,6 +44,7 @@ func NewArchiveHandler(
 func (a *ArchiveHandler) Archives(ctx *gin.Context, model template.Model) (string, error) {
 	return a.PostModel.Archives(ctx, 0, model)
 }
+
 func (a *ArchiveHandler) ArchivesPage(ctx *gin.Context, model template.Model) (string, error) {
 	page, err := util.ParamInt32(ctx, "page")
 	if err != nil {

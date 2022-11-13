@@ -387,6 +387,7 @@ func (c *CommentStatus) Scan(src interface{}) error {
 	}
 	return nil
 }
+
 func CommentStatusFromString(str string) (CommentStatus, error) {
 	if str == "PUBLISHED" {
 		return CommentStatusPublished, nil
@@ -421,9 +422,13 @@ const (
 type EditorType int32
 
 const (
-	EditorTypeMarkdown = iota
+	EditorTypeMarkdown EditorType = iota
 	EditorTypeRichText
 )
+
+func (e EditorType) Ptr() *EditorType {
+	return &e
+}
 
 func (e *EditorType) Scan(src interface{}) error {
 	if src == nil {

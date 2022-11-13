@@ -37,6 +37,7 @@ func NewSearchHandler(
 		ThemeService:  themeService,
 	}
 }
+
 func (s *SearchHandler) Search(ctx *gin.Context, model template.Model) (string, error) {
 	return s.search(ctx, 0, model)
 }

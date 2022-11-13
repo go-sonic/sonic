@@ -21,6 +21,8 @@ type Post struct {
 	CategoryIDs     []int32            `json:"categoryIds" form:"categoryIds"`
 	MetaParam       []Meta             `json:"metas" form:"metas"`
 	Content         string             `json:"content" form:"content"`
+	EditTime        *int64             `json:"editTime" form:"editTime"`
+	UpdateTime      *int64             `json:"updateTime" form:"updateTime"`
 }
 
 type PostContent struct {

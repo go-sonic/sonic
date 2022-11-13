@@ -103,6 +103,7 @@ func (f *localFileDescriptor) getExtensionName() string {
 func (f *localFileDescriptor) getFileName() string {
 	return f.Name
 }
+
 func (f *localFileDescriptor) getShouldRename() shouldRename {
 	return f.ShouldRename
 }

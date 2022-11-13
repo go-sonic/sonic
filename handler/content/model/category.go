@@ -52,7 +52,6 @@ type CategoryModel struct {
 }
 
 func (c *CategoryModel) ListCategories(ctx context.Context, model template.Model) (string, error) {
-
 	seoKeyWords := c.OptionService.GetOrByDefault(ctx, property.SeoKeywords)
 	seoDescription := c.OptionService.GetOrByDefault(ctx, property.SeoDescription)
 

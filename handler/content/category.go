@@ -43,6 +43,7 @@ func NewCategoryHandler(
 func (c *CategoryHandler) Categories(ctx *gin.Context, model template.Model) (string, error) {
 	return c.CategoryModel.ListCategories(ctx, model)
 }
+
 func (c *CategoryHandler) CategoryDetail(ctx *gin.Context, model template.Model) (string, error) {
 	slug, err := util.ParamString(ctx, "slug")
 	if err != nil {

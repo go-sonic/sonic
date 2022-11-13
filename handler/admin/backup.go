@@ -2,6 +2,7 @@ package admin
 
 import (
 	"net/http"
+	"path"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -115,6 +116,10 @@ func (b *BackupHandler) ImportMarkdown(ctx *gin.Context) (interface{}, error) {
 	fileHeader, err := ctx.FormFile("file")
 	if err != nil {
 		return nil, xerr.WithMsg(err, "上传文件错误").WithStatus(xerr.StatusBadRequest)
+	}
+	filenameExt := path.Ext(fileHeader.Filename)
+	if filenameExt != ".md" && filenameExt != ".markdown" && filenameExt != ".mdown" {
+		return nil, xerr.WithMsg(err, "Unsupported format").WithStatus(xerr.StatusBadRequest)
 	}
 	return nil, b.BackupService.ImportMarkdown(ctx, fileHeader)
 }

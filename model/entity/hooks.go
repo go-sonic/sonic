@@ -132,7 +132,6 @@ func (m *Post) BeforeCreate(tx *gorm.DB) (err error) {
 	if m.CreateTime == (time.Time{}) {
 		m.CreateTime = time.Now()
 	}
-	m.CreateTime = time.Now()
 	return nil
 }
 

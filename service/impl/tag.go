@@ -220,3 +220,9 @@ func (t tagServiceImpl) CountAllTag(ctx context.Context) (int64, error) {
 	}
 	return count, nil
 }
+
+func (t tagServiceImpl) GetByName(ctx context.Context, name string) (*entity.Tag, error) {
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
+	tag, err := tagDAL.WithContext(ctx).Where(tagDAL.Name.Eq(name)).First()
+	return tag, WrapDBErr(err)
+}

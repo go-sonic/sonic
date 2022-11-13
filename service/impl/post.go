@@ -174,6 +174,12 @@ func (p postServiceImpl) ConvertParam(ctx context.Context, postParam *param.Post
 	} else {
 		post.EditorType = consts.EditorTypeMarkdown
 	}
+	if postParam.EditTime != nil {
+		post.EditTime = util.TimePtr(time.UnixMilli(*postParam.EditTime))
+	}
+	if postParam.UpdateTime != nil {
+		post.UpdateTime = util.TimePtr(time.UnixMilli(*postParam.UpdateTime))
+	}
 
 	post.WordCount = util.HtmlFormatWordCount(post.FormatContent)
 	if postParam.Slug == "" {
@@ -182,7 +188,9 @@ func (p postServiceImpl) ConvertParam(ctx context.Context, postParam *param.Post
 		post.Slug = util.Slug(postParam.Slug)
 	}
 	if postParam.CreateTime != nil {
-		time.UnixMilli(*postParam.CreateTime)
+		post.CreateTime = time.UnixMilli(*postParam.CreateTime)
+	} else {
+		post.CreateTime = time.Now()
 	}
 	return post, nil
 }
@@ -279,6 +287,7 @@ func (p postServiceImpl) GetPrevPosts(ctx context.Context, post *entity.Post, si
 	}
 	return posts, nil
 }
+
 func (p postServiceImpl) GetNextPosts(ctx context.Context, post *entity.Post, size int) ([]*entity.Post, error) {
 	postSort := p.OptionService.GetOrByDefault(ctx, property.IndexSort)
 	postDAL := dal.GetQueryByCtx(ctx).Post

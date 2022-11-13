@@ -19,7 +19,6 @@ func NewJournalHandler(
 	optionService service.OptionService,
 	journalService service.JournalService,
 	journalModel *model.JournalModel,
-
 ) *JournalHandler {
 	return &JournalHandler{
 		OptionService:  optionService,

@@ -29,7 +29,6 @@ func NewPostUpdateListener(bus event.Bus,
 }
 
 func (p *PostUpdateListener) HandlePostUpdateEvent(ctx context.Context, postUpdateEvent event.Event) error {
-
 	postID := postUpdateEvent.(*event.PostUpdateEvent).PostID
 
 	categories, err := p.PostCategoryService.ListCategoryByPostID(ctx, postID)
