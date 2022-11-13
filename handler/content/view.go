@@ -133,6 +133,7 @@ func (v *ViewHandler) authenticateCategory(ctx *gin.Context, slug, password, tok
 	ctx.Redirect(http.StatusFound, categoryDTO.FullPath)
 	return token, nil
 }
+
 func (v *ViewHandler) authenticatePost(ctx *gin.Context, slug, password, token string) (string, error) {
 	post, err := v.PostService.GetBySlug(ctx, slug)
 	if err != nil {

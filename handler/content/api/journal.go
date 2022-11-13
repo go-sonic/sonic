@@ -79,7 +79,6 @@ func (j *JournalHandler) GetJournal(ctx *gin.Context) (interface{}, error) {
 }
 
 func (j *JournalHandler) ListTopComment(ctx *gin.Context) (interface{}, error) {
-
 	journalID, err := util.ParamInt32(ctx, "journalID")
 	if err != nil {
 		return nil, err

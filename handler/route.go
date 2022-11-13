@@ -81,7 +81,7 @@ func (s *Server) RegisterRouters() {
 					backupRouter.DELETE("/data", s.wrapHandler(s.BackupHandler.DeleteDataFile))
 					backupRouter.GET("/data/*path", s.BackupHandler.HandleData)
 					backupRouter.POST("/markdown/export", s.wrapHandler(s.BackupHandler.ExportMarkdown))
-					backupRouter.POST("/mark-down/import", s.wrapHandler(s.BackupHandler.ImportMarkdown))
+					backupRouter.POST("/markdown/import", s.wrapHandler(s.BackupHandler.ImportMarkdown))
 					backupRouter.GET("/markdown/fetch", s.wrapHandler(s.BackupHandler.GetMarkDownBackup))
 					backupRouter.GET("/markdown/export", s.wrapHandler(s.BackupHandler.ListMarkdowns))
 					backupRouter.DELETE("/markdown/export", s.wrapHandler(s.BackupHandler.DeleteMarkdowns))
@@ -345,7 +345,6 @@ func (s *Server) RegisterRouters() {
 			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHander.Comment))
 		}
 	}
-
 }
 
 func (s *Server) registerDynamicRouters(contentRouter *gin.RouterGroup) error {

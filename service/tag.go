@@ -13,6 +13,7 @@ type TagService interface {
 	ListByIDs(ctx context.Context, tagIDs []int32) ([]*entity.Tag, error)
 	GetByID(ctx context.Context, id int32) (*entity.Tag, error)
 	GetBySlug(ctx context.Context, slug string) (*entity.Tag, error)
+	GetByName(ctx context.Context, name string) (*entity.Tag, error)
 	ConvertToDTO(ctx context.Context, tag *entity.Tag) (*dto.Tag, error)
 	ConvertToDTOs(ctx context.Context, tags []*entity.Tag) ([]*dto.Tag, error)
 	Create(ctx context.Context, tagParam *param.Tag) (*entity.Tag, error)

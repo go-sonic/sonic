@@ -107,11 +107,13 @@ var AliOssSource = Property{
 	KeyValue:     "oss_ali_source",
 	Kind:         reflect.String,
 }
+
 var AliOssThumbnailStyleRule = Property{
 	DefaultValue: "",
 	KeyValue:     "oss_ali_thumbnail_style_rule",
 	Kind:         reflect.String,
 }
+
 var AliOssStyleRule = Property{
 	DefaultValue: "",
 	KeyValue:     "oss_ali_style_rule",

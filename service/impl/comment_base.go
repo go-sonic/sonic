@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+
 	"gorm.io/gen/field"
 
 	"github.com/go-sonic/sonic/consts"
@@ -218,7 +219,6 @@ func (b baseCommentServiceImpl) Create(ctx context.Context, comment *entity.Comm
 				Comment: comment,
 			})
 		}()
-
 	} else {
 		go func() {
 			b.Event.Publish(context.TODO(), &event.CommentNewEvent{

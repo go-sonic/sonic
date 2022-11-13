@@ -57,6 +57,7 @@ func MustGetQueryInt64(ctx *gin.Context, key string) (int64, error) {
 	}
 	return value, nil
 }
+
 func MustGetQueryInt(ctx *gin.Context, key string) (int, error) {
 	str, ok := ctx.GetQuery(key)
 	if !ok {

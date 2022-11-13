@@ -130,6 +130,7 @@ func Transaction(ctx context.Context, fn func(txCtx context.Context) error) erro
 		return fn(txCtx)
 	})
 }
+
 func GetDB() *gorm.DB {
 	return DB
 }

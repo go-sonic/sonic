@@ -468,5 +468,4 @@ func (o *optionServiceImpl) GetAttachmentType(ctx context.Context) consts.Attach
 	default:
 		return consts.AttachmentTypeLocal
 	}
-
 }

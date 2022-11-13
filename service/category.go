@@ -12,6 +12,7 @@ import (
 type CategoryService interface {
 	GetByID(ctx context.Context, id int32) (*entity.Category, error)
 	GetBySlug(ctx context.Context, slug string) (*entity.Category, error)
+	GetByName(ctx context.Context, name string) (*entity.Category, error)
 	ListCategoryWithPostCountDTO(ctx context.Context, sort *param.Sort) ([]*dto.CategoryWithPostCount, error)
 	ListAll(ctx context.Context, sort *param.Sort) ([]*entity.Category, error)
 	ConvertToCategoryDTO(ctx context.Context, e *entity.Category) (*dto.CategoryDTO, error)
