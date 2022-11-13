@@ -66,11 +66,14 @@ func (m *MenuHandler) ListMenusAsTreeByTeam(ctx *gin.Context) (interface{}, erro
 	if len(sort.Fields) == 0 {
 		sort.Fields = append(sort.Fields, "priority,asc")
 	}
-	team, err := util.MustGetQueryString(ctx, "team")
-	if err != nil {
-		return nil, err
+	team, _ := util.MustGetQueryString(ctx, "team")
+	if team == "" {
+		menus, err := m.MenuService.ListAsTree(ctx, &sort)
+		if err != nil {
+			return nil, err
+		}
+		return menus, nil
 	}
-
 	menus, err := m.MenuService.ListAsTreeByTeam(ctx, team, &sort)
 	if err != nil {
 		return nil, err
