@@ -85,6 +85,7 @@ func (f *urlFileDescriptor) getFileName() string {
 func (f *urlFileDescriptor) setFileName(name string) {
 	f.Name = name
 }
+
 func (f *urlFileDescriptor) getShouldRename() shouldRename {
 	return f.ShouldRename
 }
@@ -96,16 +97,19 @@ func withBaseURL(baseURL string) urlOption {
 		f.BasePath = baseURL
 	}
 }
+
 func withSubURLPath(subURL string) urlOption {
 	return func(f *urlFileDescriptor) {
 		f.SubPath = subURL
 	}
 }
+
 func withOriginalNameURLOption(originalName string) urlOption {
 	return func(f *urlFileDescriptor) {
 		f.OriginalName = originalName
 	}
 }
+
 func withShouldRenameURLOption(fn func(relativePath string) (bool, error)) urlOption {
 	return func(f *urlFileDescriptor) {
 		f.ShouldRename = fn

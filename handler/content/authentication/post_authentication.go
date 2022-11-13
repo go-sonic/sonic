@@ -85,7 +85,6 @@ func (p *PostAuthentication) Authenticate(ctx context.Context, token string, id 
 		}
 	}
 	return "", xerr.WithMsg(nil, "密码不正确").WithStatus(http.StatusUnauthorized)
-
 }
 
 func (p *PostAuthentication) IsAuthenticated(ctx context.Context, tokenStr string, id int32) (bool, error) {

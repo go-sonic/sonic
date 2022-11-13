@@ -130,7 +130,6 @@ func (a *attachmentServiceImpl) GetAttachment(ctx context.Context, attachmentID 
 }
 
 func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipart.FileHeader) (attachmentDTO *dto.AttachmentDTO, err error) {
-
 	attachmentType := a.OptionService.GetAttachmentType(ctx)
 
 	fileStorage := a.FileStorageComposite.GetFileStorage(attachmentType)

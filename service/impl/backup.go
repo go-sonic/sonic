@@ -3,7 +3,6 @@ package impl
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"io/fs"
 	"mime/multipart"
 	"os"
@@ -15,7 +14,6 @@ import (
 	"github.com/go-sonic/sonic/config"
 	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/dal"
-	"github.com/go-sonic/sonic/log"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/util"
@@ -26,13 +24,15 @@ type backupServiceImpl struct {
 	Config              *config.Config
 	OptionService       service.OptionService
 	OneTimeTokenService service.OneTimeTokenService
+	ExportImportService service.ExportImport
 }
 
-func NewBackUpService(config *config.Config, optionService service.OptionService, oneTimeTokenService service.OneTimeTokenService) service.BackupService {
+func NewBackUpService(config *config.Config, optionService service.OptionService, oneTimeTokenService service.OneTimeTokenService, exportImportService service.ExportImport) service.BackupService {
 	return &backupServiceImpl{
 		Config:              config,
 		OptionService:       optionService,
 		OneTimeTokenService: oneTimeTokenService,
+		ExportImportService: exportImportService,
 	}
 }
 
@@ -144,14 +144,8 @@ func (b *backupServiceImpl) ImportMarkdown(ctx context.Context, fileHeader *mult
 	if err != nil {
 		return xerr.NoType.Wrap(err).WithMsg("upload file error")
 	}
-	bContent, err := io.ReadAll(file)
-	if err != nil {
-		return xerr.NoType.Wrap(err).WithMsg("read file error")
-	}
-	content := string(bContent)
-	log.Info(content)
-	// TODO 导入markdown
-	return nil
+	_, err = b.ExportImportService.CreateByMarkdown(ctx, fileHeader.Filename, file)
+	return err
 }
 
 func (b *backupServiceImpl) ExportData(ctx context.Context) (*dto.BackupDTO, error) {
@@ -208,8 +202,11 @@ func (b *backupServiceImpl) ExportData(ctx context.Context) (*dto.BackupDTO, err
 }
 
 func (b *backupServiceImpl) ExportMarkdown(ctx context.Context, needFrontMatter bool) (*dto.BackupDTO, error) {
-	// TODO
-	return nil, nil
+	fileName, err := b.ExportImportService.ExportMarkdown(ctx, needFrontMatter)
+	if err != nil {
+		return nil, err
+	}
+	return b.buildBackupDTO(ctx, string(service.Markdown), fileName)
 }
 
 func (b *backupServiceImpl) buildBackupDTO(ctx context.Context, baseBackupURL string, backupFilePath string) (*dto.BackupDTO, error) {

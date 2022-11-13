@@ -38,6 +38,7 @@ func init() {
 		NewTagService,
 		NewThemeService,
 		NewUserService,
+		NewExportImport,
 		file_storage.NewFileStorageComposite,
 	)
 }

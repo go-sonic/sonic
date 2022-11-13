@@ -54,6 +54,7 @@ func NewCommentListener(
 	bus.Subscribe(event.CommentNewEventName, c.HandleCommentNew)
 	bus.Subscribe(event.CommentReplyEventName, c.HandleCommentReply)
 }
+
 func (c *CommentListener) HandleCommentNew(ctx context.Context, ce event.Event) error {
 	newCommentNotice, err := c.OptionService.GetOrByDefaultWithErr(ctx, property.CommentNewNotice, property.CommentNewNotice.DefaultValue)
 	if err != nil {
@@ -142,6 +143,7 @@ func (c *CommentListener) HandleCommentNew(ctx context.Context, ce event.Event) 
 	}
 	return c.EmailService.SendTemplateEmail(ctx, users[0].Email, subject, content.String())
 }
+
 func (c *CommentListener) HandleCommentReply(ctx context.Context, ce event.Event) error {
 	commentReplyNotice, err := c.OptionService.GetOrByDefaultWithErr(ctx, property.CommentReplyNotice, property.CommentNewNotice.DefaultValue)
 	if err != nil {

@@ -17,6 +17,7 @@ func NewEmailHandler(emailService service.EmailService) *EmailHandler {
 		EmailService: emailService,
 	}
 }
+
 func (e *EmailHandler) Test(ctx *gin.Context) (interface{}, error) {
 	p := &param.TestEmail{}
 	if err := ctx.ShouldBindJSON(p); err != nil {

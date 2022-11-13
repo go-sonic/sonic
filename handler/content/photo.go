@@ -19,7 +19,6 @@ func NewPhotoHandler(
 	optionService service.OptionService,
 	photoService service.PhotoService,
 	photoModel *model.PhotoModel,
-
 ) *PhotoHandler {
 	return &PhotoHandler{
 		OptionService: optionService,
