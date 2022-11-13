@@ -203,11 +203,15 @@ func (p *PostHandler) UpdatePostStatus(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
-	status, err := util.ParamInt32(ctx, "status")
+	statusStr, err := util.ParamString(ctx, "status")
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
-	if status < int32(consts.PostStatusPublished) || status > int32(consts.PostStatusIntimate) {
+	status, err := consts.PostStatusFromString(statusStr)
+	if err != nil {
+		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
+	}
+	if int32(status) < int32(consts.PostStatusPublished) || int32(status) > int32(consts.PostStatusIntimate) {
 		return nil, xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("status error")
 	}
 	post, err := p.PostService.UpdateStatus(ctx, int32(postID), consts.PostStatus(status))
@@ -218,11 +222,15 @@ func (p *PostHandler) UpdatePostStatus(ctx *gin.Context) (interface{}, error) {
 }
 
 func (p *PostHandler) UpdatePostStatusBatch(ctx *gin.Context) (interface{}, error) {
-	status, err := util.ParamInt32(ctx, "status")
+	statusStr, err := util.ParamString(ctx, "status")
 	if err != nil {
 		return nil, err
 	}
-	if status < int32(consts.PostStatusPublished) || status > int32(consts.PostStatusIntimate) {
+	status, err := consts.PostStatusFromString(statusStr)
+	if err != nil {
+		return nil, err
+	}
+	if int32(status) < int32(consts.PostStatusPublished) || int32(status) > int32(consts.PostStatusIntimate) {
 		return nil, xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("status error")
 	}
 	ids := make([]int32, 0)

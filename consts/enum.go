@@ -325,6 +325,19 @@ func (c PostStatus) Ptr() *PostStatus {
 	return &c
 }
 
+func PostStatusFromString(str string) (PostStatus, error) {
+	if str == "PUBLISHED" {
+		return PostStatusPublished, nil
+	} else if str == "DRAFT" {
+		return PostStatusDraft, nil
+	} else if str == "RECYCLE" {
+		return PostStatusRecycle, nil
+	} else if str == "INTIMATE" {
+		return PostStatusIntimate, nil
+	}
+	return PostStatusDraft, xerr.BadParam.New("").WithMsg("unknown PostStatus")
+}
+
 type CommentStatus int32
 
 const (
