@@ -32,7 +32,7 @@ func NewUserService(twoFactorMFAService service.TwoFactorTOTPMFAService, event e
 }
 
 func (u *userServiceImpl) GetAllUser(ctx context.Context) ([]*entity.User, error) {
-	userDAL := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDAL := dal.GetQueryByCtx(ctx).User
 	users, err := userDAL.WithContext(ctx).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -52,7 +52,7 @@ func (u *userServiceImpl) UpdatePassword(ctx context.Context, oldPassword string
 	if newPassword == oldPassword {
 		return xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("The new password and the old password cannot be the same")
 	}
-	userDal := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDal := dal.GetQueryByCtx(ctx).User
 	updateResult, err := userDal.WithContext(ctx).Where(userDal.ID.Eq(user.ID)).UpdateSimple(userDal.Password.Value(u.EncryptPassword(ctx, newPassword)))
 	if err != nil {
 		return WrapDBErr(err)
@@ -69,7 +69,7 @@ func (u *userServiceImpl) Update(ctx context.Context, userParam *param.User) (*e
 	if err != nil {
 		return nil, err
 	}
-	userDal := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDal := dal.GetQueryByCtx(ctx).User
 	_, err = userDal.WithContext(ctx).Where(userDal.ID.Eq(user.ID)).UpdateSimple(
 		userDal.Nickname.Value(userParam.Nickname),
 		userDal.Description.Value(userParam.Description),
@@ -96,7 +96,7 @@ func (u *userServiceImpl) UpdateMFA(ctx context.Context, mfaKey string, mfaType 
 	if err != nil {
 		return err
 	}
-	userDal := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDal := dal.GetQueryByCtx(ctx).User
 	updateResult, err := userDal.WithContext(ctx).Where(userDal.ID.Eq(user.ID)).UpdateSimple(
 		userDal.MfaKey.Value(mfaKey),
 		userDal.MfaType.Value(mfaType),
@@ -145,7 +145,7 @@ func (u *userServiceImpl) MustNotExpire(ctx context.Context, expireTime *time.Ti
 }
 
 func (u *userServiceImpl) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
-	userDal := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDal := dal.GetQueryByCtx(ctx).User
 	user, err := userDal.WithContext(ctx).Where(userDal.Email.Eq(email)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -154,7 +154,7 @@ func (u *userServiceImpl) GetByEmail(ctx context.Context, email string) (*entity
 }
 
 func (u *userServiceImpl) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
-	userDal := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDal := dal.GetQueryByCtx(ctx).User
 	user, err := userDal.WithContext(ctx).Where(userDal.Username.Eq(username)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -163,7 +163,7 @@ func (u *userServiceImpl) GetByUsername(ctx context.Context, username string) (*
 }
 
 func (u *userServiceImpl) GetByID(ctx context.Context, id int32) (*entity.User, error) {
-	userDal := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDal := dal.GetQueryByCtx(ctx).User
 	user, err := userDal.WithContext(ctx).Where(userDal.ID.Eq(id)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -185,7 +185,7 @@ func (u *userServiceImpl) CreateByParam(ctx context.Context, userParam param.Use
 		MfaType:     consts.MFANone,
 		Avatar:      userParam.Avatar,
 	}
-	userDAL := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDAL := dal.GetQueryByCtx(ctx).User
 	err := userDAL.WithContext(ctx).Create(user)
 	if err != nil {
 		return nil, WrapDBErr(err)

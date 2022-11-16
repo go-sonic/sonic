@@ -91,7 +91,7 @@ func (a *attachmentServiceImpl) ConvertToDTO(ctx context.Context, attachment *en
 }
 
 func (a *attachmentServiceImpl) Page(ctx context.Context, queryParam *param.AttachmentQuery) ([]*entity.Attachment, int64, error) {
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 	attachmentDo := attachmentDAL.WithContext(ctx)
 	if queryParam.Keyword != "" {
 		attachmentDo = attachmentDo.Where(attachmentDAL.Name.Like(queryParam.Keyword))
@@ -121,7 +121,7 @@ func (a *attachmentServiceImpl) Page(ctx context.Context, queryParam *param.Atta
 }
 
 func (a *attachmentServiceImpl) GetAttachment(ctx context.Context, attachmentID int32) (*entity.Attachment, error) {
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 	attachment, err := attachmentDAL.WithContext(ctx).Where(attachmentDAL.ID.Eq(attachmentID)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -134,7 +134,7 @@ func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipar
 	attachmentType := a.OptionService.GetAttachmentType(ctx)
 
 	fileStorage := a.FileStorageComposite.GetFileStorage(attachmentType)
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 
 	attachmentDTO, err = fileStorage.Upload(ctx, fileHeader)
 	if err != nil {
@@ -173,7 +173,7 @@ func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipar
 }
 
 func (a *attachmentServiceImpl) Delete(ctx context.Context, attachmentID int32) (*entity.Attachment, error) {
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 	attachment, err := attachmentDAL.WithContext(ctx).Where(attachmentDAL.ID.Eq(attachmentID)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -208,7 +208,7 @@ func (a *attachmentServiceImpl) DeleteBatch(ctx context.Context, IDs []int32) (a
 }
 
 func (a *attachmentServiceImpl) Update(ctx context.Context, id int32, updateParam *param.AttachmentUpdate) (*entity.Attachment, error) {
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 	attachment, err := attachmentDAL.WithContext(ctx).Where(attachmentDAL.ID.Eq(id)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -225,14 +225,14 @@ func (a *attachmentServiceImpl) Update(ctx context.Context, id int32, updatePara
 }
 
 func (a *attachmentServiceImpl) GetAllMediaTypes(ctx context.Context) ([]string, error) {
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 	var allMediaTypes []string
 	err := attachmentDAL.WithContext(ctx).Distinct(attachmentDAL.MediaType).Select(attachmentDAL.MediaType).Scan(&allMediaTypes)
 	return allMediaTypes, WrapDBErr(err)
 }
 
 func (a *attachmentServiceImpl) GetAllTypes(ctx context.Context) ([]consts.AttachmentType, error) {
-	attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+	attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 	var allTypes []consts.AttachmentType
 	err := attachmentDAL.WithContext(ctx).Distinct(attachmentDAL.Type).Select(attachmentDAL.Type).Scan(&allTypes)
 	return allTypes, err

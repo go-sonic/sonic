@@ -161,7 +161,7 @@ func (o *optionServiceImpl) getFromCacheMissFromDB(ctx context.Context, p proper
 		return value, nil
 	}
 
-	optionDAL := dal.Use(dal.GetDBByCtx(ctx)).Option
+	optionDAL := dal.GetQueryByCtx(ctx).Option
 	option, err := optionDAL.WithContext(ctx).Where(optionDAL.OptionKey.Eq(p.KeyValue)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -200,7 +200,7 @@ func (o *optionServiceImpl) convert(option *entity.Option, p property.Property) 
 
 func (o *optionServiceImpl) Save(ctx context.Context, saveMap map[string]string) (err error) {
 	propertyMap := o.OptionMap()
-	optionDAL := dal.Use(dal.GetDBByCtx(ctx)).Option
+	optionDAL := dal.GetQueryByCtx(ctx).Option
 	options, err := optionDAL.WithContext(ctx).Find()
 	if err != nil {
 		return WrapDBErr(err)
@@ -251,7 +251,7 @@ func (o *optionServiceImpl) Save(ctx context.Context, saveMap map[string]string)
 		o.Cache.BatchDelete(deleteKeys)
 	}()
 
-	err = dal.Use(dal.GetDBByCtx(ctx)).Transaction(func(tx *dal.Query) error {
+	err = dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		optionDAL := tx.Option
 		for _, toUpdate := range toUpdates {
 			_, err := optionDAL.WithContext(ctx).Where(optionDAL.ID.Eq(toUpdate.ID), optionDAL.OptionKey.Eq(toUpdate.OptionKey)).UpdateColumnSimple(optionDAL.OptionValue.Value(toUpdate.OptionValue))
@@ -285,7 +285,7 @@ func (o *optionServiceImpl) GetArchivePrefix(ctx context.Context) (string, error
 }
 
 func (o *optionServiceImpl) ListAllOption(ctx context.Context) ([]*dto.Option, error) {
-	optionDAL := dal.Use(dal.GetDBByCtx(ctx)).Option
+	optionDAL := dal.GetQueryByCtx(ctx).Option
 	options, err := optionDAL.WithContext(ctx).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)

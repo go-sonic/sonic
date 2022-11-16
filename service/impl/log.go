@@ -18,7 +18,7 @@ func NewLogService() service.LogService {
 }
 
 func (l *logServiceImpl) Clear(ctx context.Context) error {
-	logDAL := dal.Use(dal.GetDBByCtx(ctx)).Log
+	logDAL := dal.GetQueryByCtx(ctx).Log
 	_, err := logDAL.WithContext(ctx).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -27,7 +27,7 @@ func (l *logServiceImpl) Clear(ctx context.Context) error {
 }
 
 func (l *logServiceImpl) PageLog(ctx context.Context, page param.Page, sort *param.Sort) ([]*entity.Log, int64, error) {
-	logDAL := dal.Use(dal.GetDBByCtx(ctx)).Log
+	logDAL := dal.GetQueryByCtx(ctx).Log
 	logDO := logDAL.WithContext(ctx)
 	err := BuildSort(sort, &logDAL, &logDO)
 	if err != nil {

@@ -249,7 +249,7 @@ func (t *themeServiceImpl) GetThemeGroupSettingMap(ctx context.Context, themeID,
 }
 
 func (t *themeServiceImpl) getThemeSettingMapByItemMap(ctx context.Context, themeID string, itemMap map[string]*dto.ThemeConfigItem) (map[string]interface{}, error) {
-	themeSettingDAL := dal.Use(dal.GetDBByCtx(ctx)).ThemeSetting
+	themeSettingDAL := dal.GetQueryByCtx(ctx).ThemeSetting
 	themeSettings, err := themeSettingDAL.WithContext(ctx).Where(themeSettingDAL.ThemeID.Eq(themeID)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -286,7 +286,7 @@ func (t *themeServiceImpl) SaveThemeSettings(ctx context.Context, themeID string
 		return err
 	}
 
-	themeSettingDAL := dal.Use(dal.GetDBByCtx(ctx)).ThemeSetting
+	themeSettingDAL := dal.GetQueryByCtx(ctx).ThemeSetting
 	allThemeSetting, err := themeSettingDAL.WithContext(ctx).Where(themeSettingDAL.ThemeID.Eq(themeID)).Find()
 	if err != nil {
 		return WrapDBErr(err)
@@ -332,7 +332,7 @@ func (t *themeServiceImpl) SaveThemeSettings(ctx context.Context, themeID string
 		}
 	}
 	err = dal.Transaction(ctx, func(txCtx context.Context) error {
-		themeSettingDAL := dal.Use(dal.GetDBByCtx(txCtx)).ThemeSetting
+		themeSettingDAL := dal.GetQueryByCtx(txCtx).ThemeSetting
 		_, err := themeSettingDAL.WithContext(txCtx).Where(themeSettingDAL.ID.In(toDeleteIDs...)).Delete()
 		if err != nil {
 			return WrapDBErr(err)
@@ -360,7 +360,7 @@ func (t *themeServiceImpl) DeleteThemeSettings(ctx context.Context, themeID stri
 		return xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("can not delete the theme being used")
 	}
 
-	themeSettingDAL := dal.Use(dal.GetDBByCtx(ctx)).ThemeSetting
+	themeSettingDAL := dal.GetQueryByCtx(ctx).ThemeSetting
 	_, err = themeSettingDAL.WithContext(ctx).Where(themeSettingDAL.ThemeID.Eq(themeID)).Delete()
 	return WrapDBErr(err)
 }

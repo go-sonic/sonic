@@ -66,9 +66,9 @@ func (t *TemplateConfigListener) HandleOptionUpdateEvent(ctx context.Context, op
 }
 
 func (t *TemplateConfigListener) HandleStartEvent(ctx context.Context, startEvent event.Event) error {
-	ctx = dal.SetCtxDB(ctx, dal.GetDBByCtx(ctx).Session(&gorm.Session{
-		Logger: dal.DB.Logger.LogMode(logger.Warn),
-	}))
+	ctx = dal.SetCtxQuery(ctx, dal.GetQueryByCtx(ctx).ReplaceDB(dal.GetDB().Session(
+		&gorm.Session{Logger: dal.DB.Logger.LogMode(logger.Warn)},
+	)))
 	err := t.loadThemeConfig(ctx)
 	if err != nil {
 		return err

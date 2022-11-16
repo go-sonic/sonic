@@ -48,7 +48,7 @@ func NewSheetService(basePostService service.BasePostService,
 }
 
 func (s sheetServiceImpl) Page(ctx context.Context, page param.Page, sort *param.Sort) ([]*entity.Post, int64, error) {
-	sheetDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	sheetDAL := dal.GetQueryByCtx(ctx).Post
 	sheetDO := sheetDAL.WithContext(ctx).Where(sheetDAL.Type.Eq(consts.PostTypeSheet))
 	err := BuildSort(sort, &sheetDAL, &sheetDO)
 	if err != nil {
@@ -109,7 +109,7 @@ func (s sheetServiceImpl) ConvertParam(ctx context.Context, sheetParam *param.Sh
 }
 
 func (s sheetServiceImpl) Update(ctx context.Context, sheetID int32, sheetParam *param.Sheet) (*entity.Post, error) {
-	sheetDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	sheetDAL := dal.GetQueryByCtx(ctx).Post
 	sheet, err := sheetDAL.WithContext(ctx).Where(sheetDAL.ID.Eq(sheetID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -175,7 +175,7 @@ func (s sheetServiceImpl) Preview(ctx context.Context, sheetID int32) (string, e
 
 func (s sheetServiceImpl) CountVisit(ctx context.Context) (int64, error) {
 	var count float64
-	sheetDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	sheetDAL := dal.GetQueryByCtx(ctx).Post
 	err := sheetDAL.WithContext(ctx).Select(sheetDAL.Visits.Sum().IfNull(0)).Where(sheetDAL.Type.Eq(consts.PostTypeSheet), sheetDAL.Status.Eq(consts.PostStatusPublished)).Scan(&count)
 	if err != nil {
 		return 0, WrapDBErr(err)
@@ -185,7 +185,7 @@ func (s sheetServiceImpl) CountVisit(ctx context.Context) (int64, error) {
 
 func (s sheetServiceImpl) CountLike(ctx context.Context) (int64, error) {
 	var count float64
-	sheetDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	sheetDAL := dal.GetQueryByCtx(ctx).Post
 	err := sheetDAL.WithContext(ctx).Select(sheetDAL.Likes.Sum().IfNull(0)).Where(sheetDAL.Type.Eq(consts.PostTypeSheet), sheetDAL.Status.Eq(consts.PostStatusPublished)).Scan(&count)
 	if err != nil {
 		return 0, WrapDBErr(err)

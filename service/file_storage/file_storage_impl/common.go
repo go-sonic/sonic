@@ -18,7 +18,7 @@ import (
 
 func commonRenamePredicateFunc(ctx context.Context, attachmentType consts.AttachmentType) func(relativePath string) (bool, error) {
 	return func(relativePath string) (bool, error) {
-		attachmentDAL := dal.Use(dal.GetDBByCtx(ctx)).Attachment
+		attachmentDAL := dal.GetQueryByCtx(ctx).Attachment
 		count, err := attachmentDAL.WithContext(ctx).Where(attachmentDAL.Type.Eq(attachmentType), attachmentDAL.FileKey.Eq(relativePath)).Count()
 		if err != nil {
 			return false, err

@@ -16,7 +16,7 @@ func NewMetaService() service.MetaService {
 }
 
 func (m *metaServiceImpl) GetPostsMeta(ctx context.Context, postIDs []int32) (map[int32][]*entity.Meta, error) {
-	metaDAL := dal.Use(dal.GetDBByCtx(ctx)).Meta
+	metaDAL := dal.GetQueryByCtx(ctx).Meta
 	metas, err := metaDAL.WithContext(ctx).Where(metaDAL.PostID.In(postIDs...)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -48,7 +48,7 @@ func (m *metaServiceImpl) ConvertToMetaDTO(meta *entity.Meta) *dto.Meta {
 }
 
 func (m *metaServiceImpl) GetPostMeta(ctx context.Context, postID int32) ([]*entity.Meta, error) {
-	metaDAL := dal.Use(dal.GetDBByCtx(ctx)).Meta
+	metaDAL := dal.GetQueryByCtx(ctx).Meta
 	metas, err := metaDAL.WithContext(ctx).Where(metaDAL.PostID.Eq(postID)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)

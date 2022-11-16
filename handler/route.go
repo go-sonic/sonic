@@ -348,9 +348,9 @@ func (s *Server) RegisterRouters() {
 
 func (s *Server) registerDynamicRouters(contentRouter *gin.RouterGroup) error {
 	ctx := context.Background()
-	ctx = dal.SetCtxDB(ctx, dal.GetDBByCtx(ctx).Session(&gorm.Session{
-		Logger: dal.DB.Logger.LogMode(logger.Warn),
-	}))
+	ctx = dal.SetCtxQuery(ctx, dal.GetQueryByCtx(ctx).ReplaceDB(dal.GetDB().Session(
+		&gorm.Session{Logger: dal.DB.Logger.LogMode(logger.Warn)},
+	)))
 	// theme, err := s.ThemeService.GetActivateTheme(ctx)
 	// if err != nil {
 	// 	return nil

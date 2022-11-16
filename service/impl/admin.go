@@ -173,7 +173,7 @@ func (a *adminServiceImpl) RefreshToken(ctx context.Context, refreshToken string
 	if !ok {
 		return nil, xerr.WithMsg(nil, "登录状态已失效，请重新登录").WithStatus(xerr.StatusBadRequest)
 	}
-	userDAL := dal.Use(dal.GetDBByCtx(ctx)).User
+	userDAL := dal.GetQueryByCtx(ctx).User
 	user, err := userDAL.WithContext(ctx).Where(userDAL.ID.Eq(userID.(int32))).First()
 	if err != nil {
 		return nil, err

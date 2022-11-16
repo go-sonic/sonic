@@ -24,7 +24,7 @@ func NewPostCommentService(baseCommentService service.BaseCommentService) servic
 }
 
 func (p postCommentServiceImpl) CreateBy(ctx context.Context, commentParam *param.Comment) (*entity.Comment, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(commentParam.PostID)).First()
 	if err == gorm.ErrRecordNotFound {
 		return nil, xerr.WithMsg(nil, "post not found").WithStatus(xerr.StatusBadRequest)
@@ -48,7 +48,7 @@ func (p postCommentServiceImpl) UpdateBy(ctx context.Context, commentID int32, c
 }
 
 func (p postCommentServiceImpl) CountByStatus(ctx context.Context, status consts.CommentStatus) (int64, error) {
-	postCommentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	postCommentDAL := dal.GetQueryByCtx(ctx).Comment
 	count, err := postCommentDAL.WithContext(ctx).Where(postCommentDAL.Type.Eq(consts.CommentTypePost), postCommentDAL.Status.Eq(status)).Count()
 	if err != nil {
 		return 0, WrapDBErr(err)

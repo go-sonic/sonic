@@ -30,7 +30,7 @@ type basePostServiceImpl struct {
 func NewBasePostService(optionService service.OptionService, baseCommentService service.BaseCommentService) service.BasePostService {
 	counterCache := util.NewCounterCache(time.Second*5, nil, func(postID int32, count int64) {
 		ctx := context.Background()
-		postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+		postDAL := dal.GetQueryByCtx(ctx).Post
 		_, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).UpdateSimple(postDAL.Visits.Add(count))
 		if err != nil {
 			log.CtxErrorf(ctx, "increase visit err postID=%v", postID)
@@ -45,7 +45,7 @@ func NewBasePostService(optionService service.OptionService, baseCommentService 
 }
 
 func (b basePostServiceImpl) GetByStatus(ctx context.Context, status []consts.PostStatus, postType consts.PostType, sort *param.Sort) ([]*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	postDo := postDAL.WithContext(ctx)
 	if err := BuildSort(sort, &postDAL, &postDo); err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (b basePostServiceImpl) BuildFullPath(ctx context.Context, post *entity.Pos
 }
 
 func (b basePostServiceImpl) GetByPostIDs(ctx context.Context, postIDs []int32) (map[int32]*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	posts, err := postDAL.WithContext(ctx).Where(postDAL.ID.In(postIDs...)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -82,7 +82,7 @@ func (b basePostServiceImpl) GetByPostIDs(ctx context.Context, postIDs []int32) 
 }
 
 func (b basePostServiceImpl) GetBySlug(ctx context.Context, slug string) (*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.Slug.Eq(slug)).Take()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -201,7 +201,7 @@ func (b basePostServiceImpl) buildSheetFullPath(ctx context.Context, sheet *enti
 }
 
 func (b basePostServiceImpl) GetByPostID(ctx context.Context, postID int32) (*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -224,7 +224,7 @@ func (b basePostServiceImpl) GenerateSummary(ctx context.Context, htmlContent st
 }
 
 func (b basePostServiceImpl) Delete(ctx context.Context, postID int32) error {
-	err := dal.Use(dal.GetDBByCtx(ctx)).Transaction(func(tx *dal.Query) error {
+	err := dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		postDAL := tx.Post
 		postTagDAL := tx.PostTag
 		postCategoryDAL := tx.PostCategory
@@ -264,7 +264,7 @@ func (b basePostServiceImpl) UpdateStatus(ctx context.Context, postID int32, sta
 		return nil, xerr.BadParam.New("").WithMsg("postID or status parameter error").WithStatus(xerr.StatusBadRequest)
 	}
 
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -281,7 +281,7 @@ func (b basePostServiceImpl) UpdateStatus(ctx context.Context, postID int32, sta
 }
 
 func (b basePostServiceImpl) DeleteBatch(ctx context.Context, postIDs []int32) error {
-	err := dal.Use(dal.GetDBByCtx(ctx)).Transaction(func(tx *dal.Query) error {
+	err := dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		postDAL := tx.Post
 		postTagDAL := tx.PostTag
 		postCategoryDAL := tx.PostCategory
@@ -317,7 +317,7 @@ func (b basePostServiceImpl) DeleteBatch(ctx context.Context, postIDs []int32) e
 }
 
 func (b basePostServiceImpl) CreateOrUpdate(ctx context.Context, post *entity.Post, categoryIDs, tagIDs []int32, metas []param.Meta) (*entity.Post, error) {
-	err := dal.Use(dal.GetDBByCtx(ctx)).Transaction(func(tx *dal.Query) error {
+	err := dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		postDAL := tx.Post
 		postCategoryDAL := tx.PostCategory
 		postTagDAL := tx.PostTag
@@ -465,7 +465,7 @@ func (b basePostServiceImpl) UpdateStatusBatch(ctx context.Context, status const
 	for postID := range uniquePostIDMap {
 		uniqueIDs = append(uniqueIDs, postID)
 	}
-	err := dal.Use(dal.GetDBByCtx(ctx)).Transaction(func(tx *dal.Query) error {
+	err := dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		postDAL := tx.Post
 		updateResult, err := postDAL.WithContext(ctx).Where(postDAL.ID.In(uniqueIDs...)).UpdateColumnSimple(postDAL.Status.Value(status))
 		if err != nil {
@@ -479,7 +479,7 @@ func (b basePostServiceImpl) UpdateStatusBatch(ctx context.Context, status const
 	if err != nil {
 		return nil, err
 	}
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	posts, err := postDAL.WithContext(ctx).Where(postDAL.ID.In(uniqueIDs...)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -488,7 +488,7 @@ func (b basePostServiceImpl) UpdateStatusBatch(ctx context.Context, status const
 }
 
 func (b basePostServiceImpl) UpdateDraftContent(ctx context.Context, postID int32, content string) (*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)

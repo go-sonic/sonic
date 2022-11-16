@@ -23,7 +23,7 @@ type baseCommentServiceImpl struct {
 }
 
 func (b baseCommentServiceImpl) LGetByIDs(ctx context.Context, commentIDs []int32) ([]*entity.Comment, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	comments, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.In(commentIDs...)).Find()
 	return comments, WrapDBErr(err)
 }
@@ -37,7 +37,7 @@ func NewBaseCommentService(userService service.UserService, optionService servic
 }
 
 func (b baseCommentServiceImpl) Page(ctx context.Context, commentQuery param.CommentQuery, commentType consts.CommentType) ([]*entity.Comment, int64, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	commentDO := commentDAL.WithContext(ctx).Where(commentDAL.Type.Eq(commentType))
 	err := BuildSort(commentQuery.Sort, &commentDAL, &commentDO)
 	if err != nil {
@@ -66,7 +66,7 @@ func (b baseCommentServiceImpl) Update(ctx context.Context, comment *entity.Comm
 	if comment.ID == 0 {
 		return nil, nil
 	}
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	updateResult, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.Eq(comment.ID)).Updates(comment)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -82,7 +82,7 @@ func (b baseCommentServiceImpl) Update(ctx context.Context, comment *entity.Comm
 }
 
 func (b baseCommentServiceImpl) GetByID(ctx context.Context, commentID int32) (*entity.Comment, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	comment, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.Eq(commentID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -91,7 +91,7 @@ func (b baseCommentServiceImpl) GetByID(ctx context.Context, commentID int32) (*
 }
 
 func (b baseCommentServiceImpl) GetByContentID(ctx context.Context, contentID int32, commentType consts.CommentType, sort *param.Sort) ([]*entity.Comment, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	commentDO := commentDAL.WithContext(ctx).Where(commentDAL.PostID.Eq(contentID), commentDAL.Type.Eq(commentType))
 
 	err := BuildSort(sort, &commentDAL, &commentDO)
@@ -103,7 +103,7 @@ func (b baseCommentServiceImpl) GetByContentID(ctx context.Context, contentID in
 }
 
 func (b baseCommentServiceImpl) DeleteBatch(ctx context.Context, commentIDs []int32) error {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	deleteResult, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.In(commentIDs...)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -115,7 +115,7 @@ func (b baseCommentServiceImpl) DeleteBatch(ctx context.Context, commentIDs []in
 }
 
 func (b baseCommentServiceImpl) Delete(ctx context.Context, commentID int32) error {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	deleteResult, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.Eq(commentID)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -127,7 +127,7 @@ func (b baseCommentServiceImpl) Delete(ctx context.Context, commentID int32) err
 }
 
 func (b baseCommentServiceImpl) UpdateStatusBatch(ctx context.Context, commentIDs []int32, commentStatus consts.CommentStatus) ([]*entity.Comment, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	_, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.In(commentIDs...)).UpdateSimple(commentDAL.Status.Value(commentStatus))
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -140,7 +140,7 @@ func (b baseCommentServiceImpl) UpdateStatusBatch(ctx context.Context, commentID
 }
 
 func (b baseCommentServiceImpl) UpdateStatus(ctx context.Context, commentID int32, commentStatus consts.CommentStatus) (*entity.Comment, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	comment, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.Eq(commentID)).First()
 	if err != nil {
 		return nil, err
@@ -167,7 +167,7 @@ func (b baseCommentServiceImpl) Create(ctx context.Context, comment *entity.Comm
 	if comment == nil {
 		return nil, xerr.BadParam.New("comment can not be empty")
 	}
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	if comment.ParentID != 0 {
 		_, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.Eq(comment.ParentID)).First()
 		err = WrapDBErr(err)
@@ -270,7 +270,7 @@ func (b baseCommentServiceImpl) ConvertParam(commentParam *param.Comment) *entit
 }
 
 func (b baseCommentServiceImpl) CountByContentID(ctx context.Context, contentID int32, commentType consts.CommentType, status consts.CommentStatus) (int64, error) {
-	postCommentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	postCommentDAL := dal.GetQueryByCtx(ctx).Comment
 	count, err := postCommentDAL.WithContext(ctx).Where(postCommentDAL.PostID.Eq(contentID), postCommentDAL.Type.Eq(commentType), postCommentDAL.Status.Eq(status)).Count()
 	if err != nil {
 		return 0, WrapDBErr(err)
@@ -284,7 +284,7 @@ func (b baseCommentServiceImpl) CountByStatusAndContentIDs(ctx context.Context, 
 		CommentCount int64 `gorm:"column:comment_count"`
 	}
 
-	postCommentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	postCommentDAL := dal.GetQueryByCtx(ctx).Comment
 	err := postCommentDAL.WithContext(ctx).Select(postCommentDAL.PostID, postCommentDAL.ID.Count().As("comment_count")).Where(postCommentDAL.Status.Eq(status), postCommentDAL.PostID.In(contentIDs...)).Group(postCommentDAL.PostID).Scan(&projections)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -307,7 +307,7 @@ func (*baseCommentServiceImpl) CountChildren(ctx context.Context, parentCommentI
 		CommentCount int64
 	}
 
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	err := commentDAL.WithContext(ctx).Select(commentDAL.ParentID, commentDAL.ID.Count()).Where(commentDAL.Status.Eq(consts.CommentStatusPublished), commentDAL.ID.In(parentCommentIDs...)).Group(commentDAL.ParentID).Scan(&projections)
 	if err != nil {
 		return nil, WrapDBErr(err)

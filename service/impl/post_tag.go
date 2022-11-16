@@ -21,8 +21,8 @@ func (p *postTagServiceImpl) PagePost(ctx context.Context, postQuery param.PostQ
 	if postQuery.PageNum < 0 || postQuery.PageSize <= 0 {
 		return nil, 0, xerr.BadParam.New("").WithStatus(xerr.StatusBadRequest).WithMsg("Paging parameter error")
 	}
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
-	postTagDAL := dal.Use(dal.GetDBByCtx(ctx)).PostTag
+	postDAL := dal.GetQueryByCtx(ctx).Post
+	postTagDAL := dal.GetQueryByCtx(ctx).PostTag
 	postDo := postDAL.WithContext(ctx).Where(postDAL.Type.Eq(consts.PostTypePost))
 	err := BuildSort(postQuery.Sort, &postDAL, &postDo)
 	if err != nil {
@@ -61,7 +61,7 @@ func (p postTagServiceImpl) ListTagMapByPostID(ctx context.Context, postIDs []in
 	if len(postIDs) == 0 {
 		return res, nil
 	}
-	postTagDAL := dal.Use(dal.GetDBByCtx(ctx)).PostTag
+	postTagDAL := dal.GetQueryByCtx(ctx).PostTag
 	postTags, err := postTagDAL.WithContext(ctx).Where(postTagDAL.PostID.In(postIDs...)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -100,8 +100,8 @@ func (p postTagServiceImpl) ListTagMapByPostID(ctx context.Context, postIDs []in
 }
 
 func (p postTagServiceImpl) ListTagByPostID(ctx context.Context, postID int32) ([]*entity.Tag, error) {
-	postTagDAL := dal.Use(dal.GetDBByCtx(ctx)).PostTag
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	postTagDAL := dal.GetQueryByCtx(ctx).PostTag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tags, err := tagDAL.WithContext(ctx).Join(&entity.PostTag{}, tagDAL.ID.EqCol(postTagDAL.TagID)).Where(postTagDAL.PostID.Eq(postID)).Find()
 	if err != nil {
 		return nil, err
@@ -110,8 +110,8 @@ func (p postTagServiceImpl) ListTagByPostID(ctx context.Context, postID int32) (
 }
 
 func (p postTagServiceImpl) ListAllTagWithPostCount(ctx context.Context, sort *param.Sort) ([]*dto.TagWithPostCount, error) {
-	postTagDAL := dal.Use(dal.GetDBByCtx(ctx)).PostTag
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	postTagDAL := dal.GetQueryByCtx(ctx).PostTag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tagDo := tagDAL.WithContext(ctx)
 
 	err := BuildSort(sort, &tagDAL, &tagDo)
@@ -155,8 +155,8 @@ func (p postTagServiceImpl) ListAllTagWithPostCount(ctx context.Context, sort *p
 }
 
 func (p postTagServiceImpl) ListPostByTagID(ctx context.Context, tagID int32, status consts.PostStatus) ([]*entity.Post, error) {
-	postTagDAL := dal.Use(dal.GetDBByCtx(ctx)).PostTag
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postTagDAL := dal.GetQueryByCtx(ctx).PostTag
+	postDAL := dal.GetQueryByCtx(ctx).Post
 
 	postIDQuery := postTagDAL.WithContext(ctx).Where(postTagDAL.TagID.Eq(tagID)).Select(postTagDAL.PostID)
 	posts, err := postDAL.WithContext(ctx).Where(postDAL.WithContext(ctx).Columns(postDAL.ID).In(postIDQuery), postDAL.Status.Eq(status)).Find()

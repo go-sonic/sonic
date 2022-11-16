@@ -20,7 +20,7 @@ func NewPostCategoryService(categoryService service.CategoryService) service.Pos
 }
 
 func (p *postCategoryServiceImpl) ListByPostIDs(ctx context.Context, postIDs []int32) ([]*entity.PostCategory, error) {
-	postCategoryDAL := dal.Use(dal.GetDBByCtx(ctx)).PostCategory
+	postCategoryDAL := dal.GetQueryByCtx(ctx).PostCategory
 	postCategories, err := postCategoryDAL.WithContext(ctx).Where(postCategoryDAL.PostID.In(postIDs...)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -75,8 +75,8 @@ func (p *postCategoryServiceImpl) ListCategoryByPostID(ctx context.Context, post
 }
 
 func (p *postCategoryServiceImpl) ListByCategoryID(ctx context.Context, categoryID int32, status consts.PostStatus) ([]*entity.Post, error) {
-	postCategoryDAL := dal.Use(dal.GetDBByCtx(ctx)).PostCategory
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postCategoryDAL := dal.GetQueryByCtx(ctx).PostCategory
+	postDAL := dal.GetQueryByCtx(ctx).Post
 
 	postIDsQuery := postCategoryDAL.WithContext(ctx).Where(postCategoryDAL.CategoryID.Eq(categoryID)).Select(postCategoryDAL.PostID)
 	posts, err := postDAL.WithContext(ctx).Where(postDAL.WithContext(ctx).Columns(postDAL.ID).In(postIDsQuery), postDAL.Status.Eq(status)).Find()
