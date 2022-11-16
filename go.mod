@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.2
-	github.com/aliyun/aliyun-oss-go-sdk v2.2.5+incompatible
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.6+incompatible
 	github.com/disintegration/imaging v1.6.2
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/gin-contrib/cors v1.4.0
