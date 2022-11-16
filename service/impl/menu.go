@@ -19,7 +19,7 @@ func NewMenuService() service.MenuService {
 }
 
 func (m *menuServiceImpl) DeleteBatch(ctx context.Context, ids []int32) error {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	_, err := menuDAL.WithContext(ctx).Where(menuDAL.ID.In(ids...)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -29,7 +29,7 @@ func (m *menuServiceImpl) DeleteBatch(ctx context.Context, ids []int32) error {
 
 func (m *menuServiceImpl) UpdateBatch(ctx context.Context, menuParams []*param.Menu) ([]*entity.Menu, error) {
 	ids := make([]int32, 0, len(menuParams))
-	err := dal.Use(dal.GetDBByCtx(ctx)).Transaction(func(tx *dal.Query) error {
+	err := dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		menuDAL := tx.Menu
 		for _, menuParam := range menuParams {
 			ids = append(ids, menuParam.ID)
@@ -54,7 +54,7 @@ func (m *menuServiceImpl) UpdateBatch(ctx context.Context, menuParams []*param.M
 	if err != nil {
 		return nil, err
 	}
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	menus, err := menuDAL.WithContext(ctx).Where(menuDAL.ID.In(ids...)).Find()
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (m *menuServiceImpl) UpdateBatch(ctx context.Context, menuParams []*param.M
 }
 
 func (m *menuServiceImpl) CreateBatch(ctx context.Context, menuParams []*param.Menu) ([]*entity.Menu, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	menus := make([]*entity.Menu, 0, len(menuParams))
 	for _, menuParam := range menuParams {
 		menu := &entity.Menu{
@@ -93,7 +93,7 @@ func (m *menuServiceImpl) ListAsTree(ctx context.Context, sort *param.Sort) ([]*
 }
 
 func (m *menuServiceImpl) List(ctx context.Context, sort *param.Sort) ([]*entity.Menu, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	menuDO := menuDAL.WithContext(ctx)
 	err := BuildSort(sort, &menuDAL, &menuDO)
 	if err != nil {
@@ -107,7 +107,7 @@ func (m *menuServiceImpl) List(ctx context.Context, sort *param.Sort) ([]*entity
 }
 
 func (m *menuServiceImpl) ListByTeam(ctx context.Context, team string, sort *param.Sort) ([]*entity.Menu, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	menuDO := menuDAL.WithContext(ctx)
 	err := BuildSort(sort, &menuDAL, &menuDO)
 	if err != nil {
@@ -121,7 +121,7 @@ func (m *menuServiceImpl) ListByTeam(ctx context.Context, team string, sort *par
 }
 
 func (m *menuServiceImpl) ListAsTreeByTeam(ctx context.Context, team string, sort *param.Sort) ([]*vo.Menu, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	menuDO := menuDAL.WithContext(ctx)
 	err := BuildSort(sort, &menuDAL, &menuDO)
 	if err != nil {
@@ -135,7 +135,7 @@ func (m *menuServiceImpl) ListAsTreeByTeam(ctx context.Context, team string, sor
 }
 
 func (m *menuServiceImpl) GetByID(ctx context.Context, id int32) (*entity.Menu, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	menu, err := menuDAL.WithContext(ctx).Where(menuDAL.ID.Eq(id)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -153,7 +153,7 @@ func (m *menuServiceImpl) Create(ctx context.Context, menuParam *param.Menu) (*e
 		ParentID: menuParam.ParentID,
 		Target:   menuParam.Target,
 	}
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	err := menuDAL.WithContext(ctx).Create(menu)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -162,7 +162,7 @@ func (m *menuServiceImpl) Create(ctx context.Context, menuParam *param.Menu) (*e
 }
 
 func (m *menuServiceImpl) Update(ctx context.Context, id int32, menuParam *param.Menu) (*entity.Menu, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	updateResult, err := menuDAL.WithContext(ctx).Where(menuDAL.ID.Eq(id)).UpdateSimple(
 		menuDAL.Team.Value(menuParam.Team),
 		menuDAL.Priority.Value(menuParam.Priority),
@@ -186,7 +186,7 @@ func (m *menuServiceImpl) Update(ctx context.Context, id int32, menuParam *param
 }
 
 func (m *menuServiceImpl) Delete(ctx context.Context, id int32) error {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	deleteResult, err := menuDAL.WithContext(ctx).Where(menuDAL.ID.Eq(id)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -221,7 +221,7 @@ func (m *menuServiceImpl) ConvertToDTOs(ctx context.Context, menus []*entity.Men
 
 func (m *menuServiceImpl) ListTeams(ctx context.Context) ([]string, error) {
 	teams := make([]string, 0)
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	err := menuDAL.WithContext(ctx).Select(menuDAL.Team).Distinct(menuDAL.Team).Scan(&teams)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -256,7 +256,7 @@ func (m *menuServiceImpl) buildTree(ctx context.Context, menus []*entity.Menu) [
 }
 
 func (m *menuServiceImpl) GetMenuCount(ctx context.Context) (int64, error) {
-	menuDAL := dal.Use(dal.GetDBByCtx(ctx)).Menu
+	menuDAL := dal.GetQueryByCtx(ctx).Menu
 	count, err := menuDAL.WithContext(ctx).Count()
 	return count, WrapDBErr(err)
 }

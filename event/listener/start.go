@@ -57,11 +57,12 @@ func (s *StartListener) HandleEvent(ctx context.Context, startEvent event.Event)
 
 func (s *StartListener) createOptions() error {
 	ctx := context.Background()
-	ctx = dal.SetCtxDB(ctx, dal.GetDBByCtx(ctx).Session(&gorm.Session{
-		Logger: dal.DB.Logger.LogMode(logger.Warn),
-	}))
 
-	optionDAL := dal.Use(dal.GetDBByCtx(ctx)).Option
+	ctx = dal.SetCtxQuery(ctx, dal.GetQueryByCtx(ctx).ReplaceDB(dal.GetDB().Session(
+		&gorm.Session{Logger: dal.DB.Logger.LogMode(logger.Warn)},
+	)))
+
+	optionDAL := dal.GetQueryByCtx(ctx).Option
 	options, err := optionDAL.WithContext(ctx).Find()
 	if err != nil {
 		return err

@@ -36,7 +36,7 @@ func NewLinkService() service.LinkService {
 
 func (l *linkServiceImpl) ListTeams(ctx context.Context) ([]string, error) {
 	teams := make([]string, 0)
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	err := linkDAL.WithContext(ctx).Select(linkDAL.Team).Distinct(linkDAL.Team).Scan(&teams)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -45,7 +45,7 @@ func (l *linkServiceImpl) ListTeams(ctx context.Context) ([]string, error) {
 }
 
 func (l *linkServiceImpl) Delete(ctx context.Context, id int32) error {
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	deleteResult, err := linkDAL.WithContext(ctx).Where(linkDAL.ID.Eq(id)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -65,7 +65,7 @@ func (l *linkServiceImpl) Create(ctx context.Context, linkParam *param.Link) (*e
 		Priority:    linkParam.Priority,
 		Team:        linkParam.Team,
 	}
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	err := linkDAL.WithContext(ctx).Create(link)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -74,7 +74,7 @@ func (l *linkServiceImpl) Create(ctx context.Context, linkParam *param.Link) (*e
 }
 
 func (l *linkServiceImpl) Update(ctx context.Context, id int32, linkParam *param.Link) (*entity.Link, error) {
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	updateResult, err := linkDAL.WithContext(ctx).Where(linkDAL.ID.Eq(id)).UpdateSimple(
 		linkDAL.Name.Value(linkParam.Name),
 		linkDAL.Description.Value(linkParam.Description),
@@ -100,7 +100,7 @@ func (l *linkServiceImpl) Update(ctx context.Context, id int32, linkParam *param
 }
 
 func (l *linkServiceImpl) List(ctx context.Context, sort *param.Sort) ([]*entity.Link, error) {
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	linkDO := linkDAL.WithContext(ctx)
 	err := BuildSort(sort, &linkDAL, &linkDO)
 	if err != nil {
@@ -114,7 +114,7 @@ func (l *linkServiceImpl) List(ctx context.Context, sort *param.Sort) ([]*entity
 }
 
 func (l *linkServiceImpl) GetByID(ctx context.Context, id int32) (*entity.Link, error) {
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	link, err := linkDAL.WithContext(ctx).Where(linkDAL.ID.Eq(id)).First()
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (l *linkServiceImpl) ConvertToDTOs(ctx context.Context, links []*entity.Lin
 }
 
 func (l *linkServiceImpl) Count(ctx context.Context) (int64, error) {
-	linkDAL := dal.Use(dal.GetDBByCtx(ctx)).Link
+	linkDAL := dal.GetQueryByCtx(ctx).Link
 	count, err := linkDAL.WithContext(ctx).Count()
 	if err != nil {
 		return 0, WrapDBErr(err)

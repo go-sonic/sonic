@@ -34,7 +34,7 @@ func (j *journalCommentServiceImpl) UpdateBy(ctx context.Context, commentID int3
 }
 
 func (j *journalCommentServiceImpl) CountByStatus(ctx context.Context, status consts.CommentStatus) (int64, error) {
-	commentDAL := dal.Use(dal.GetDBByCtx(ctx)).Comment
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
 	count, err := commentDAL.WithContext(ctx).Where(commentDAL.Type.Eq(consts.CommentTypeJournal), commentDAL.Status.Eq(status)).Count()
 	if err != nil {
 		return 0, WrapDBErr(err)

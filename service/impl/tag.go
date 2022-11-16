@@ -26,13 +26,13 @@ func NewTagService(optionService service.OptionService) service.TagService {
 }
 
 func (t tagServiceImpl) GetByID(ctx context.Context, id int32) (*entity.Tag, error) {
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tag, err := tagDAL.WithContext(ctx).Where(tagDAL.ID.Eq(id)).First()
 	return tag, WrapDBErr(err)
 }
 
 func (t tagServiceImpl) GetBySlug(ctx context.Context, slug string) (*entity.Tag, error) {
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tag, err := tagDAL.WithContext(ctx).Where(tagDAL.Slug.Eq(slug)).First()
 	return tag, WrapDBErr(err)
 }
@@ -46,7 +46,7 @@ func (t tagServiceImpl) Create(ctx context.Context, tagParam *param.Tag) (*entit
 	if tagParam.Color == "" {
 		tagParam.Color = consts.SonicDefaultTagColor
 	}
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tag := &entity.Tag{
 		Name:      tagParam.Name,
 		Slug:      tagParam.Slug,
@@ -69,7 +69,7 @@ func (t tagServiceImpl) Update(ctx context.Context, id int32, tagParam *param.Ta
 	if tagParam.Color == "" {
 		tagParam.Color = consts.SonicDefaultTagColor
 	}
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	updateResult, err := tagDAL.WithContext(ctx).Where(tagDAL.ID.Eq(id)).UpdateSimple(
 		tagDAL.Name.Value(tagParam.Name),
 		tagDAL.Slug.Value(tagParam.Slug),
@@ -90,7 +90,7 @@ func (t tagServiceImpl) Update(ctx context.Context, id int32, tagParam *param.Ta
 }
 
 func (t tagServiceImpl) Delete(ctx context.Context, id int32) error {
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	deleteResult, err := tagDAL.WithContext(ctx).Where(tagDAL.ID.Value(id)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -102,7 +102,7 @@ func (t tagServiceImpl) Delete(ctx context.Context, id int32) error {
 }
 
 func (t tagServiceImpl) ListAll(ctx context.Context, sort *param.Sort) ([]*entity.Tag, error) {
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tagDO := tagDAL.WithContext(ctx)
 	err := BuildSort(sort, &tagDAL, &tagDO)
 	if err != nil {
@@ -119,7 +119,7 @@ func (t tagServiceImpl) ListByIDs(ctx context.Context, tagIDs []int32) ([]*entit
 	if len(tagIDs) == 0 {
 		return make([]*entity.Tag, 0), nil
 	}
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	tags, err := tagDAL.WithContext(ctx).Where(tagDAL.ID.In(tagIDs...)).Find()
 	if err != nil {
 		return nil, err
@@ -213,7 +213,7 @@ func (t tagServiceImpl) ConvertToDTOs(ctx context.Context, tags []*entity.Tag) (
 }
 
 func (t tagServiceImpl) CountAllTag(ctx context.Context) (int64, error) {
-	tagDAL := dal.Use(dal.GetDBByCtx(ctx)).Tag
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
 	count, err := tagDAL.WithContext(ctx).Count()
 	if err != nil {
 		return 0, WrapDBErr(err)

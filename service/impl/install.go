@@ -60,6 +60,7 @@ func (i installServiceImpl) InstallBlog(ctx context.Context, installParam param.
 	if isInstalled.(bool) {
 		return xerr.BadParam.New("").WithStatus(xerr.StatusBadRequest).WithMsg("Blog has been installed")
 	}
+	var user *entity.User
 	err = dal.Transaction(ctx, func(txCtx context.Context) error {
 		if err := i.createJWTSecret(txCtx); err != nil {
 			return err
@@ -67,7 +68,7 @@ func (i installServiceImpl) InstallBlog(ctx context.Context, installParam param.
 		if err := i.createDefaultSetting(txCtx, installParam); err != nil {
 			return err
 		}
-		user, err := i.createUser(txCtx, installParam.User)
+		user, err = i.createUser(txCtx, installParam.User)
 		if err != nil {
 			return err
 		}
@@ -88,16 +89,18 @@ func (i installServiceImpl) InstallBlog(ctx context.Context, installParam param.
 			return err
 		}
 		err = i.createDefaultMenu(txCtx)
-		if err != nil {
-			return err
-		}
-		i.Event.Publish(txCtx, &event.LogEvent{
+		return err
+	})
+	if err != nil {
+		return err
+	}
+	if user != nil {
+		i.Event.Publish(ctx, &event.LogEvent{
 			LogKey:  strconv.Itoa(int(user.ID)),
 			LogType: consts.LogTypeBlogInitialized,
 			Content: "博客已成功初始化",
 		})
-		return nil
-	})
+	}
 
 	return err
 }
@@ -133,7 +136,7 @@ func (i installServiceImpl) createUser(ctx context.Context, user param.User) (*e
 }
 
 func (i installServiceImpl) createDefaultCategory(ctx context.Context) (*entity.Category, error) {
-	categoryDal := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDal := dal.GetQueryByCtx(ctx).Category
 	count, err := categoryDal.WithContext(ctx).Count()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -157,7 +160,7 @@ func (i installServiceImpl) createDefaultPost(ctx context.Context, category *ent
 	if category == nil {
 		return nil, nil
 	}
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	count, err := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished)).Count()
 	if err != nil {
 		return nil, err
@@ -205,7 +208,7 @@ func (i installServiceImpl) createDefaultPost(ctx context.Context, category *ent
 }
 
 func (i installServiceImpl) createDefaultSheet(ctx context.Context) (*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	count, err := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished)).Count()
 	if err != nil {
 		return nil, err

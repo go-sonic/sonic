@@ -49,8 +49,8 @@ func (p postServiceImpl) Page(ctx context.Context, postQuery param.PostQuery) ([
 	if postQuery.PageNum < 0 || postQuery.PageSize <= 0 {
 		return nil, 0, xerr.BadParam.New("").WithStatus(xerr.StatusBadRequest).WithMsg("Paging parameter error")
 	}
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
-	postCategoryDAL := dal.Use(dal.GetDBByCtx(ctx)).PostCategory
+	postDAL := dal.GetQueryByCtx(ctx).Post
+	postCategoryDAL := dal.GetQueryByCtx(ctx).PostCategory
 	postDo := postDAL.WithContext(ctx).Where(postDAL.Type.Eq(consts.PostTypePost))
 	err := BuildSort(postQuery.Sort, &postDAL, &postDo)
 	if err != nil {
@@ -83,7 +83,7 @@ func (p postServiceImpl) Page(ctx context.Context, postQuery param.PostQuery) ([
 }
 
 func (p postServiceImpl) IncreaseLike(ctx context.Context, postID int32) error {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	info, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).UpdateSimple(postDAL.Likes.Add(1))
 	if err != nil {
 		return WrapDBErr(err)
@@ -122,7 +122,7 @@ func (p postServiceImpl) Create(ctx context.Context, postParam *param.Post) (*en
 }
 
 func (p postServiceImpl) Update(ctx context.Context, postID int32, postParam *param.Post) (*entity.Post, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -188,7 +188,7 @@ func (p postServiceImpl) ConvertParam(ctx context.Context, postParam *param.Post
 }
 
 func (p postServiceImpl) CountByStatus(ctx context.Context, status consts.PostStatus) (int64, error) {
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	count, err := postDAL.WithContext(ctx).Where(postDAL.Type.Eq(consts.PostTypePost), postDAL.Status.Eq(status)).Count()
 	if err != nil {
 		return 0, WrapDBErr(err)
@@ -231,7 +231,7 @@ func (p postServiceImpl) Preview(ctx context.Context, postID int32) (string, err
 
 func (p postServiceImpl) CountVisit(ctx context.Context) (int64, error) {
 	var count float64
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	err := postDAL.WithContext(ctx).Select(postDAL.Visits.Sum().IfNull(0)).Where(postDAL.Type.Eq(consts.PostTypePost), postDAL.Status.Eq(consts.PostStatusPublished)).Scan(&count)
 	if err != nil {
 		return 0, WrapDBErr(err)
@@ -241,7 +241,7 @@ func (p postServiceImpl) CountVisit(ctx context.Context) (int64, error) {
 
 func (p postServiceImpl) CountLike(ctx context.Context) (int64, error) {
 	var count float64
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	err := postDAL.WithContext(ctx).Select(postDAL.Likes.Sum().IfNull(0)).Where(postDAL.Type.Eq(consts.PostTypePost), postDAL.Status.Eq(consts.PostStatusPublished)).Scan(&count)
 	if err != nil {
 		return 0, WrapDBErr(err)
@@ -251,7 +251,7 @@ func (p postServiceImpl) CountLike(ctx context.Context) (int64, error) {
 
 func (p postServiceImpl) GetPrevPosts(ctx context.Context, post *entity.Post, size int) ([]*entity.Post, error) {
 	postSort := p.OptionService.GetOrByDefault(ctx, property.IndexSort)
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished))
 
 	if postSort == "createTime" {
@@ -281,7 +281,7 @@ func (p postServiceImpl) GetPrevPosts(ctx context.Context, post *entity.Post, si
 }
 func (p postServiceImpl) GetNextPosts(ctx context.Context, post *entity.Post, size int) ([]*entity.Post, error) {
 	postSort := p.OptionService.GetOrByDefault(ctx, property.IndexSort)
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+	postDAL := dal.GetQueryByCtx(ctx).Post
 	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished))
 
 	if postSort == "createTime" {

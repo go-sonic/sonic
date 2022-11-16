@@ -26,7 +26,7 @@ func (l *LogEventListener) HandleEvent(ctx context.Context, logEvent event.Event
 	if !ok {
 		return nil
 	}
-	logDAL := dal.Use(dal.GetDBByCtx(ctx)).Log
+	logDAL := dal.GetQueryByCtx(ctx).Log
 	logEntity := &entity.Log{
 		Content:   log.Content,
 		IPAddress: log.IpAddress,

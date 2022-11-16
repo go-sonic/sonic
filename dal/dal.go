@@ -54,6 +54,7 @@ func NewGormDB(conf *config.Config, gormLogger logger.Interface) *gorm.DB {
 	sqlDB.SetMaxIdleConns(200)
 	sqlDB.SetMaxOpenConns(300)
 	sqlDB.SetConnMaxIdleTime(time.Hour)
+	SetDefault(DB)
 	dbMigrate()
 	return DB
 }
@@ -103,29 +104,32 @@ func dbMigrate() {
 
 type ctxTransaction struct{}
 
-func GetDBByCtx(ctx context.Context) *gorm.DB {
+func GetQueryByCtx(ctx context.Context) *Query {
 	dbI := ctx.Value(ctxTransaction{})
 
 	if dbI != nil {
-		db, ok := dbI.(*gorm.DB)
+		db, ok := dbI.(*Query)
 		if !ok {
-			panic("unexpected context db value type")
+			panic("unexpected context query value type")
 		}
 		if db != nil {
 			return db
 		}
 	}
-	return DB.WithContext(ctx)
+	return Q
 }
 
-func SetCtxDB(ctx context.Context, tx *gorm.DB) context.Context {
-	return context.WithValue(ctx, ctxTransaction{}, tx)
+func SetCtxQuery(ctx context.Context, q *Query) context.Context {
+	return context.WithValue(ctx, ctxTransaction{}, q)
 }
 
 func Transaction(ctx context.Context, fn func(txCtx context.Context) error) error {
-	db := GetDBByCtx(ctx)
-	return db.Transaction(func(tx *gorm.DB) error {
-		txCtx := SetCtxDB(ctx, tx)
+	q := GetQueryByCtx(ctx)
+	return q.Transaction(func(tx *Query) error {
+		txCtx := SetCtxQuery(ctx, tx)
 		return fn(txCtx)
 	})
+}
+func GetDB() *gorm.DB {
+	return DB
 }

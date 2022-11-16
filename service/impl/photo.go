@@ -23,7 +23,7 @@ func (p *photoServiceImpl) Page(ctx context.Context, page param.Page, sort *para
 	if page.PageNum < 0 || page.PageSize <= 0 || page.PageSize > 100 {
 		return nil, 0, xerr.BadParam.New("").WithStatus(xerr.StatusBadRequest).WithMsg("Paging parameter error")
 	}
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	photoDO := photoDAL.WithContext(ctx)
 	err := BuildSort(sort, &photoDAL, &photoDO)
 	if err != nil {
@@ -38,7 +38,7 @@ func (p *photoServiceImpl) Page(ctx context.Context, page param.Page, sort *para
 
 func (p *photoServiceImpl) ListTeams(ctx context.Context) ([]string, error) {
 	teams := make([]string, 0)
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	err := photoDAL.WithContext(ctx).Select(photoDAL.Team).Distinct(photoDAL.Team).Scan(&teams)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -47,7 +47,7 @@ func (p *photoServiceImpl) ListTeams(ctx context.Context) ([]string, error) {
 }
 
 func (p *photoServiceImpl) Delete(ctx context.Context, id int32) error {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	deleteResult, err := photoDAL.WithContext(ctx).Where(photoDAL.ID.Eq(id)).Delete()
 	if err != nil {
 		return WrapDBErr(err)
@@ -70,7 +70,7 @@ func (p *photoServiceImpl) Create(ctx context.Context, photoParam *param.Photo) 
 	if photoParam.TakeTime != nil && *photoParam.TakeTime != 0 {
 		photo.CreateTime = time.Unix(*photoParam.TakeTime, 0)
 	}
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	err := photoDAL.WithContext(ctx).Create(photo)
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -79,7 +79,7 @@ func (p *photoServiceImpl) Create(ctx context.Context, photoParam *param.Photo) 
 }
 
 func (p *photoServiceImpl) Update(ctx context.Context, id int32, photoParam *param.Photo) (*entity.Photo, error) {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	var takeTime *time.Time
 	if photoParam.TakeTime != nil && *photoParam.TakeTime != 0 {
 		takeTime = util.TimePtr(time.Unix(*photoParam.TakeTime, 0))
@@ -112,7 +112,7 @@ func (p *photoServiceImpl) Update(ctx context.Context, id int32, photoParam *par
 }
 
 func (p *photoServiceImpl) List(ctx context.Context, sort *param.Sort) ([]*entity.Photo, error) {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	photoDO := photoDAL.WithContext(ctx)
 	err := BuildSort(sort, &photoDAL, &photoDO)
 	if err != nil {
@@ -126,7 +126,7 @@ func (p *photoServiceImpl) List(ctx context.Context, sort *param.Sort) ([]*entit
 }
 
 func (p *photoServiceImpl) GetByID(ctx context.Context, id int32) (*entity.Photo, error) {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	photo, err := photoDAL.WithContext(ctx).Where(photoDAL.ID.Eq(id)).First()
 	if err != nil {
 		return nil, err
@@ -156,7 +156,7 @@ func (p *photoServiceImpl) ConvertToDTOs(ctx context.Context, photos []*entity.P
 }
 
 func (p *photoServiceImpl) IncreaseLike(ctx context.Context, id int32) error {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	updateResult, err := photoDAL.WithContext(ctx).Where(photoDAL.ID.Eq(id)).UpdateSimple(photoDAL.Likes.Add(1))
 	if err != nil {
 		return WrapDBErr(err)
@@ -168,7 +168,7 @@ func (p *photoServiceImpl) IncreaseLike(ctx context.Context, id int32) error {
 }
 
 func (p *photoServiceImpl) ListByTeam(ctx context.Context, team string, sort *param.Sort) ([]*entity.Photo, error) {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	photoDO := photoDAL.WithContext(ctx)
 	err := BuildSort(sort, &photoDAL, &photoDO)
 	if err != nil {
@@ -179,7 +179,7 @@ func (p *photoServiceImpl) ListByTeam(ctx context.Context, team string, sort *pa
 }
 
 func (p *photoServiceImpl) GetPhotoCount(ctx context.Context) (int64, error) {
-	photoDAL := dal.Use(dal.GetDBByCtx(ctx)).Photo
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	count, err := photoDAL.WithContext(ctx).Count()
 	return count, WrapDBErr(err)
 }

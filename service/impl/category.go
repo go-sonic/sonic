@@ -30,19 +30,19 @@ func NewCategoryService(optionService service.OptionService) service.CategorySer
 }
 
 func (c categoryServiceImpl) GetByID(ctx context.Context, id int32) (*entity.Category, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	category, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.Eq(id)).Take()
 	return category, WrapDBErr(err)
 }
 
 func (c categoryServiceImpl) GetBySlug(ctx context.Context, slug string) (*entity.Category, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	category, err := categoryDAL.WithContext(ctx).Where(categoryDAL.Slug.Eq(slug)).Take()
 	return category, WrapDBErr(err)
 }
 
 func (c categoryServiceImpl) ListCategoryWithPostCountDTO(ctx context.Context, sort *param.Sort) ([]*dto.CategoryWithPostCount, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	categoryDO := categoryDAL.WithContext(ctx)
 
 	err := BuildSort(sort, &categoryDAL, &categoryDO)
@@ -54,7 +54,7 @@ func (c categoryServiceImpl) ListCategoryWithPostCountDTO(ctx context.Context, s
 	if err != nil {
 		return nil, WrapDBErr(err)
 	}
-	postCategoryDAL := dal.Use(dal.GetDBByCtx(ctx)).PostCategory
+	postCategoryDAL := dal.GetQueryByCtx(ctx).PostCategory
 	postCounts := make([]*projection.CategoryPostCountProjection, 0)
 	err = postCategoryDAL.WithContext(ctx).Select(postCategoryDAL.CategoryID, postCategoryDAL.PostID.Count().As("post_count")).Group(postCategoryDAL.CategoryID).Scan(&postCounts)
 	if err != nil {
@@ -79,7 +79,7 @@ func (c categoryServiceImpl) ListCategoryWithPostCountDTO(ctx context.Context, s
 }
 
 func (c categoryServiceImpl) ListAll(ctx context.Context, sort *param.Sort) ([]*entity.Category, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	categoryDO := categoryDAL.WithContext(ctx)
 	err := BuildSort(sort, &categoryDAL, &categoryDO)
 	if err != nil {
@@ -215,7 +215,7 @@ func (c categoryServiceImpl) ConvertToCategoryDTOs(ctx context.Context, categori
 }
 
 func (c categoryServiceImpl) Create(ctx context.Context, categoryParam *param.Category) (*entity.Category, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 
 	count, err := categoryDAL.WithContext(ctx).Where(categoryDAL.Name.Eq(categoryParam.Name)).Count()
 	if err != nil {
@@ -279,7 +279,7 @@ func (c *categoryServiceImpl) Update(ctx context.Context, categoryParam *param.C
 		return nil, err
 	}
 
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	category, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.Eq(categoryParam.ID)).First()
 	return category, WrapDBErr(err)
 }
@@ -291,7 +291,7 @@ func (c categoryServiceImpl) UpdateBatch(ctx context.Context, categoryParams []*
 		return nil, err
 	}
 
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	categoryIDs := make([]int32, 0)
 	for _, category := range categoryParams {
 		categoryIDs = append(categoryIDs, category.ID)
@@ -308,7 +308,7 @@ func (c categoryServiceImpl) Delete(ctx context.Context, categoryID int32) (err 
 }
 
 func (c categoryServiceImpl) ListByIDs(ctx context.Context, categoryIDs []int32) ([]*entity.Category, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	categories, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(categoryIDs...)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
@@ -320,13 +320,13 @@ func (c categoryServiceImpl) IsCategoriesEncrypt(ctx context.Context, categoryID
 	if len(categoryIDs) == 0 {
 		return false, nil
 	}
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	count, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(categoryIDs...), categoryDAL.Type.Eq(consts.CategoryTypeIntimate)).Count()
 	return count > 0, WrapDBErr(err)
 }
 
 func (c categoryServiceImpl) Count(ctx context.Context) (int64, error) {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	count, err := categoryDAL.WithContext(ctx).Count()
 	if err != nil {
 		return 0, err
@@ -391,7 +391,7 @@ func (c *categoryUpdateExecutor) Update(ctx context.Context, categoryParam *para
 	}
 
 	err := dal.Transaction(ctx, func(txCtx context.Context) error {
-		categoryDAL := dal.Use(dal.GetDBByCtx(txCtx)).Category
+		categoryDAL := dal.GetQueryByCtx(txCtx).Category
 
 		resultInfo, err := categoryDAL.WithContext(txCtx).Where(categoryDAL.ID.Eq(categoryParam.ID)).Select(field.Star).Omit(categoryDAL.CreateTime).Updates(category)
 		if err != nil {
@@ -424,7 +424,7 @@ func (c *categoryUpdateExecutor) UpdateBatch(ctx context.Context, categoryParams
 	}
 
 	err := dal.Transaction(ctx, func(txCtx context.Context) error {
-		categoryDAL := dal.Use(dal.GetDBByCtx(txCtx)).Category
+		categoryDAL := dal.GetQueryByCtx(txCtx).Category
 		err := categoryDAL.WithContext(txCtx).Omit(categoryDAL.CreateTime).Save(categories...)
 		if err != nil {
 			return WrapDBErr(err)
@@ -488,7 +488,7 @@ func (c *categoryUpdateExecutor) Delete(ctx context.Context, categoryID int32) e
 }
 
 func (c *categoryUpdateExecutor) prepare(ctx context.Context, categoryParams []*param.Category) error {
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	categoryDO := categoryDAL.WithContext(ctx)
 
 	categories, err := categoryDO.Find()
@@ -512,8 +512,8 @@ func (c *categoryUpdateExecutor) prepare(ctx context.Context, categoryParams []*
 	}
 	categoryIDs := util.MapKeyToArray(categoryIDMap)
 
-	postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
-	postCategoryDAL := dal.Use(dal.GetDBByCtx(ctx)).PostCategory
+	postDAL := dal.GetQueryByCtx(ctx).Post
+	postCategoryDAL := dal.GetQueryByCtx(ctx).PostCategory
 
 	posts, err := postDAL.WithContext(ctx).Where(
 		postDAL.Password.Null()).Or(postDAL.Password.Zero()).Where(
@@ -626,7 +626,7 @@ func (c *categoryUpdateExecutor) refreshChildsType(ctx context.Context, parentID
 	}
 	needEncrypt := util.MapKeyToArray(needEncryptMap)
 	if len(needEncrypt) > 0 {
-		categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+		categoryDAL := dal.GetQueryByCtx(ctx).Category
 		_, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(needEncrypt...)).UpdateColumnSimple(categoryDAL.Type.Value(consts.CategoryTypeIntimate))
 		if err != nil {
 			return WrapDBErr(err)
@@ -634,7 +634,7 @@ func (c *categoryUpdateExecutor) refreshChildsType(ctx context.Context, parentID
 	}
 
 	if len(needDecrypt) > 0 {
-		categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+		categoryDAL := dal.GetQueryByCtx(ctx).Category
 		_, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(needDecrypt...)).UpdateColumnSimple(categoryDAL.Type.Value(consts.CategoryTypeNormal))
 		if err != nil {
 			return WrapDBErr(err)
@@ -671,7 +671,7 @@ func (c *categoryUpdateExecutor) refreshAllType(ctx context.Context) error {
 	}
 
 	if len(needEncrypt) > 0 {
-		categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+		categoryDAL := dal.GetQueryByCtx(ctx).Category
 		_, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(needEncrypt...)).UpdateColumnSimple(categoryDAL.Type.Value(consts.CategoryTypeIntimate))
 		if err != nil {
 			return WrapDBErr(err)
@@ -679,7 +679,7 @@ func (c *categoryUpdateExecutor) refreshAllType(ctx context.Context) error {
 	}
 
 	if len(needDecrypt) > 0 {
-		categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+		categoryDAL := dal.GetQueryByCtx(ctx).Category
 		_, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(needDecrypt...)).UpdateColumnSimple(categoryDAL.Type.Value(consts.CategoryTypeNormal))
 		if err != nil {
 			return WrapDBErr(err)
@@ -709,14 +709,14 @@ func (c *categoryUpdateExecutor) refreshPostStatus(ctx context.Context) error {
 		}
 	}
 	if len(needEncryptPostID) > 0 {
-		postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+		postDAL := dal.GetQueryByCtx(ctx).Post
 		_, err := postDAL.WithContext(ctx).Where(postDAL.ID.In(needEncryptPostID...), postDAL.Status.Neq(consts.PostStatusDraft)).UpdateColumnSimple(postDAL.Status.Value(consts.PostStatusIntimate))
 		if err != nil {
 			return WrapDBErr(err)
 		}
 	}
 	if len(needDecryptPostID) > 0 {
-		postDAL := dal.Use(dal.GetDBByCtx(ctx)).Post
+		postDAL := dal.GetQueryByCtx(ctx).Post
 		_, err := postDAL.WithContext(ctx).Where(postDAL.ID.In(needDecryptPostID...), postDAL.Status.Neq(consts.PostStatusDraft)).UpdateColumnSimple(postDAL.Status.Value(consts.PostStatusPublished))
 		if err != nil {
 			return WrapDBErr(err)
@@ -750,7 +750,7 @@ func (c *categoryUpdateExecutor) removePostCategory(ctx context.Context, categor
 			c.PostToCategory[postID] = t
 		}
 	}
-	postCategoryDAL := dal.Use(dal.GetDBByCtx(ctx)).PostCategory
+	postCategoryDAL := dal.GetQueryByCtx(ctx).PostCategory
 	err := postCategoryDAL.WithContext(ctx).Create(postCategory...)
 
 	if err != nil {
@@ -775,7 +775,7 @@ func (c *categoryUpdateExecutor) removeCategory(ctx context.Context, categoryID 
 	if ok && parent != nil {
 		parentID = int(parent.ID)
 	}
-	categoryDAL := dal.Use(dal.GetDBByCtx(ctx)).Category
+	categoryDAL := dal.GetQueryByCtx(ctx).Category
 	if len(toUpdate) > 0 {
 		_, err := categoryDAL.WithContext(ctx).Where(categoryDAL.ID.In(toUpdate...)).UpdateColumnSimple(categoryDAL.ParentID.Value(int32(parentID)))
 		if err != nil {
