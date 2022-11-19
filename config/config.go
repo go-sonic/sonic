@@ -22,7 +22,7 @@ func NewConfig() *Config {
 		viper.SetConfigFile(configFile)
 	} else {
 		viper.AddConfigPath("./conf/")
-		viper.SetConfigName("config.yaml")
+		viper.SetConfigName("config")
 	}
 
 	conf := &Config{}
