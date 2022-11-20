@@ -43,8 +43,8 @@ func (b baseCommentServiceImpl) Page(ctx context.Context, commentQuery param.Com
 	if err != nil {
 		return nil, 0, err
 	}
-	if commentQuery.Keyword != nil {
-		commentDO.Where(commentDAL.Content.Like(*commentQuery.Keyword))
+	if commentQuery.Keyword != nil && *commentQuery.Keyword != "" {
+		commentDO.Where(commentDAL.Content.Like("%" + *commentQuery.Keyword + "%"))
 	}
 	if commentQuery.CommentStatus != nil {
 		commentDO.Where(commentDAL.Status.Eq(*commentQuery.CommentStatus))
