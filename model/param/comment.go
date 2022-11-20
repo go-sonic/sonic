@@ -6,9 +6,9 @@ type CommentQuery struct {
 	Page
 	*Sort
 	ContentID     *int32
-	Keyword       *string               `json:"keyword"`
-	CommentStatus *consts.CommentStatus `json:"status"`
-	ParentID      *int32                `json:"parentID"`
+	Keyword       *string               `json:"keyword" form:"keyword"`
+	CommentStatus *consts.CommentStatus `json:"status" form:"status"`
+	ParentID      *int32                `json:"parentID" form:"parentID"`
 }
 
 type Comment struct {
