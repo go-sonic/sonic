@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -17,6 +18,10 @@ func NewConfig() *Config {
 	var configFile string
 	flag.StringVar(&configFile, "config", "", "")
 	flag.Parse()
+
+	viper.AutomaticEnv()
+	replacer := strings.NewReplacer(".", "_")
+	viper.SetEnvKeyReplacer(replacer)
 	viper.SetConfigType("yaml")
 	if configFile != "" {
 		viper.SetConfigFile(configFile)
