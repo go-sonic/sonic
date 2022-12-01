@@ -240,16 +240,15 @@ func (o *optionServiceImpl) Save(ctx context.Context, saveMap map[string]string)
 	// Update the database before deleting the cache.
 	// Although there is a very small probability that this will lead to temporary cache and database data inconsistency,
 	// but it is acceptable
-	defer func() {
-		deleteKeys := make([]string, 0, len(toUpdates)+len(toCreates))
-		for _, option := range toCreates {
-			deleteKeys = append(deleteKeys, option.OptionKey)
-		}
-		for _, option := range toUpdates {
-			deleteKeys = append(deleteKeys, option.OptionKey)
-		}
-		o.Cache.BatchDelete(deleteKeys)
-	}()
+
+	deleteKeys := make([]string, 0, len(toUpdates)+len(toCreates))
+	for _, option := range toCreates {
+		deleteKeys = append(deleteKeys, option.OptionKey)
+	}
+	for _, option := range toUpdates {
+		deleteKeys = append(deleteKeys, option.OptionKey)
+	}
+	o.Cache.BatchDelete(deleteKeys)
 
 	err = dal.GetQueryByCtx(ctx).Transaction(func(tx *dal.Query) error {
 		optionDAL := tx.Option
