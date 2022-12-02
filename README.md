@@ -9,7 +9,6 @@
 <a href="https://github.com/go-sonic/sonic/releases"><img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/go-sonic/sonic/total.svg?style=flat-square" /></a>
 <a href="https://hub.docker.com/r/gosonic/sonic"><img alt="Docker pulls" src="https://img.shields.io/docker/pulls/gosonic/sonic?style=flat-square" /></a>
 <a href="https://github.com/go-sonic/sonic/commits"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/go-sonic/sonic.svg?style=flat-square" /></a>
-<a href="https://github.com/go-sonic/sonic/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/go-sonic/sonic/Sonic%20CI?style=flat-square" /></a>
 <br />
 <a href="https://t.me/go_sonic">Telegram Channel</a>
 </p>

@@ -15,8 +15,8 @@ RUN GOPROXY=https://goproxy.cn CGO_ENABLED=1 GOOS=linux go build -o sonic -ldfla
 RUN mkdir -p /app/conf && \
     mkdir /app/resources && \
     cp -r /go/src/github.com/go-sonic/sonic/sonic /app/ && \
-    cp -r /go/src/github.com/go-sonic/sonic/conf /app/conf && \
-    cp -r /go/src/github.com/go-sonic/sonic/resources /app/resources && \
+    cp -r /go/src/github.com/go-sonic/sonic/conf /app/ && \
+    cp -r /go/src/github.com/go-sonic/sonic/resources /app/ && \
     cp /go/src/github.com/go-sonic/sonic/scripts/docker_init.sh /app/
 
 FROM alpine:latest as prod
