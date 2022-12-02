@@ -26,7 +26,7 @@ Thanks [Halo](https://github.com/halo-dev) project team,this project is inspired
 ## 🚀 Features:
 - Support multiple types of databases: SQLite、MySQL(TODO: PostgreSQL)
 - Small: The installation file is only 10mb size
-- High-performance: Post details page can withstand 900qps(Enviroment:   Intel Xeon Platinum 8260 4C 8G ,SQLite3)
+- High-performance: Post details page can withstand 2500 QPS(Enviroment:   Intel Xeon Platinum 8260 4C 8G ,SQLite3)
 - Support changing theme
 - Support Linux、Windows、Mac OS. And Support x86、x64、Arm、Arm64、MIPS
 - Object storage(MINIO、Google Cloud、AWS、AliYun)
@@ -41,13 +41,13 @@ Thanks [Halo](https://github.com/halo-dev) project team,this project is inspired
 ## 🧰 How to install
 
 ### Download the latest installation package
-> Please pay attention to the operating system and instruction set
+> Please pay attention to the operating os and instruction set  and the version
 ```bash
-wget https://github.com/go-sonic/sonic/releases/download/v1.0.0/sonic-linux-64.zip -O sonic.zip
+wget https://github.com/go-sonic/sonic/releases/download/v1.0.3/sonic-linux-amd64.zip -O sonic.zip
 ```
 ### Decompression
 ```bash
-unzip sonic.zip
+unzip -d sonic sonic.zip
 ```
 ### Launch
 ```bash
@@ -64,6 +64,8 @@ Next, you can access sonic through the browser.
 
 The URL of the admin console is http://ip:port/admin
 
+## Docker
+See: https://hub.docker.com/r/gosonic/sonic
 
 ## TODO
 - [ ] i18n
