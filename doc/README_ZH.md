@@ -24,7 +24,7 @@ Sonic 意为声速的、声音的，正如它的名字一样, sonic 致力于成
 ## 🚀 Features:
 - 支持多种类型的数据库：SQLite、MySQL(TODO: PostgreSQL)
 - 体积小: 安装包仅仅只有10Mb
-- 高性能: 文章详情页可以达到1000 QPS(压测环境是: Intel Xeon Platinum 8260 4C 8G ,SQLite3)
+- 高性能: 文章详情页可以达到2500 QPS(压测环境是: Intel Xeon Platinum 8260 4C 8G ,SQLite3)
 - 支持更换主题
 - 支持 Linux、Windows、Mac OS等主流操作系统，支持x86、x64、Arm、Arm64、MIPS等指令集架构
 - 支持对象存储(MINIO、Google Cloud、AWS、AliYun)
@@ -38,13 +38,13 @@ Sonic 意为声速的、声音的，正如它的名字一样, sonic 致力于成
 ## 🧰 安装
 
 ### 下载对应平台的安装包
-> 根据你的操作系统和指令集下载对应的安装包
+> 根据你的操作系统和指令集下载对应的安装包,注意要下载最新的版本
 ```bash
-wget https://github.com/go-sonic/sonic/releases/download/v1.0.0/sonic-linux-64.zip -O sonic.zip
+wget https://github.com/go-sonic/sonic/releases/download/v1.0.3/sonic-linux-amd64.zip -O sonic.zip
 ```
 ### 解压
 ```bash
-unzip sonic.zip
+unzip -d sonic sonic.zip
 ```
 ### 运行
 > 可以通过 -config选项来指定配置文件的位置
@@ -56,6 +56,9 @@ cd sonic
 **然后你就可以通过浏览器访问sonic了，默认的端口是8080**
 
 后台管理路径是 http://ip:port/admin
+
+## Docker
+See: https://hub.docker.com/r/gosonic/sonic
 
 ## TODO
 - [ ] i18n

@@ -8,8 +8,7 @@ RUN git clone --recursive --depth 1 https://github.com/go-sonic/sonic.git
 
 WORKDIR /go/src/github.com/go-sonic/sonic
 
-ENV GOPROXY=https://goproxy.cn
-RUN CGO_ENABLED=1 GOOS=linux go build -o sonic -ldflags="-s -w" -trimpath . && \
+RUN GOPROXY=https://goproxy.cn CGO_ENABLED=1 GOOS=linux go build -o sonic -ldflags="-s -w" -trimpath . && \
     upx  sonic -o upx_sonic && \
     mv -f upx_sonic sonic
 
@@ -17,7 +16,7 @@ RUN mkdir -p /app/conf && \
     mkdir /app/resources && \
     cp -r /go/src/github.com/go-sonic/sonic/sonic /app/ && \
     cp -r /go/src/github.com/go-sonic/sonic/conf /app/conf && \
-    cp -r /go/src/github.com/go-sonic/sonic/resources /app/ && \
+    cp -r /go/src/github.com/go-sonic/sonic/resources /app/resources && \
     cp /go/src/github.com/go-sonic/sonic/scripts/docker_init.sh /app/
 
 FROM alpine:latest as prod
