@@ -3,10 +3,6 @@ name: Release
 on:
   release:
     types: [published]
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - ".github/workflows/release.yml"
 
 jobs:
   build:
