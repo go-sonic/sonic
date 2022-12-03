@@ -37,16 +37,16 @@ Sonic 意为声速的、声音的，正如它的名字一样, sonic 致力于成
 
 ## 🧰 安装
 
-### 下载对应平台的安装包
+**下载对应平台的安装包**
 > 根据你的操作系统和指令集下载对应的安装包,注意要下载最新的版本
 ```bash
 wget https://github.com/go-sonic/sonic/releases/download/v1.0.3/sonic-linux-amd64.zip -O sonic.zip
 ```
-### 解压
+**解压**
 ```bash
 unzip -d sonic sonic.zip
 ```
-### 运行
+**运行**
 > 可以通过 -config选项来指定配置文件的位置
 ```bash
 cd sonic
@@ -59,6 +59,13 @@ cd sonic
 
 ## Docker
 See: https://hub.docker.com/r/gosonic/sonic
+
+## 主题生态
+
+| Theme   | URL                                               |
+|---------|---------------------------------------------------|
+| Anatole | https://github.com/go-sonic/default-theme-anatole |
+| Journal | https://github.com/hooxuu/sonic-theme-Journal     |
 
 ## TODO
 - [ ] i18n
