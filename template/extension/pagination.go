@@ -53,7 +53,7 @@ func (p *paginationExtension) addArchivesPagination() {
 		if err != nil {
 			return nil, err
 		}
-		return p.getPagination(ctx, page, total, display, prefix, suffix)
+		return p.getPagination(ctx, page, total, display, "/"+prefix, suffix)
 	}
 	p.Template.AddFunc("archivesPagination", archivesPagination)
 }
@@ -81,7 +81,7 @@ func (p *paginationExtension) addTagPostsPagination() {
 		if err != nil {
 			return nil, err
 		}
-		return p.getPagination(ctx, page, total, display, tagPrefix.(string)+"/"+slug, suffix)
+		return p.getPagination(ctx, page, total, display, "/"+tagPrefix.(string)+"/"+slug, suffix)
 	}
 	p.Template.AddFunc("tagPostsPagination", tagPostsPagination)
 }
@@ -97,7 +97,7 @@ func (p *paginationExtension) addCategoryPostsPagination() {
 		if err != nil {
 			return nil, err
 		}
-		return p.getPagination(ctx, page, total, display, categoryPrefix.(string)+"/"+slug, suffix)
+		return p.getPagination(ctx, page, total, display, "/"+categoryPrefix.(string)+"/"+slug, suffix)
 	}
 	p.Template.AddFunc("categoryPostsPagination", categoryPostsPagination)
 }
@@ -113,7 +113,7 @@ func (p *paginationExtension) addPhotosPagination() {
 		if err != nil {
 			return nil, err
 		}
-		return p.getPagination(ctx, page, total, display, prefix, suffix)
+		return p.getPagination(ctx, page, total, display, "/"+prefix, suffix)
 	}
 	p.Template.AddFunc("photosPagination", photosPagination)
 }
@@ -129,7 +129,7 @@ func (p *paginationExtension) addJournalsPagination() {
 		if err != nil {
 			return nil, err
 		}
-		return p.getPagination(ctx, page, total, display, prefix, suffix)
+		return p.getPagination(ctx, page, total, display, "/"+prefix, suffix)
 	}
 	p.Template.AddFunc("journalsPagination", journalsPagination)
 }
@@ -154,12 +154,12 @@ func (p *paginationExtension) getPagination(ctx context.Context, page, total, di
 
 	rainbow := util.RainbowPage(page+1, total, display)
 
-	rainbowPages := make([]vo.RainbowPage, len(rainbow), len(rainbow))
+	rainbowPages := make([]vo.RainbowPage, len(rainbow))
 
 	nextPageFullPath += prefix + "/page/" + strconv.Itoa(page+2) + suffix
 
 	if page == 1 {
-		prevPageFullPath += "/"
+		prevPageFullPath += prefix + "/"
 	} else {
 		prevPageFullPath += prefix + "/page/" + strconv.Itoa(page) + suffix
 	}
