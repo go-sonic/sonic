@@ -54,7 +54,11 @@ func NewTemplateConfigListener(bus event.Bus,
 }
 
 func (t *TemplateConfigListener) HandleThemeUpdateEvent(ctx context.Context, themeUpdateEvent event.Event) error {
-	return t.loadThemeConfig(ctx)
+	err := t.loadThemeConfig(ctx)
+	if err != nil {
+		return err
+	}
+	return t.loadThemeTemplate(ctx)
 }
 
 func (t *TemplateConfigListener) HandleUserUpdateEvent(ctx context.Context, userUpdateEvent event.Event) error {
@@ -81,12 +85,7 @@ func (t *TemplateConfigListener) HandleStartEvent(ctx context.Context, startEven
 	if err != nil {
 		return err
 	}
-	err = t.loadThemeTemplate(ctx)
-	if err != nil {
-		return err
-	}
-	err = t.registerTemplateStaticFileRoute(ctx)
-	return err
+	return t.loadThemeTemplate(ctx)
 }
 
 func (t *TemplateConfigListener) HandleThemeFileUpdateEvent(ctx context.Context, themeFileUpdateEvent event.Event) error {
@@ -194,14 +193,5 @@ func (t *TemplateConfigListener) loadOption(ctx context.Context) error {
 	t.Template.SetSharedVariable("archives_url", urlContext+archivePrefix.(string))
 	t.Template.SetSharedVariable("categories_url", urlContext+categoryPrefix.(string))
 	t.Template.SetSharedVariable("tags_url", urlContext+tagPrefix.(string))
-	return nil
-}
-
-func (t *TemplateConfigListener) registerTemplateStaticFileRoute(ctx context.Context) error {
-	theme, err := t.ThemeService.GetActivateTheme(ctx)
-	if err != nil {
-		return nil
-	}
-	t.Router.StaticFS("/themes/"+theme.FolderName, gin.Dir(theme.ThemePath, false))
 	return nil
 }
