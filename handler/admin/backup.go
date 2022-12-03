@@ -28,7 +28,7 @@ func NewBackupHandler(backupService service.BackupService) *BackupHandler {
 }
 
 func (b *BackupHandler) GetWorkDirBackup(ctx *gin.Context) (interface{}, error) {
-	filename, err := util.ParamString(ctx, "filename")
+	filename, err := util.MustGetQueryString(ctx, "filename")
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (b *BackupHandler) GetWorkDirBackup(ctx *gin.Context) (interface{}, error) 
 }
 
 func (b *BackupHandler) GetDataBackup(ctx *gin.Context) (interface{}, error) {
-	filename, err := util.ParamString(ctx, "filename")
+	filename, err := util.MustGetQueryString(ctx, "filename")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (b *BackupHandler) GetDataBackup(ctx *gin.Context) (interface{}, error) {
 }
 
 func (b *BackupHandler) GetMarkDownBackup(ctx *gin.Context) (interface{}, error) {
-	filename, err := util.ParamString(ctx, "filename")
+	filename, err := util.MustGetQueryString(ctx, "filename")
 	if err != nil {
 		return nil, err
 	}
@@ -52,11 +52,24 @@ func (b *BackupHandler) GetMarkDownBackup(ctx *gin.Context) (interface{}, error)
 }
 
 func (b *BackupHandler) BackupWholeSite(ctx *gin.Context) (interface{}, error) {
-	return b.BackupService.BackupWholeSite(ctx)
+	toBackupItems := make([]string, 0)
+	err := ctx.ShouldBindJSON(&toBackupItems)
+	if err != nil {
+		if e, ok := err.(validator.ValidationErrors); ok {
+			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
+		}
+		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
+	}
+
+	return b.BackupService.BackupWholeSite(ctx, toBackupItems)
 }
 
 func (b *BackupHandler) ListBackups(ctx *gin.Context) (interface{}, error) {
 	return b.BackupService.ListFiles(ctx, config.BackupDir, service.WholeSite)
+}
+
+func (b *BackupHandler) ListToBackupItems(ctx *gin.Context) (interface{}, error) {
+	return b.BackupService.ListToBackupItems(ctx)
 }
 
 func (b *BackupHandler) HandleWorkDir(ctx *gin.Context) {
@@ -65,8 +78,8 @@ func (b *BackupHandler) HandleWorkDir(ctx *gin.Context) {
 		wrapHandler(b.GetWorkDirBackup)(ctx)
 		return
 	}
-	if path == "/api/admin/backups/work-dir" || path == "/api/admin/backups/work-dir/" {
-		wrapHandler(b.ListBackups)(ctx)
+	if path == "/api/admin/backups/work-dir/options" || path == "/api/admin/backups/work-dir/options/" {
+		wrapHandler(b.ListToBackupItems)(ctx)
 		return
 	}
 	b.DownloadBackups(ctx)
@@ -91,7 +104,7 @@ func (b *BackupHandler) DownloadBackups(ctx *gin.Context) {
 }
 
 func (b *BackupHandler) DeleteBackups(ctx *gin.Context) (interface{}, error) {
-	filename, err := util.ParamString(ctx, "filename")
+	filename, err := util.MustGetQueryString(ctx, "filename")
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +182,7 @@ func (b *BackupHandler) ListMarkdowns(ctx *gin.Context) (interface{}, error) {
 }
 
 func (b *BackupHandler) DeleteMarkdowns(ctx *gin.Context) (interface{}, error) {
-	filename, err := util.ParamString(ctx, "filename")
+	filename, err := util.MustGetQueryString(ctx, "filename")
 	if err != nil {
 		return nil, err
 	}

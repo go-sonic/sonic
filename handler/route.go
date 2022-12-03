@@ -74,6 +74,7 @@ func (s *Server) RegisterRouters() {
 				{
 					backupRouter := authRouter.Group("/backups")
 					backupRouter.POST("/work-dir", s.wrapHandler(s.BackupHandler.BackupWholeSite))
+					backupRouter.GET("/work-dir", s.wrapHandler(s.BackupHandler.ListBackups))
 					backupRouter.GET("/work-dir/*path", s.BackupHandler.HandleWorkDir)
 					backupRouter.DELETE("/work-dir", s.wrapHandler(s.BackupHandler.DeleteBackups))
 					backupRouter.POST("/data", s.wrapHandler(s.BackupHandler.ExportData))
@@ -352,11 +353,6 @@ func (s *Server) registerDynamicRouters(contentRouter *gin.RouterGroup) error {
 	ctx = dal.SetCtxQuery(ctx, dal.GetQueryByCtx(ctx).ReplaceDB(dal.GetDB().Session(
 		&gorm.Session{Logger: dal.DB.Logger.LogMode(logger.Warn)},
 	)))
-	// theme, err := s.ThemeService.GetActivateTheme(ctx)
-	// if err != nil {
-	// 	return nil
-	// }
-	// s.Router.StaticFS("/themes/"+theme.FolderName, gin.Dir(theme.ThemePath, false))
 
 	archivePath, err := s.OptionService.GetArchivePrefix(ctx)
 	if err != nil {
