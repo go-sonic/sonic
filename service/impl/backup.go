@@ -46,9 +46,10 @@ func (b *backupServiceImpl) GetBackup(ctx context.Context, filepath string, back
 	return b.buildBackupDTO(ctx, string(backupType), filepath)
 }
 
-func (b *backupServiceImpl) BackupWholeSite(ctx context.Context) (*dto.BackupDTO, error) {
+func (b *backupServiceImpl) BackupWholeSite(ctx context.Context, toBackupItems []string) (*dto.BackupDTO, error) {
 	backupFilename := consts.SonicBackupPrefix + time.Now().Format("2006-01-02-15-04-05") + util.GenUUIDWithOutDash() + ".zip"
 	backupFilePath := config.BackupDir
+
 	if _, err := os.Stat(backupFilePath); os.IsNotExist(err) {
 		err = os.MkdirAll(backupFilePath, os.ModePerm)
 		if err != nil {
@@ -57,17 +58,16 @@ func (b *backupServiceImpl) BackupWholeSite(ctx context.Context) (*dto.BackupDTO
 	} else if err != nil {
 		return nil, xerr.NoType.Wrap(err).WithMsg("get fileInfo")
 	}
+
 	backupFile := filepath.Join(backupFilePath, backupFilename)
 
-	toBackupPath := []string{b.Config.Sonic.WorkDir}
-	if !strings.Contains(b.Config.Sonic.LogDir, b.Config.Sonic.WorkDir) {
-		toBackupPath = append(toBackupPath, b.Config.Sonic.LogDir)
-	}
-	if !strings.Contains(b.Config.Sonic.TemplateDir, b.Config.Sonic.WorkDir) {
-		toBackupPath = append(toBackupPath, b.Config.Sonic.TemplateDir)
+	toBackupPaths := []string{}
+	for _, toBackupItem := range toBackupItems {
+		toBackupPath := filepath.Join(b.Config.Sonic.WorkDir, toBackupItem)
+		toBackupPaths = append(toBackupPaths, toBackupPath)
 	}
 
-	err := util.ZipFile(backupFile, toBackupPath...)
+	err := util.ZipFile(backupFile, toBackupPaths...)
 	if err != nil {
 		return nil, err
 	}
@@ -255,4 +255,17 @@ func fillData(dataMap map[string]interface{}, item string, f interface{}, preErr
 		dataMap[item] = data.Interface()
 	}
 	return nil
+}
+
+func (b *backupServiceImpl) ListToBackupItems(ctx context.Context) ([]string, error) {
+	dirEntrys, err := os.ReadDir(b.Config.Sonic.WorkDir)
+	if err != nil {
+		return nil, xerr.WithStatus(err, xerr.StatusInternalServerError).WithMsg("read work dir err")
+	}
+
+	result := make([]string, 0)
+	for _, dirEntry := range dirEntrys {
+		result = append(result, dirEntry.Name())
+	}
+	return result, nil
 }
