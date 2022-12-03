@@ -39,22 +39,22 @@ Thanks [Halo](https://github.com/halo-dev) project team,this project is inspired
 
 ## 🧰 How to install
 
-### Download the latest installation package
+**Download the latest installation package**
 > Please pay attention to the operating os and instruction set  and the version
 ```bash
 wget https://github.com/go-sonic/sonic/releases/download/v1.0.3/sonic-linux-amd64.zip -O sonic.zip
 ```
-### Decompression
+**Decompression**
 ```bash
 unzip -d sonic sonic.zip
 ```
-### Launch
+**Launch**
 ```bash
 cd sonic
 ./sonic -config conf/config.yaml
 ```
 
-### Initialization
+**Initialization**
 **The default port is 8080**
 
 Open http://ip:port/admin#install
@@ -65,6 +65,13 @@ The URL of the admin console is http://ip:port/admin
 
 ## Docker
 See: https://hub.docker.com/r/gosonic/sonic
+
+## Theme ecology
+
+| Theme   | URL                                               |
+|---------|---------------------------------------------------|
+| Anatole | https://github.com/go-sonic/default-theme-anatole |
+| Journal | https://github.com/hooxuu/sonic-theme-Journal     |
 
 ## TODO
 - [ ] i18n
