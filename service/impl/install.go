@@ -171,7 +171,7 @@ func (i installServiceImpl) createDefaultPost(ctx context.Context, category *ent
 	content := `
 ## Hello Sonic
 
-如果你看到了这一篇文章，那么证明你已经安装成功了，感谢使用 [Sonic](https://go-sonic.org) 进行创作，希望能够使用愉快。
+如果你看到了这一篇文章，那么证明你已经安装成功了，感谢使用 [Sonic](https://github.com/go-sonic) 进行创作，希望能够使用愉快。
 
 ## 相关链接
 
