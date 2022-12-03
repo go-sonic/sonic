@@ -41,7 +41,7 @@ func (p *postTagServiceImpl) PagePost(ctx context.Context, postQuery param.PostQ
 		postDo = postDo.Where(postDAL.Status.In(statuesValue...))
 	}
 	if postQuery.TagID != nil {
-		postDo.Join(&entity.PostTag{}, postDAL.ID.EqCol(postTagDAL.PostID)).Where(postTagDAL.ID.Eq(*postQuery.TagID))
+		postDo.Join(&entity.PostTag{}, postDAL.ID.EqCol(postTagDAL.PostID)).Where(postTagDAL.TagID.Eq(*postQuery.TagID))
 	}
 	posts, totalCount, err := postDo.FindByPage(postQuery.PageNum*postQuery.PageSize, postQuery.PageSize)
 	if err != nil {
