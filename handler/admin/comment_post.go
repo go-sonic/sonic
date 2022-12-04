@@ -213,7 +213,11 @@ func (p *PostCommentHandler) UpdatePostCommentStatus(ctx *gin.Context) (interfac
 }
 
 func (p *PostCommentHandler) UpdatePostCommentStatusBatch(ctx *gin.Context) (interface{}, error) {
-	status, err := util.ParamInt32(ctx, "status")
+	strStatus, err := util.ParamString(ctx, "status")
+	if err != nil {
+		return nil, err
+	}
+	status, err := consts.CommentStatusFromString(strStatus)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +227,7 @@ func (p *PostCommentHandler) UpdatePostCommentStatusBatch(ctx *gin.Context) (int
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
 	}
-	comments, err := p.PostCommentService.UpdateStatusBatch(ctx, ids, consts.CommentStatus(status))
+	comments, err := p.PostCommentService.UpdateStatusBatch(ctx, ids, status)
 	if err != nil {
 		return nil, err
 	}
