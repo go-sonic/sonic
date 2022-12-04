@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -207,7 +208,10 @@ func (s *Server) Run(ctx context.Context) error {
 	}
 	go func() {
 		if err := s.HttpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			// print err info when httpServer start failed
 			s.logger.Error("unexpected error from ListenAndServe", zap.Error(err))
+			fmt.Printf("http server start error:%s\n", err.Error())
+			os.Exit(1)
 		}
 	}()
 	return nil
