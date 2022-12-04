@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-
 	"gorm.io/gen/field"
 
 	"github.com/go-sonic/sonic/consts"
@@ -108,7 +107,7 @@ func (b baseCommentServiceImpl) DeleteBatch(ctx context.Context, commentIDs []in
 	if err != nil {
 		return WrapDBErr(err)
 	}
-	if deleteResult.RowsAffected != 1 {
+	if deleteResult.RowsAffected != int64(len(commentIDs)) {
 		return xerr.NoType.New("").WithMsg("delete comment failed")
 	}
 	return nil
