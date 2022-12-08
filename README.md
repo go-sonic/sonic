@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.png" />
+   <img width="200" src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.svg" />
 </p>
 
 <p align="center"><b>Sonic </b> [ˈsɒnɪk] ,Sonic is a Go Blogging Platform. Simple and Powerful.</p>
