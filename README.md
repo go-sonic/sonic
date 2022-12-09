@@ -1,5 +1,5 @@
 <p align="center">
-   <img width="200" src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.svg" />
+   <img width="170" src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.svg" />
 </p>
 
 <p align="center"><b>Sonic </b> [ˈsɒnɪk] ,Sonic is a Go Blogging Platform. Simple and Powerful.</p>
@@ -37,7 +37,7 @@ Thanks [Halo](https://github.com/halo-dev) project team,this project is inspired
 
 ![Console](https://github.com/go-sonic/resources/raw/master/console-screenshot.png)
 
-## 🧰 How to install
+## 🧰 Install
 
 **Download the latest installation package**
 > Please pay attention to the operating os and instruction set  and the version
@@ -79,6 +79,19 @@ See: https://hub.docker.com/r/gosonic/sonic
 - [ ] Better error handling
 - [ ] Plugin(base on Wasm)
 - [ ] Use new web framework([Hertz](https://github.com/cloudwego/hertz))
+
+## Contributing
+
+Feel free to dive in! [Open an issue](https://github.com/go-sonic/sonic/issues) or submit PRs.
+
+Standard Readme follows the [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) Code of Conduct.
+
+### Contributors
+
+This project exists thanks to all the people who contribute. 
+<a href="https://github.com/go-sonic/sonic/graphs/contributors"><img src="https://opencollective.com/go-sonic/contributors.svg?width=890&button=false" /></a>
+
+Special thanks to Evan(evanzhao@88.com), who designed the logo
 
 ## 📄 License
 
