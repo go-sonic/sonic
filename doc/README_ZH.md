@@ -1,5 +1,5 @@
 <p align="center">
-   <img width="200" src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.svg" />
+   <img width="170" src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.svg" />
 </p>
 
 <p align="center"><b>Sonic </b> [ˈsɒnɪk] ,Sonic 是一个用Golang开发的博客平台，高效快速.</p>
@@ -73,6 +73,21 @@ See: https://hub.docker.com/r/gosonic/sonic
 - [ ] 更好的错误处理
 - [ ] 插件系统(基于 Wasm)
 - [ ] 使用新的web框架([Hertz](https://github.com/cloudwego/hertz))
+
+
+## 如何贡献
+
+非常欢迎你的加入！[提一个 Issue](https://github.com/go-sonic/sonic/issues) 或者提交一个 Pull Request。
+
+
+Sonic 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
+
+### 贡献者
+
+感谢以下参与项目的人：
+<a href="https://github.com/go-sonic/sonic/graphs/contributors"><img src="https://opencollective.com/go-sonic/contributors.svg?width=890&button=false" /></a>
+
+特别感谢 Evan(evanzhao@88.com) ，他帮助设计了Logo。
 
 
 ## 📄 License
