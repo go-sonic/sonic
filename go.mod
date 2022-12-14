@@ -19,7 +19,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/pquerna/otp v1.3.0
+	github.com/pquerna/otp v1.4.0
 	github.com/spf13/viper v1.14.0
 	github.com/yeqown/go-qrcode v1.5.10
 	go.uber.org/dig v1.15.0
