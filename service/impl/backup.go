@@ -63,7 +63,10 @@ func (b *backupServiceImpl) BackupWholeSite(ctx context.Context, toBackupItems [
 
 	toBackupPaths := []string{}
 	for _, toBackupItem := range toBackupItems {
-		toBackupPath := filepath.Join(b.Config.Sonic.WorkDir, toBackupItem)
+		toBackupPath := filepath.Clean(filepath.Join(b.Config.Sonic.WorkDir, toBackupItem))
+		if !strings.HasPrefix(toBackupPath, b.Config.Sonic.WorkDir) {
+			continue
+		}
 		toBackupPaths = append(toBackupPaths, toBackupPath)
 	}
 
