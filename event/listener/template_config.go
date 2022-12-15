@@ -66,6 +66,10 @@ func (t *TemplateConfigListener) HandleUserUpdateEvent(ctx context.Context, user
 }
 
 func (t *TemplateConfigListener) HandleOptionUpdateEvent(ctx context.Context, optionUpdateEvent event.Event) error {
+	err := t.loadThemeConfig(ctx)
+	if err != nil {
+		return err
+	}
 	return t.loadOption(ctx)
 }
 
