@@ -1,6 +1,7 @@
 package template
 
 import (
+	"context"
 	htmlTemplate "html/template"
 	"io"
 	"io/fs"
@@ -13,6 +14,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"go.uber.org/zap"
 
+	"github.com/go-sonic/sonic/event"
 	"github.com/go-sonic/sonic/util/xerr"
 )
 
@@ -25,13 +27,15 @@ type Template struct {
 	logger         *zap.Logger
 	paths          []string
 	funcMap        map[string]any
+	bus            event.Bus
 }
 
-func NewTemplate(logger *zap.Logger) *Template {
+func NewTemplate(logger *zap.Logger, bus event.Bus) *Template {
 	t := &Template{
 		sharedVariable: map[string]any{},
 		logger:         logger,
 		funcMap:        map[string]any{},
+		bus:            bus,
 	}
 	t.addUtilFunc()
 	watcher, err := fsnotify.NewWatcher()
@@ -44,7 +48,8 @@ func NewTemplate(logger *zap.Logger) *Template {
 }
 
 func (t *Template) Reload(paths []string) error {
-	return t.Load(paths)
+	t.bus.Publish(context.Background(), &event.ThemeFileUpdatedEvent{})
+	return nil
 }
 
 func (t *Template) Load(paths []string) error {

@@ -157,7 +157,6 @@ func (t *themeServiceImpl) UpdateThemeFile(ctx context.Context, themeID, absPath
 	if err != nil {
 		return xerr.WithMsg(err, "write to file err")
 	}
-	t.Event.Publish(ctx, &event.ThemeFileUpdatedEvent{})
 	return nil
 }
 
