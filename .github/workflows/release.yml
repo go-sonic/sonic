@@ -89,7 +89,7 @@ jobs:
 
       - name: Prepare package for Linux
         if: matrix.goos == 'linux'
-        run: cp -rv ./release/systemd ./build/
+        run: cp -rv ./scripts/release/systemd ./build/
 
       - name: Create ZIP archive
         run: |
