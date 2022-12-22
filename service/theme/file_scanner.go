@@ -39,7 +39,7 @@ func (f *fileScannerImpl) ListThemeFiles(ctx context.Context, themePath string) 
 			Name:     info.Name(),
 			IsFile:   !info.IsDir(),
 			Path:     path,
-			Editable: f.isFileWritable(info.Sys().(*syscall.Stat_t), info.Mode(), euid, egid) && f.isFileReadable(info.Sys().(*syscall.Stat_t), info.Mode(), euid, egid),
+			Editable: f.isFileEditable(info.Name()) && f.isFileWritable(info.Sys().(*syscall.Stat_t), info.Mode(), euid, egid) && f.isFileReadable(info.Sys().(*syscall.Stat_t), info.Mode(), euid, egid),
 		}
 		parentDir, ok := fileMap[filepath.Dir(path)]
 		if !ok {
@@ -54,6 +54,20 @@ func (f *fileScannerImpl) ListThemeFiles(ctx context.Context, themePath string) 
 		return nil, xerr.NoType.Wrap(err)
 	}
 	return root.Node, nil
+}
+
+var catEditSuffix = map[string]struct{}{
+	".tmpl":       {},
+	".css":        {},
+	".js":         {},
+	".yaml":       {},
+	".yml":        {},
+	".properties": {},
+}
+
+func (f *fileScannerImpl) isFileEditable(filePath string) bool {
+	_, ok := catEditSuffix[filepath.Ext(filePath)]
+	return ok
 }
 
 func (f *fileScannerImpl) isFileWritable(t *syscall.Stat_t, fileMode fs.FileMode, euid, egid int) bool {
