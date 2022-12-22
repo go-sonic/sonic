@@ -37,7 +37,7 @@ func (f *fileScannerImpl) ListThemeFiles(ctx context.Context, themePath string) 
 			Name:     info.Name(),
 			IsFile:   !info.IsDir(),
 			Path:     path,
-			Editable: true,
+			Editable: f.isFileEditable(info.Name()),
 		}
 		parentDir, ok := fileMap[filepath.Dir(path)]
 		if !ok {
@@ -52,4 +52,18 @@ func (f *fileScannerImpl) ListThemeFiles(ctx context.Context, themePath string) 
 		return nil, xerr.NoType.Wrap(err)
 	}
 	return root.Node, nil
+}
+
+var catEditSuffix = map[string]struct{}{
+	".tmpl":       {},
+	".css":        {},
+	".js":         {},
+	".yaml":       {},
+	".yml":        {},
+	".properties": {},
+}
+
+func (f *fileScannerImpl) isFileEditable(filePath string) bool {
+	_, ok := catEditSuffix[filepath.Ext(filePath)]
+	return ok
 }
