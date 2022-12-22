@@ -209,22 +209,28 @@ func (i installServiceImpl) createDefaultPost(ctx context.Context, category *ent
 
 func (i installServiceImpl) createDefaultSheet(ctx context.Context) (*entity.Post, error) {
 	postDAL := dal.GetQueryByCtx(ctx).Post
-	count, err := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished)).Count()
+	count, err := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished), postDAL.Type.Eq(consts.PostTypeSheet)).Count()
 	if err != nil {
 		return nil, err
 	}
 	if count > 0 {
 		return nil, nil
 	}
-	content := "## 关于页面 \n\n" +
+	originalContent := "## 关于页面 \n\n" +
 		" 这是一个自定义页面，你可以在后台的 `页面` -> `所有页面` -> `自定义页面` 找到它，" +
 		"你可以用于新建关于页面、留言板页面等等。发挥你自己的想象力！\n\n" +
 		"> 这是一篇自动生成的页面，你可以在后台删除它。"
+	formatContent := `<h2 id="%E5%85%B3%E4%BA%8E%E9%A1%B5%E9%9D%A2" tabindex="-1">关于页面</h2>
+<p>这是一个自定义页面，你可以在后台的 <code>页面</code> -&gt; <code>所有页面</code> -&gt; <code>自定义页面</code> 找到它，你可以用于新建关于页面、留言板页面等等。发挥你自己的想象力！</p>
+<blockquote>
+<p>这是一篇自动生成的页面，你可以在后台删除它。</p>
+</blockquote>`
 	sheetParam := param.Sheet{
 		Title:           "关于页面",
 		Status:          consts.PostStatusPublished,
 		Slug:            "about",
-		OriginalContent: content,
+		OriginalContent: originalContent,
+		Content:         formatContent,
 	}
 	return i.SheetService.Create(ctx, &sheetParam)
 }
