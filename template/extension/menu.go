@@ -36,7 +36,7 @@ func (m *menuExtension) addListMenuFunc() {
 		ctx := context.Background()
 		listTeam := m.OptionService.GetOrByDefault(ctx, property.DefaultMenuTeam)
 		menus, err := m.MenuService.ListByTeam(ctx, listTeam.(string), &param.Sort{
-			Fields: []string{"priority,desc"},
+			Fields: []string{"priority,asc"},
 		})
 		if err != nil {
 			return nil, err
@@ -51,7 +51,7 @@ func (m *menuExtension) addListMenuAsTree() {
 	listMenuAsTree := func() ([]*vo.Menu, error) {
 		ctx := context.Background()
 		listTeam := m.OptionService.GetOrByDefault(ctx, property.DefaultMenuTeam)
-		menus, err := m.MenuService.ListAsTreeByTeam(ctx, listTeam.(string), &param.Sort{Fields: []string{"priority,desc"}})
+		menus, err := m.MenuService.ListAsTreeByTeam(ctx, listTeam.(string), &param.Sort{Fields: []string{"priority,asc"}})
 		return menus, err
 	}
 	m.Template.AddFunc("listMenuAsTree", listMenuAsTree)
@@ -70,7 +70,7 @@ func (m *menuExtension) addListMenuByTeam() {
 	listMenuByTeam := func(team string) ([]*dto.Menu, error) {
 		ctx := context.Background()
 		menus, err := m.MenuService.ListByTeam(ctx, team, &param.Sort{
-			Fields: []string{"priority,desc"},
+			Fields: []string{"priority,asc"},
 		})
 		if err != nil {
 			return nil, err
@@ -85,7 +85,7 @@ func (m *menuExtension) addListMenuAsTreeByTeam() {
 	listMenuAsTreeByTeam := func(team string) ([]*vo.Menu, error) {
 		ctx := context.Background()
 		menus, err := m.MenuService.ListAsTreeByTeam(ctx, team, &param.Sort{
-			Fields: []string{"priority,desc"},
+			Fields: []string{"priority,asc"},
 		})
 		return menus, err
 	}
