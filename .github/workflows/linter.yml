@@ -2,9 +2,6 @@ name: Linter
 
 on:
   push:
-    branches:
-      - master
-      - v*
     paths:
       - "**/*.go"
       - ".github/workflows/linter.yml"
