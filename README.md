@@ -55,7 +55,7 @@ cd sonic
 ```
 
 **Initialization**
-**The default port is 8080**
+
 
 Open http://ip:port/admin#install
 
@@ -63,6 +63,7 @@ Next, you can access sonic through the browser.
 
 The URL of the admin console is http://ip:port/admin
 
+The default port is 8080.
 ## Docker
 See: https://hub.docker.com/r/gosonic/sonic
 
