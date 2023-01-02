@@ -2,7 +2,7 @@
    <img width="170" src="https://raw.githubusercontent.com/go-sonic/resources/master/logo/logo.svg" />
 </p>
 
-<p align="center"><b>Sonic </b> [ˈsɒnɪk] ,Sonic is a Go Blogging Platform. Simple and Powerful.</p>
+<p align="center"><b>Sonic </b> [ˈsɒnɪk], Sonic is a Go Blogging Platform. Simple and Powerful.</p>
 
 <p align="center">
 <a href="https://github.com/go-sonic/sonic/releases"><img alt="GitHub release" src="https://img.shields.io/github/release/go-sonic/sonic.svg?style=flat-square&include_prereleases" /></a>
@@ -18,9 +18,9 @@ English | [中文](doc/README_ZH.md)
 
 ## 📖 Introduction
 
-Sonic means as fast as sound speed. Like its name, sonic is a high-performance blog system developed using golang
+Sonic means as fast as sound speed. Like its name, sonic is a high-performance blog system developed using golang.
 
-Thanks [Halo](https://github.com/halo-dev) project team,this project is inspired by Halo. Front end project fork from Halo
+Thanks to the [Halo](https://github.com/halo-dev) project team, who inspired this project. The front-end is a project fork from Halo.
 
 ## 🚀 Features:
 - Support multiple types of databases: SQLite、MySQL(TODO: PostgreSQL)
@@ -85,14 +85,14 @@ See: https://hub.docker.com/r/gosonic/sonic
 
 Feel free to dive in! [Open an issue](https://github.com/go-sonic/sonic/issues) or submit PRs.
 
-Standard Readme follows the [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) Code of Conduct.
+Sonic follows the [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) Code of Conduct.
 
 ### Contributors
 
 This project exists thanks to all the people who contribute. 
 <a href="https://github.com/go-sonic/sonic/graphs/contributors"><img src="https://opencollective.com/go-sonic/contributors.svg?width=890&button=false" /></a>
 
-Special thanks to Evan(evanzhao@88.com), who designed the logo
+Special thanks to Evan (evanzhao@88.com), who designed the logo.
 
 ## 📄 License
 
