@@ -801,8 +801,8 @@ gorm.io/driver/postgres v1.4.1/go.mod h1:whNfh5WhhHs96honoLjBAMwJGYEuA3m1hvgUbNX
 gorm.io/driver/sqlite v1.1.6/go.mod h1:W8LmC/6UvVbHKah0+QOC7Ja66EaZXHwUTjgXY8YNWX8=
 gorm.io/driver/sqlite v1.3.1/go.mod h1:wJx0hJspfycZ6myN38x1O/AqLtNS6c5o9TndewFbELg=
 gorm.io/driver/sqlite v1.4.1/go.mod h1:AKZZCAoFfOWHF7Nd685Iq8Uywc0i9sWJlzpoE/INzsw=
-gorm.io/driver/sqlite v1.4.3 h1:HBBcZSDnWi5BW3B3rwvVTc510KGkBkexlOg0QrmLUuU=
-gorm.io/driver/sqlite v1.4.3/go.mod h1:0Aq3iPO+v9ZKbcdiz8gLWRw5VOPcBOPUQJFLq5e2ecI=
+gorm.io/driver/sqlite v1.4.4 h1:gIufGoR0dQzjkyqDyYSCvsYR6fba1Gw5YKDqKeChxFc=
+gorm.io/driver/sqlite v1.4.4/go.mod h1:0Aq3iPO+v9ZKbcdiz8gLWRw5VOPcBOPUQJFLq5e2ecI=
 gorm.io/driver/sqlserver v1.3.1/go.mod h1:w25Vrx2BG+CJNUu/xKbFhaKlGxT/nzRkhWCCoptX8tQ=
 gorm.io/driver/sqlserver v1.4.0 h1:3fjbsNkr/YqocSBW5CP16Lq6+APjRrWMzu7NbkXr9QU=
 gorm.io/driver/sqlserver v1.4.0/go.mod h1:P8BSbBwkdzXURYx3pWUSEAABRQU0vxbd6xk5+53pg7g=
