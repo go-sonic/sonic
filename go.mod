@@ -32,7 +32,7 @@ require (
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.4.4
+	gorm.io/driver/mysql v1.4.5
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gen v0.3.18
 	gorm.io/gorm v1.24.2
@@ -46,7 +46,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
