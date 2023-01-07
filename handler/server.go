@@ -75,7 +75,7 @@ type Server struct {
 	ContentAPILinkHandler     *api.LinkHandler
 	ContentAPIPostHandler     *api.PostHandler
 	ContentAPISheetHandler    *api.SheetHandler
-	ContentAPIOptionHander    *api.OptionHandler
+	ContentAPIOptionHandler   *api.OptionHandler
 }
 
 type ServerParams struct {
@@ -129,7 +129,7 @@ type ServerParams struct {
 	ContentAPILinkHandler     *api.LinkHandler
 	ContentAPIPostHandler     *api.PostHandler
 	ContentAPISheetHandler    *api.SheetHandler
-	ContentAPIOptionHander    *api.OptionHandler
+	ContentAPIOptionHandler   *api.OptionHandler
 }
 
 func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
@@ -192,7 +192,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		ContentAPILinkHandler:     param.ContentAPILinkHandler,
 		ContentAPIPostHandler:     param.ContentAPIPostHandler,
 		ContentAPISheetHandler:    param.ContentAPISheetHandler,
-		ContentAPIOptionHander:    param.ContentAPIOptionHander,
+		ContentAPIOptionHandler:   param.ContentAPIOptionHandler,
 		ContentSearchHandler:      param.ContentSearchHandler,
 	}
 	lifecycle.Append(fx.Hook{
