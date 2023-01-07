@@ -229,11 +229,12 @@ func (m MFAType) MarshalJSON() ([]byte, error) {
 
 func (m *MFAType) UnmarshalJSON(data []byte) error {
 	str := string(data)
-	if str == `"NONE"` {
+	switch str {
+	case `"NONE"`:
 		*m = MFANone
-	} else if str == `"TFA_TOTP"` {
+	case `"TFA_TOTP"`:
 		*m = MFATFATotp
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown MFAType")
 	}
 	return nil
@@ -270,13 +271,14 @@ const (
 )
 
 func (c PostStatus) MarshalJSON() ([]byte, error) {
-	if c == PostStatusPublished {
+	switch c {
+	case PostStatusPublished:
 		return []byte(`"PUBLISHED"`), nil
-	} else if c == PostStatusDraft {
+	case PostStatusDraft:
 		return []byte(`"DRAFT"`), nil
-	} else if c == PostStatusRecycle {
+	case PostStatusRecycle:
 		return []byte(`"RECYCLE"`), nil
-	} else if c == PostStatusIntimate {
+	case PostStatusIntimate:
 		return []byte(`"INTIMATE"`), nil
 	}
 	return nil, nil
@@ -284,17 +286,18 @@ func (c PostStatus) MarshalJSON() ([]byte, error) {
 
 func (c *PostStatus) UnmarshalJSON(data []byte) error {
 	str := string(data)
-	if str == `"PUBLISHED"` {
+	switch str {
+	case `"PUBLISHED"`:
 		*c = PostStatusPublished
-	} else if str == `"DRAFT"` {
+	case `"DRAFT"`:
 		*c = PostStatusDraft
-	} else if str == `"RECYCLE"` {
+	case `"RECYCLE"`:
 		*c = PostStatusRecycle
-	} else if str == `"INTIMATE"` {
+	case `"INTIMATE"`:
 		*c = PostStatusIntimate
-	} else if str == "" {
+	case "":
 		*c = PostStatusDraft
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown PostStatus")
 	}
 	return nil
@@ -326,16 +329,18 @@ func (c PostStatus) Ptr() *PostStatus {
 }
 
 func PostStatusFromString(str string) (PostStatus, error) {
-	if str == "PUBLISHED" {
+	switch str {
+	case "PUBLISHED":
 		return PostStatusPublished, nil
-	} else if str == "DRAFT" {
+	case "DRAFT":
 		return PostStatusDraft, nil
-	} else if str == "RECYCLE" {
+	case "RECYCLE":
 		return PostStatusRecycle, nil
-	} else if str == "INTIMATE" {
+	case "INTIMATE":
 		return PostStatusIntimate, nil
+	default:
+		return PostStatusDraft, xerr.BadParam.New("").WithMsg("unknown PostStatus")
 	}
-	return PostStatusDraft, xerr.BadParam.New("").WithMsg("unknown PostStatus")
 }
 
 type CommentStatus int32
@@ -347,11 +352,12 @@ const (
 )
 
 func (c CommentStatus) MarshalJSON() ([]byte, error) {
-	if c == CommentStatusPublished {
+	switch c {
+	case CommentStatusPublished:
 		return []byte(`"PUBLISHED"`), nil
-	} else if c == CommentStatusAuditing {
+	case CommentStatusAuditing:
 		return []byte(`"AUDITING"`), nil
-	} else if c == CommentStatusRecycle {
+	case CommentStatusRecycle:
 		return []byte(`"RECYCLE"`), nil
 	}
 	return nil, nil
@@ -359,13 +365,15 @@ func (c CommentStatus) MarshalJSON() ([]byte, error) {
 
 func (c *CommentStatus) UnmarshalJSON(data []byte) error {
 	str := string(data)
-	if str == `"PUBLISHED"` {
+
+	switch str {
+	case `"PUBLISHED"`:
 		*c = CommentStatusPublished
-	} else if str == `"AUDITING"` {
+	case `"AUDITING"`:
 		*c = CommentStatusAuditing
-	} else if str == `"RECYCLE"` {
+	case `"RECYCLE"`:
 		*c = CommentStatusRecycle
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown CommentStatus")
 	}
 	return nil
@@ -389,13 +397,14 @@ func (c *CommentStatus) Scan(src interface{}) error {
 }
 
 func CommentStatusFromString(str string) (CommentStatus, error) {
-	if str == "PUBLISHED" {
+	switch str {
+	case "PUBLISHED":
 		return CommentStatusPublished, nil
-	} else if str == "AUDITING" {
+	case "AUDITING":
 		return CommentStatusAuditing, nil
-	} else if str == "RECYCLE" {
+	case "RECYCLE":
 		return CommentStatusRecycle, nil
-	} else {
+	default:
 		return CommentStatusPublished, xerr.BadParam.New("").WithMsg("unknown CommentStatus")
 	}
 }
@@ -462,13 +471,14 @@ func (e EditorType) MarshalJSON() ([]byte, error) {
 
 func (e *EditorType) UnmarshalJSON(data []byte) error {
 	str := string(data)
-	if str == `"MARKDOWN"` {
+	switch str {
+	case `"MARKDOWN"`:
 		*e = EditorTypeMarkdown
-	} else if str == `"RICHTEXT"` {
+	case `"RICHTEXT"`:
 		*e = EditorTypeRichText
-	} else if str == "" {
+	case "":
 		*e = EditorTypeMarkdown
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown editorType")
 	}
 	return nil
@@ -491,12 +501,12 @@ func (o OptionType) MarshalJSON() ([]byte, error) {
 }
 
 func (o *OptionType) UnmarshalJSON(data []byte) error {
-	str := string(data)
-	if str == `"INTERNAL"` {
+	switch string(data) {
+	case `"INTERNAL"`:
 		*o = OptionTypeInternal
-	} else if str == `"CUSTOM"` {
+	case `"CUSTOM"`:
 		*o = OptionTypeCustom
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown OptionType")
 	}
 	return nil
@@ -608,12 +618,12 @@ func (j JournalType) MarshalJSON() ([]byte, error) {
 }
 
 func (j *JournalType) UnmarshalJSON(data []byte) error {
-	str := string(data)
-	if str == `"PUBLIC"` {
+	switch string(data) {
+	case `"PUBLIC"`:
 		*j = JournalTypePublic
-	} else if str == `"INTIMATE"` {
+	case `"INTIMATE"`:
 		*j = JournalTypeIntimate
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown JournalType")
 	}
 	return nil
@@ -858,7 +868,7 @@ func (t ThemeConfigDataType) FormatToStr(value interface{}) (string, error) {
 		case float32:
 			valueStr = strconv.FormatFloat(float64(data), 'f', 5, 32)
 		case float64:
-			valueStr = strconv.FormatFloat(float64(data), 'f', 5, 64)
+			valueStr = strconv.FormatFloat(data, 'f', 5, 64)
 		default:
 			return "", xerr.WithErrMsgf(nil, "value invalid ThemeConfigDataType")
 		}
@@ -971,12 +981,12 @@ func (c CategoryType) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CategoryType) UnmarshalJSON(data []byte) error {
-	str := string(data)
-	if str == `"NORMAL"` {
+	switch string(data) {
+	case `"NORMAL"`:
 		*c = CategoryTypeNormal
-	} else if str == `"INTIMATE"` {
+	case `"INTIMATE"`:
 		*c = CategoryTypeIntimate
-	} else {
+	default:
 		return xerr.BadParam.New("").WithMsg("unknown PostStatus")
 	}
 	return nil

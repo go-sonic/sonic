@@ -13,7 +13,6 @@ import (
 func NewPhotoModel(optionService service.OptionService,
 	themeService service.ThemeService,
 	photoService service.PhotoService,
-	PhotoService service.PhotoService,
 ) *PhotoModel {
 	return &PhotoModel{
 		OptionService: optionService,

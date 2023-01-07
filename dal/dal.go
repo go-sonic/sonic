@@ -28,6 +28,8 @@ var (
 
 func NewGormDB(conf *config.Config, gormLogger logger.Interface) *gorm.DB {
 	var err error
+
+	//nolint:gocritic
 	if conf.SQLite3 != nil && conf.SQLite3.Enable {
 		DB, err = initSQLite(conf, gormLogger)
 		if err != nil {

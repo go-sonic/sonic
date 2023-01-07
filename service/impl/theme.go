@@ -42,7 +42,7 @@ func NewThemeService(optionService service.OptionService, config *config.Config,
 }
 
 func (t *themeServiceImpl) GetActivateTheme(ctx context.Context) (*dto.ThemeProperty, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (t *themeServiceImpl) GetThemeByID(ctx context.Context, themeID string) (*d
 	if themeProperty == nil {
 		return nil, xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg(themeID + " not exist")
 	}
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (t *themeServiceImpl) ListAllTheme(ctx context.Context) ([]*dto.ThemeProper
 	if err != nil {
 		return nil, err
 	}
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +351,7 @@ func (t *themeServiceImpl) SaveThemeSettings(ctx context.Context, themeID string
 }
 
 func (t *themeServiceImpl) DeleteThemeSettings(ctx context.Context, themeID string) error {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return err
 	}
@@ -365,7 +365,7 @@ func (t *themeServiceImpl) DeleteThemeSettings(ctx context.Context, themeID stri
 }
 
 func (t *themeServiceImpl) DeleteTheme(ctx context.Context, themeID string, deleteSettings bool) error {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return err
 	}
@@ -420,7 +420,7 @@ func (t *themeServiceImpl) ReloadTheme(ctx context.Context) error {
 }
 
 func (t *themeServiceImpl) TemplateExist(ctx context.Context, template string) (bool, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -462,7 +462,7 @@ func (t *themeServiceImpl) addTheme(ctx context.Context, themeProperty *dto.Them
 }
 
 func (t *themeServiceImpl) Render(ctx context.Context, name string) (string, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return "", err
 	}

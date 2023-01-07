@@ -35,7 +35,7 @@ func RegisterPostFunc(template *template.Template, postService service.PostServi
 	p.addGetPostCount()
 	p.addGetPostArchiveYear()
 	p.addGetPostArchiveMonth()
-	p.addListPostByCategoryId()
+	p.addListPostByCategoryID()
 	p.addListPostByCategorySlug()
 	p.addListPostByTagID()
 	p.addListPostByTagSlug()
@@ -94,8 +94,8 @@ func (p *postExtension) addGetPostArchiveMonth() {
 	p.Template.AddFunc("listYearArchives", getPostArchiveMonthFunc)
 }
 
-func (p *postExtension) addListPostByCategoryId() {
-	listPostByCategoryId := func(categoryID int32) ([]*vo.Post, error) {
+func (p *postExtension) addListPostByCategoryID() {
+	listPostByCategoryID := func(categoryID int32) ([]*vo.Post, error) {
 		ctx := context.Background()
 		posts, err := p.PostCategoryService.ListByCategoryID(ctx, categoryID, consts.PostStatusPublished)
 		if err != nil {
@@ -103,7 +103,7 @@ func (p *postExtension) addListPostByCategoryId() {
 		}
 		return p.PostAssembler.ConvertToListVO(ctx, posts)
 	}
-	p.Template.AddFunc("listPostByCategoryID", listPostByCategoryId)
+	p.Template.AddFunc("listPostByCategoryID", listPostByCategoryID)
 }
 
 func (p *postExtension) addListPostByCategorySlug() {

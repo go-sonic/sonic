@@ -319,7 +319,7 @@ func (*baseCommentServiceImpl) CountChildren(ctx context.Context, parentCommentI
 }
 
 func (b *baseCommentServiceImpl) GetChildren(ctx context.Context, parentCommentID int32, contentID int32, commentType consts.CommentType) ([]*entity.Comment, error) {
-	allComments, err := b.GetByContentID(ctx, int32(contentID), commentType, nil)
+	allComments, err := b.GetByContentID(ctx, contentID, commentType, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,7 @@ type Comment struct {
 	ID                int32                `json:"id"`
 	Author            string               `json:"author"`
 	Email             string               `json:"email"`
-	IpAddress         string               `json:"ipAddress"`
+	IPAddress         string               `json:"ipAddress"`
 	AuthorURL         string               `json:"authorUrl"`
 	GravatarMD5       string               `json:"gravatarMd5"`
 	Content           string               `json:"content"`

@@ -1,4 +1,4 @@
-package file_storage
+package storage
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/model/dto"
-	"github.com/go-sonic/sonic/service/file_storage/file_storage_impl"
+	storageimpl "github.com/go-sonic/sonic/service/storage/impl"
 )
 
 type FileStorage interface {
@@ -20,12 +20,12 @@ type FileStorageComposite interface {
 	GetFileStorage(storageType consts.AttachmentType) FileStorage
 }
 type fileStorageComposite struct {
-	localStorage *file_storage_impl.LocalFileStorage
-	minio        *file_storage_impl.MinIO
-	aliyunOSS    *file_storage_impl.Aliyun
+	localStorage *storageimpl.LocalFileStorage
+	minio        *storageimpl.MinIO
+	aliyunOSS    *storageimpl.Aliyun
 }
 
-func NewFileStorageComposite(localStorage *file_storage_impl.LocalFileStorage, minio *file_storage_impl.MinIO, aliyun *file_storage_impl.Aliyun) FileStorageComposite {
+func NewFileStorageComposite(localStorage *storageimpl.LocalFileStorage, minio *storageimpl.MinIO, aliyun *storageimpl.Aliyun) FileStorageComposite {
 	return &fileStorageComposite{
 		localStorage: localStorage,
 		minio:        minio,

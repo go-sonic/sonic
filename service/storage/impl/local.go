@@ -1,4 +1,4 @@
-package file_storage_impl
+package filestorageimpl
 
 import (
 	"context"
@@ -165,12 +165,12 @@ func (l *LocalFileStorage) GetAttachmentType() consts.AttachmentType {
 
 func (l *LocalFileStorage) GetFilePath(ctx context.Context, relativePath string) (string, error) {
 	isEnabled, _ := l.OptionService.IsEnabledAbsolutePath(ctx)
-	var blogBaseUrl string
+	var blogBaseURL string
 	if isEnabled {
-		blogBaseUrl, _ = l.OptionService.GetBlogBaseURL(ctx)
+		blogBaseURL, _ = l.OptionService.GetBlogBaseURL(ctx)
 	}
-	fullPath, _ := url.JoinPath(blogBaseUrl, relativePath)
-	if blogBaseUrl == "" {
+	fullPath, _ := url.JoinPath(blogBaseURL, relativePath)
+	if blogBaseURL == "" {
 		fullPath, _ = url.JoinPath("/", relativePath)
 	}
 	fullPath, _ = url.PathUnescape(fullPath)

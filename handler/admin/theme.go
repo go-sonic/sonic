@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -37,7 +39,7 @@ func (t *ThemeHandler) ListAllThemes(ctx *gin.Context) (interface{}, error) {
 }
 
 func (t *ThemeHandler) ListActivatedThemeFile(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +59,7 @@ func (t *ThemeHandler) GetThemeFileContent(ctx *gin.Context) (interface{}, error
 	if err != nil {
 		return nil, err
 	}
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -82,13 +84,14 @@ func (t *ThemeHandler) UpdateThemeFile(ctx *gin.Context) (interface{}, error) {
 	err := ctx.ShouldBindJSON(themeParam)
 	if err != nil {
 		if err != nil {
-			if e, ok := err.(validator.ValidationErrors); ok {
+			e := validator.ValidationErrors{}
+			if errors.As(err, &e) {
 				return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 			}
 			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 		}
 	}
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +107,8 @@ func (t *ThemeHandler) UpdateThemeFileByID(ctx *gin.Context) (interface{}, error
 	err = ctx.ShouldBindJSON(themeParam)
 	if err != nil {
 		if err != nil {
-			if e, ok := err.(validator.ValidationErrors); ok {
+			e := validator.ValidationErrors{}
+			if errors.As(err, &e) {
 				return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 			}
 			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -114,7 +118,7 @@ func (t *ThemeHandler) UpdateThemeFileByID(ctx *gin.Context) (interface{}, error
 }
 
 func (t *ThemeHandler) ListCustomSheetTemplate(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +126,7 @@ func (t *ThemeHandler) ListCustomSheetTemplate(ctx *gin.Context) (interface{}, e
 }
 
 func (t *ThemeHandler) ListCustomPostTemplate(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +142,7 @@ func (t *ThemeHandler) ActivateTheme(ctx *gin.Context) (interface{}, error) {
 }
 
 func (t *ThemeHandler) GetActivatedTheme(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +150,7 @@ func (t *ThemeHandler) GetActivatedTheme(ctx *gin.Context) (interface{}, error) 
 }
 
 func (t *ThemeHandler) GetActivatedThemeConfig(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +203,7 @@ func (t *ThemeHandler) GetThemeConfigGroupNames(ctx *gin.Context) (interface{}, 
 }
 
 func (t *ThemeHandler) GetActivatedThemeSettingMap(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +231,7 @@ func (t *ThemeHandler) GetThemeSettingMapByGroupAndThemeID(ctx *gin.Context) (in
 }
 
 func (t *ThemeHandler) SaveActivatedThemeSetting(ctx *gin.Context) (interface{}, error) {
-	activatedThemeID, err := t.OptionService.GetActivatedThemeId(ctx)
+	activatedThemeID, err := t.OptionService.GetActivatedThemeID(ctx)
 	if err != nil {
 		return nil, err
 	}

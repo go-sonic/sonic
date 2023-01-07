@@ -19,7 +19,7 @@ import (
 )
 
 type Template struct {
-	HtmlTemplate   *htmlTemplate.Template
+	HTMLTemplate   *htmlTemplate.Template
 	TextTemplate   *template.Template
 	sharedVariable map[string]any
 	lock           sync.RWMutex
@@ -59,8 +59,7 @@ func (t *Template) Load(paths []string) error {
 	t.paths = paths
 	filenames := make([]string, 0)
 	for _, templateDir := range paths {
-
-		err := filepath.Walk(templateDir, func(path string, info fs.FileInfo, err error) error {
+		err := filepath.Walk(templateDir, func(path string, _ fs.FileInfo, _ error) error {
 			if filepath.Ext(path) == ".tmpl" {
 				filenames = append(filenames, path)
 				if err := t.watcher.Add(path); err != nil {
@@ -84,7 +83,7 @@ func (t *Template) Load(paths []string) error {
 		return xerr.WithMsg(err, "parse template err").WithStatus(xerr.StatusInternalServerError)
 	}
 	t.TextTemplate = tt
-	t.HtmlTemplate = ht
+	t.HTMLTemplate = ht
 	return nil
 }
 
@@ -95,51 +94,35 @@ func (t *Template) SetSharedVariable(name string, value interface{}) {
 }
 
 func (t *Template) Execute(wr io.Writer, data Model) error {
-	dataMap, err := t.wrapData(data)
-	if err != nil {
-		return err
-	}
-	return t.HtmlTemplate.Execute(wr, dataMap)
+	return t.HTMLTemplate.Execute(wr, t.wrapData(data))
 }
 
 func (t *Template) ExecuteTemplate(wr io.Writer, name string, data Model) error {
-	dataMap, err := t.wrapData(data)
-	if err != nil {
-		return err
-	}
-	return t.HtmlTemplate.ExecuteTemplate(wr, name, dataMap)
+	return t.HTMLTemplate.ExecuteTemplate(wr, name, t.wrapData(data))
 }
 
 func (t *Template) ExecuteText(wr io.Writer, data Model) error {
-	dataMap, err := t.wrapData(data)
-	if err != nil {
-		return err
-	}
-	return t.TextTemplate.Execute(wr, dataMap)
+	return t.TextTemplate.Execute(wr, t.wrapData(data))
 }
 
 func (t *Template) ExecuteTextTemplate(wr io.Writer, name string, data Model) error {
-	dataMap, err := t.wrapData(data)
-	if err != nil {
-		return err
-	}
-	return t.TextTemplate.ExecuteTemplate(wr, name, dataMap)
+	return t.TextTemplate.ExecuteTemplate(wr, name, t.wrapData(data))
 }
 
-func (t *Template) wrapData(data Model) (map[string]any, error) {
+func (t *Template) wrapData(data Model) map[string]any {
 	if data == nil {
-		return nil, nil
+		return nil
 	}
 
 	t.lock.RLock()
 	defer t.lock.RUnlock()
 	data.MergeAttributes(t.sharedVariable)
 	data["now"] = time.Now()
-	return data, nil
+	return data
 }
 
 func (t *Template) AddFunc(name string, fn interface{}) {
-	if t.HtmlTemplate != nil {
+	if t.HTMLTemplate != nil {
 		panic("the template has been parsed")
 	}
 	t.funcMap[name] = fn

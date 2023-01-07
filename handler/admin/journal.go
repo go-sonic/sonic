@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -63,7 +65,8 @@ func (j *JournalHandler) CreateJournal(ctx *gin.Context) (interface{}, error) {
 	var journalParam param.Journal
 	err := ctx.ShouldBindJSON(&journalParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -82,7 +85,8 @@ func (j *JournalHandler) UpdateJournal(ctx *gin.Context) (interface{}, error) {
 	var journalParam param.Journal
 	err := ctx.ShouldBindJSON(&journalParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -100,5 +104,5 @@ func (j *JournalHandler) DeleteJournal(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return nil, j.JournalService.Delete(ctx, int32(journalID))
+	return nil, j.JournalService.Delete(ctx, journalID)
 }

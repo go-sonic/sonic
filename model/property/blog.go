@@ -18,7 +18,7 @@ var (
 		DefaultValue: "",
 		Kind:         reflect.String,
 	}
-	BlogUrl = Property{
+	BlogURL = Property{
 		KeyValue:     "blog_url",
 		DefaultValue: "",
 		Kind:         reflect.String,

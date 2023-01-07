@@ -32,7 +32,7 @@ func CompositeURL(urls ...string) string {
 
 var htmlRegexp = regexp.MustCompile(`(<[^<]*?>)|(<[\s]*?/[^<]*?>)|(<[^<]*?/[\s]*?>)`)
 
-func CleanHtmlTag(htmlContent string) string {
+func CleanHTMLTag(htmlContent string) string {
 	if htmlContent == "" {
 		return ""
 	}
@@ -41,7 +41,7 @@ func CleanHtmlTag(htmlContent string) string {
 
 var blankRegexp = regexp.MustCompile(`\s`)
 
-func HtmlFormatWordCount(html string) int64 {
-	text := CleanHtmlTag(html)
+func HTMLFormatWordCount(html string) int64 {
+	text := CleanHTMLTag(html)
 	return int64(utf8.RuneCountInString(text) - len(blankRegexp.FindSubmatchIndex(StringToBytes(text))))
 }

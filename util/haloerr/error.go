@@ -73,16 +73,17 @@ func (ce *customError) Format(s fmt.State, verb rune) {
 	case 'v':
 		if s.Flag('+') {
 			fmt.Fprintf(s, "%+v\n", ce.Cause())
-			io.WriteString(s, ce.msg)
+			_, _ = io.WriteString(s, ce.msg)
 			return
 		}
 		fallthrough
 	case 's', 'q':
-		io.WriteString(s, ce.Error())
+		_, _ = io.WriteString(s, ce.Error())
 	}
 }
 
 func WithStatus(err error, status int) *customError {
+	//nolint:errorlint
 	ee, ok := err.(*customError)
 	if ok {
 		return &customError{errorType: ee.errorType, cause: ee, httpStatus: status}
@@ -91,6 +92,7 @@ func WithStatus(err error, status int) *customError {
 }
 
 func WithMsg(err error, msg string) *customError {
+	//nolint:errorlint
 	ee, ok := err.(*customError)
 	if ok {
 		return &customError{errorType: ee.errorType, cause: ee, httpStatus: -1, msg: msg}
@@ -99,6 +101,7 @@ func WithMsg(err error, msg string) *customError {
 }
 
 func WithErrMsgf(err error, errMsg string, args ...interface{}) *customError {
+	//nolint:errorlint
 	ee, ok := err.(*customError)
 	if ok {
 		return &customError{errorType: ee.errorType, cause: err, httpStatus: -1, errMsg: fmt.Sprintf(errMsg, args...)}
@@ -120,14 +123,16 @@ func (ce *customError) WithMsg(msg string) *customError {
 
 // GetType returns the error type
 func GetType(err error) ErrorType {
+	//nolint:errorlint
 	if ee, ok := err.(*customError); ok {
 		return ee.errorType
 	}
 	return NoType
 }
 
-func GetHttpStatus(err error) int {
+func GetHTTPStatus(err error) int {
 	for err != nil {
+		//nolint:errorlint
 		if e, ok := err.(*customError); ok {
 			if e.httpStatus != -1 {
 				return e.httpStatus
@@ -143,6 +148,7 @@ func GetHttpStatus(err error) int {
 
 func GetMessage(err error) string {
 	for err != nil {
+		//nolint:errorlint
 		if e, ok := err.(*customError); ok {
 			if e.msg != "" {
 				return e.msg

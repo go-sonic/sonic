@@ -6,41 +6,39 @@ run:
 
 issues:
   new: true
-  exclude-rules:
-    - linters:
-        - staticcheck
-      text: "SA1019:"
-    - linters:
-        - stylecheck
-      text: "ST1016:"
 
 linters:
   enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - asasalint 
     - asciicheck
     - bodyclose
+    - decorder
     - depguard
+    - dogsled
+    - errname
+    - errorlint
     - gocritic
     - gofmt
     - gofumpt
     - goimports
-    - goprintffuncname
-    - gosimple
-    - govet
-    - ineffassign
     - misspell
     - nakedret
     - revive
-    - rowserrcheck
-    - staticcheck
+    - prealloc
     - stylecheck
-    - typecheck
     - unconvert
     - unparam
     - whitespace
-  disable:
-    - deadcode
-    - errcheck
-    - unused
+    - usestdlibvars
+    - wastedassign
+
 
 linters-settings:
   goimports:

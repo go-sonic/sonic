@@ -92,6 +92,6 @@ func CtxFatal(ctx context.Context, msg string, fields ...zap.Field) {
 }
 
 func Sync() {
-	exportUseLogger.Sync()
-	exportUseSugarLogger.Sync()
+	_ = exportUseLogger.Sync()
+	_ = exportUseSugarLogger.Sync()
 }

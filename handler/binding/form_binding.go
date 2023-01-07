@@ -1,6 +1,7 @@
 package binding
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin/binding"
@@ -10,8 +11,10 @@ const defaultMemory = 32 << 20
 
 // CustomFormBinding  If the type implements the UnmarshalJSON interface, use JSON to bind
 // For the purpose of support enum string to turn the enum type binding
-var CustomFormBinding = customFormBinding{}
-var CustomFormPostBinding = customFormPostBinding{}
+var (
+	CustomFormBinding     = customFormBinding{}
+	CustomFormPostBinding = customFormPostBinding{}
+)
 
 type (
 	customFormBinding     struct{}
@@ -27,7 +30,7 @@ func (customFormBinding) Bind(req *http.Request, obj interface{}) error {
 		return err
 	}
 	if err := req.ParseMultipartForm(defaultMemory); err != nil {
-		if err != http.ErrNotMultipart {
+		if !errors.Is(err, http.ErrNotMultipart) {
 			return err
 		}
 	}
