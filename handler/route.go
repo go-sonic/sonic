@@ -342,7 +342,7 @@ func (s *Server) RegisterRouters() {
 			contentAPIRouter.GET("/links", s.wrapHandler(s.ContentAPILinkHandler.ListLinks))
 			contentAPIRouter.GET("/links/team_view", s.wrapHandler(s.ContentAPILinkHandler.LinkTeamVO))
 
-			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHander.Comment))
+			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHandler.Comment))
 		}
 	}
 }
