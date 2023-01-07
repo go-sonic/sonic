@@ -27,7 +27,7 @@ import (
 type Server struct {
 	logger                    *zap.Logger
 	Config                    *config.Config
-	HttpServer                *http.Server
+	HTTPServer                *http.Server
 	Router                    *gin.Engine
 	Template                  *template.Template
 	AuthMiddleware            *middleware.AuthMiddleware
@@ -145,7 +145,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 	s := &Server{
 		logger:                    param.Logger,
 		Config:                    param.Config,
-		HttpServer:                httpServer,
+		HTTPServer:                httpServer,
 		Router:                    router,
 		Template:                  param.Template,
 		AuthMiddleware:            param.AuthMiddleware,
@@ -207,7 +207,7 @@ func (s *Server) Run(ctx context.Context) error {
 		gin.SetMode(gin.DebugMode)
 	}
 	go func() {
-		if err := s.HttpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.HTTPServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			// print err info when httpServer start failed
 			s.logger.Error("unexpected error from ListenAndServe", zap.Error(err))
 			fmt.Printf("http server start error:%s\n", err.Error())
@@ -224,7 +224,7 @@ func (s *Server) wrapHandler(handler wrapperHandler) gin.HandlerFunc {
 		data, err := handler(ctx)
 		if err != nil {
 			s.logger.Error("handler error", zap.Error(err))
-			status := xerr.GetHttpStatus(err)
+			status := xerr.GetHTTPStatus(err)
 			ctx.JSON(status, &dto.BaseDTO{Status: status, Message: xerr.GetMessage(err)})
 			return
 		}
@@ -286,12 +286,12 @@ func (s *Server) wrapTextHandler(handler wrapperHTMLHandler) gin.HandlerFunc {
 }
 
 func (s *Server) handleError(ctx *gin.Context, err error) {
-	status := xerr.GetHttpStatus(err)
+	status := xerr.GetHTTPStatus(err)
 	message := xerr.GetMessage(err)
 	model := template.Model{}
 
 	templateName, _ := s.ThemeService.Render(ctx, strconv.Itoa(status))
-	t := s.Template.HtmlTemplate.Lookup(templateName)
+	t := s.Template.HTMLTemplate.Lookup(templateName)
 	if t == nil {
 		templateName = "common/error/error"
 	}

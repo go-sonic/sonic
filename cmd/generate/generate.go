@@ -27,7 +27,7 @@ func main() {
 		OutPath:      "./dal",
 		ModelPkgPath: "./model/entity",
 		/* Mode: gen.WithoutContext,*/
-		//if you want the nullable field generation property to be pointer type, set FieldNullable true
+		// if you want the nullable field generation property to be pointer type, set FieldNullable true
 		FieldNullable:     true,
 		FieldWithIndexTag: true,
 		FieldWithTypeTag:  true,

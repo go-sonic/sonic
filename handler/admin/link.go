@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -56,7 +58,8 @@ func (l *LinkHandler) CreateLink(ctx *gin.Context) (interface{}, error) {
 	linkParam := &param.Link{}
 	err := ctx.ShouldBindJSON(linkParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -77,7 +80,8 @@ func (l *LinkHandler) UpdateLink(ctx *gin.Context) (interface{}, error) {
 	err = ctx.ShouldBindJSON(linkParam)
 
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")

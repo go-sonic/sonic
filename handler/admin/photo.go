@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -74,7 +76,8 @@ func (p *PhotoHandler) CreatePhoto(ctx *gin.Context) (interface{}, error) {
 	photoParam := &param.Photo{}
 	err := ctx.ShouldBindJSON(photoParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -95,7 +98,8 @@ func (p *PhotoHandler) UpdatePhoto(ctx *gin.Context) (interface{}, error) {
 	err = ctx.ShouldBindJSON(photoParam)
 
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")

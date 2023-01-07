@@ -15,7 +15,6 @@ import (
 func NewTagModel(optionService service.OptionService,
 	themeService service.ThemeService,
 	tagService service.TagService,
-	TagService service.TagService,
 	postTagService service.PostTagService,
 	postAssembler assembler.PostAssembler,
 ) *TagModel {

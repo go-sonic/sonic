@@ -1,4 +1,4 @@
-package file_storage_impl
+package filestorageimpl
 
 import "github.com/go-sonic/sonic/injection"
 

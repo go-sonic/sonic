@@ -110,14 +110,14 @@ func (i installServiceImpl) createDefaultSetting(ctx context.Context, installPar
 	optionMap[property.IsInstalled.KeyValue] = "true"
 	optionMap[property.GlobalAbsolutePathEnabled.KeyValue] = "false"
 	optionMap[property.BlogTitle.KeyValue] = installParam.Title
-	if installParam.Url == "" {
+	if installParam.URL == "" {
 		blogURL, err := i.OptionService.GetBlogBaseURL(ctx)
 		if err != nil {
 			return err
 		}
-		optionMap[property.BlogUrl.KeyValue] = blogURL
+		optionMap[property.BlogURL.KeyValue] = blogURL
 	} else {
-		optionMap[property.BlogUrl.KeyValue] = installParam.Url
+		optionMap[property.BlogURL.KeyValue] = installParam.URL
 	}
 	if installParam.Locale == "" {
 		optionMap[property.BlogLocale.KeyValue] = property.BlogLocale.DefaultValue.(string)

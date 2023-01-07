@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -154,14 +155,15 @@ func (p *PostHandler) LikePost(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return nil, p.PostService.IncreaseLike(ctx, int32(postID))
+	return nil, p.PostService.IncreaseLike(ctx, postID)
 }
 
 func (p *PostHandler) CreatePost(ctx *gin.Context) (interface{}, error) {
 	var postParam param.Post
 	err := ctx.ShouldBindJSON(&postParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -178,7 +180,8 @@ func (p *PostHandler) UpdatePost(ctx *gin.Context) (interface{}, error) {
 	var postParam param.Post
 	err := ctx.ShouldBindJSON(&postParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -214,7 +217,7 @@ func (p *PostHandler) UpdatePostStatus(ctx *gin.Context) (interface{}, error) {
 	if int32(status) < int32(consts.PostStatusPublished) || int32(status) > int32(consts.PostStatusIntimate) {
 		return nil, xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("status error")
 	}
-	post, err := p.PostService.UpdateStatus(ctx, int32(postID), consts.PostStatus(status))
+	post, err := p.PostService.UpdateStatus(ctx, int32(postID), status)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +242,7 @@ func (p *PostHandler) UpdatePostStatusBatch(ctx *gin.Context) (interface{}, erro
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
 	}
 
-	return p.PostService.UpdateStatusBatch(ctx, consts.PostStatus(status), ids)
+	return p.PostService.UpdateStatusBatch(ctx, status, ids)
 }
 
 func (p *PostHandler) UpdatePostDraft(ctx *gin.Context) (interface{}, error) {
@@ -252,7 +255,7 @@ func (p *PostHandler) UpdatePostDraft(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("content param error")
 	}
-	post, err := p.PostService.UpdateDraftContent(ctx, int32(postID), postContentParam.Content)
+	post, err := p.PostService.UpdateDraftContent(ctx, postID, postContentParam.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -281,5 +284,5 @@ func (p *PostHandler) PreviewPost(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return p.PostService.Preview(ctx, int32(postID))
+	return p.PostService.Preview(ctx, postID)
 }

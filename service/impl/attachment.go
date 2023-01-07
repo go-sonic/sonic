@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"errors"
 	"mime/multipart"
 	"os"
 	"strings"
@@ -16,13 +17,13 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/service"
-	"github.com/go-sonic/sonic/service/file_storage"
+	"github.com/go-sonic/sonic/service/storage"
 	"github.com/go-sonic/sonic/util/xerr"
 )
 
 type attachmentServiceImpl struct {
 	OptionService        service.OptionService
-	FileStorageComposite file_storage.FileStorageComposite
+	FileStorageComposite storage.FileStorageComposite
 }
 
 func (a *attachmentServiceImpl) ConvertToDTOs(ctx context.Context, attachments []*entity.Attachment) ([]*dto.AttachmentDTO, error) {
@@ -39,14 +40,14 @@ func (a *attachmentServiceImpl) ConvertToDTOs(ctx context.Context, attachments [
 			Width:          attachment.Width,
 			Height:         attachment.Height,
 			Size:           attachment.Size,
-			AttachmentType: consts.AttachmentType(attachment.Type),
+			AttachmentType: attachment.Type,
 		}
 		dtos = append(dtos, dto)
-		path, err := a.FileStorageComposite.GetFileStorage(consts.AttachmentType(attachment.Type)).GetFilePath(ctx, attachment.Path)
+		path, err := a.FileStorageComposite.GetFileStorage(attachment.Type).GetFilePath(ctx, attachment.Path)
 		if err != nil {
 			log.CtxError(ctx, "GetFilePath err", zap.Error(err))
 		}
-		thumbPath, err := a.FileStorageComposite.GetFileStorage(consts.AttachmentType(attachment.Type)).GetFilePath(ctx, attachment.ThumbPath)
+		thumbPath, err := a.FileStorageComposite.GetFileStorage(attachment.Type).GetFilePath(ctx, attachment.ThumbPath)
 		if err != nil {
 			log.CtxError(ctx, "GetFilePath err", zap.Error(err))
 		}
@@ -56,7 +57,7 @@ func (a *attachmentServiceImpl) ConvertToDTOs(ctx context.Context, attachments [
 	return dtos, nil
 }
 
-func NewAttachmentService(optionService service.OptionService, fileStorageComposite file_storage.FileStorageComposite) service.AttachmentService {
+func NewAttachmentService(optionService service.OptionService, fileStorageComposite storage.FileStorageComposite) service.AttachmentService {
 	return &attachmentServiceImpl{
 		FileStorageComposite: fileStorageComposite,
 		OptionService:        optionService,
@@ -75,13 +76,13 @@ func (a *attachmentServiceImpl) ConvertToDTO(ctx context.Context, attachment *en
 		Width:          attachment.Width,
 		Height:         attachment.Height,
 		Size:           attachment.Size,
-		AttachmentType: consts.AttachmentType(attachment.Type),
+		AttachmentType: attachment.Type,
 	}
-	path, err := a.FileStorageComposite.GetFileStorage(consts.AttachmentType(attachment.Type)).GetFilePath(ctx, attachment.Path)
+	path, err := a.FileStorageComposite.GetFileStorage(attachment.Type).GetFilePath(ctx, attachment.Path)
 	if err != nil {
 		return nil, err
 	}
-	thumbPath, err := a.FileStorageComposite.GetFileStorage(consts.AttachmentType(attachment.Type)).GetFilePath(ctx, attachment.ThumbPath)
+	thumbPath, err := a.FileStorageComposite.GetFileStorage(attachment.Type).GetFilePath(ctx, attachment.ThumbPath)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +147,7 @@ func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipar
 			WithStatus(xerr.StatusBadRequest).
 			WithMsg("附件路径为 " + attachmentDTO.Path + " 已经存在")
 	}
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, WrapDBErr(err)
 	}
 	attachmentEntity := &entity.Attachment{
@@ -181,7 +182,7 @@ func (a *attachmentServiceImpl) Delete(ctx context.Context, attachmentID int32) 
 	if err != nil || result.RowsAffected != 1 {
 		return nil, xerr.WithMsg(err, "delete file failed")
 	}
-	fileStorage := a.FileStorageComposite.GetFileStorage(consts.AttachmentType(attachment.Type))
+	fileStorage := a.FileStorageComposite.GetFileStorage(attachment.Type)
 	err = fileStorage.Delete(ctx, attachment.FileKey)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "delete file failed")
@@ -189,10 +190,10 @@ func (a *attachmentServiceImpl) Delete(ctx context.Context, attachmentID int32) 
 	return attachment, nil
 }
 
-func (a *attachmentServiceImpl) DeleteBatch(ctx context.Context, IDs []int32) (attachments []*entity.Attachment, err error) {
+func (a *attachmentServiceImpl) DeleteBatch(ctx context.Context, ids []int32) (attachments []*entity.Attachment, err error) {
 	attachments = make([]*entity.Attachment, 0)
 	var globalErr error
-	for _, id := range IDs {
+	for _, id := range ids {
 		attachment, err := a.Delete(ctx, id)
 		if err != nil {
 			globalErr = err

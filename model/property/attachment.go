@@ -222,7 +222,7 @@ var TencentCosBucketName = Property{
 	Kind:         reflect.String,
 }
 
-var TencentCosSecretId = Property{
+var TencentCosSecretID = Property{
 	DefaultValue: "",
 	KeyValue:     "cos_tencent_secret_id",
 	Kind:         reflect.String,

@@ -380,7 +380,7 @@ func convertJekyllMetaData(metadata map[string]any, postName string, postDate ti
 
 func convertJekyllContent(metadata map[string]any, content string) string {
 	lines := strings.Split(content, "\n")
-	var resultLines []string
+	resultLines := make([]string, 0, len(lines))
 	for _, line := range lines {
 		resultLines = append(resultLines, strings.Trim(line, "\r\n"))
 	}

@@ -13,7 +13,6 @@ import (
 func NewJournalModel(optionService service.OptionService,
 	themeService service.ThemeService,
 	journalService service.JournalService,
-	JournalService service.JournalService,
 ) *JournalModel {
 	return &JournalModel{
 		OptionService:  optionService,

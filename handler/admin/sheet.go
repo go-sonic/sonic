@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -69,7 +71,8 @@ func (s *SheetHandler) CreateSheet(ctx *gin.Context) (interface{}, error) {
 	var sheetParam param.Sheet
 	err := ctx.ShouldBindJSON(&sheetParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
@@ -89,7 +92,8 @@ func (s *SheetHandler) UpdateSheet(ctx *gin.Context) (interface{}, error) {
 	var sheetParam param.Sheet
 	err := ctx.ShouldBindJSON(&sheetParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -111,14 +115,18 @@ func (s *SheetHandler) UpdateSheetStatus(ctx *gin.Context) (interface{}, error) 
 	if err != nil {
 		return nil, err
 	}
-	status, err := util.ParamInt32(ctx, "status")
+	statusStr, err := util.ParamString(ctx, "status")
 	if err != nil {
 		return nil, err
 	}
-	if status < int32(consts.PostStatusPublished) || status > int32(consts.PostStatusIntimate) {
+	status, err := consts.PostStatusFromString(statusStr)
+	if err != nil {
+		return nil, err
+	}
+	if status < consts.PostStatusPublished || status > consts.PostStatusIntimate {
 		return nil, xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("status error")
 	}
-	return s.SheetService.UpdateStatus(ctx, sheetID, consts.PostStatus(status))
+	return s.SheetService.UpdateStatus(ctx, sheetID, status)
 }
 
 func (s *SheetHandler) UpdateSheetDraft(ctx *gin.Context) (interface{}, error) {
@@ -131,7 +139,7 @@ func (s *SheetHandler) UpdateSheetDraft(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("content param error")
 	}
-	post, err := s.SheetService.UpdateDraftContent(ctx, int32(sheetID), postContentParam.Content)
+	post, err := s.SheetService.UpdateDraftContent(ctx, sheetID, postContentParam.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +151,7 @@ func (s *SheetHandler) DeleteSheet(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return nil, s.SheetService.Delete(ctx, int32(sheetID))
+	return nil, s.SheetService.Delete(ctx, sheetID)
 }
 
 func (s *SheetHandler) PreviewSheet(ctx *gin.Context) (interface{}, error) {
@@ -151,5 +159,5 @@ func (s *SheetHandler) PreviewSheet(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.PostService.Preview(ctx, int32(sheetID))
+	return s.PostService.Preview(ctx, sheetID)
 }

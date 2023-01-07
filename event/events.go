@@ -26,7 +26,7 @@ type LogEvent struct {
 	LogKey    string
 	LogType   consts.LogType
 	Content   string
-	IpAddress string
+	IPAddress string
 }
 
 func (*LogEvent) EventType() string {

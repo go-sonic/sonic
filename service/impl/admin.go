@@ -85,7 +85,7 @@ func (a *adminServiceImpl) Auth(ctx context.Context, loginParam param.LoginParam
 	if err != nil {
 		return nil, err
 	}
-	if a.TwoFactorTOTPMFA.UseMFA(consts.MFAType(user.MfaType)) {
+	if a.TwoFactorTOTPMFA.UseMFA(user.MfaType) {
 		if len(loginParam.AuthCode) != 6 {
 			return nil, xerr.WithMsg(nil, "请输入6位两步验证码").WithStatus(xerr.StatusBadRequest)
 		}
@@ -98,7 +98,7 @@ func (a *adminServiceImpl) Auth(ctx context.Context, loginParam param.LoginParam
 		LogKey:    user.Username,
 		LogType:   consts.LogTypeLoggedIn,
 		Content:   user.Nickname,
-		IpAddress: util.GetClientIP(ctx),
+		IPAddress: util.GetClientIP(ctx),
 	})
 	return a.buildAuthToken(user), nil
 }
@@ -120,7 +120,7 @@ func (a *adminServiceImpl) ClearToken(ctx context.Context) error {
 		LogKey:    user.Username,
 		LogType:   consts.LogTypeLoggedOut,
 		Content:   user.Nickname,
-		IpAddress: util.GetClientIP(ctx),
+		IPAddress: util.GetClientIP(ctx),
 	})
 	return nil
 }
@@ -226,7 +226,6 @@ func (a *adminServiceImpl) GetLogFiles(ctx context.Context, lineNum int64) (stri
 
 	for position > 0 {
 		if !globalIsPrefix {
-
 			position--
 
 			_, err = file.Seek(position, 0)
@@ -264,7 +263,6 @@ func (a *adminServiceImpl) GetLogFiles(ctx context.Context, lineNum int64) (stri
 		if linesCount == lineNum {
 			break
 		}
-
 	}
 	result := bytes.Buffer{}
 	result.Grow(linesTotalByteNum)

@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -26,7 +28,7 @@ func (c *CategoryHandler) GetCategoryByID(ctx *gin.Context) (interface{}, error)
 	if err != nil {
 		return nil, err
 	}
-	category, err := c.CategoryService.GetByID(ctx, int32(id))
+	category, err := c.CategoryService.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +74,8 @@ func (c *CategoryHandler) CreateCategory(ctx *gin.Context) (interface{}, error) 
 	var categoryParam param.Category
 	err := ctx.ShouldBindJSON(&categoryParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
@@ -88,7 +91,8 @@ func (c *CategoryHandler) UpdateCategory(ctx *gin.Context) (interface{}, error) 
 	var categoryParam param.Category
 	err := ctx.ShouldBindJSON(&categoryParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
@@ -109,7 +113,8 @@ func (c *CategoryHandler) UpdateCategoryBatch(ctx *gin.Context) (interface{}, er
 	categoryParams := make([]*param.Category, 0)
 	err := ctx.ShouldBindJSON(&categoryParams)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")

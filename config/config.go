@@ -97,7 +97,7 @@ func initDirectory(conf *Config) {
 	err := mkdirFunc(conf.Sonic.LogDir, nil)
 	err = mkdirFunc(conf.Sonic.UploadDir, err)
 	if err != nil {
-		panic(fmt.Errorf("initDirectory err=%v", err))
+		panic(fmt.Errorf("initDirectory err=%w", err))
 	}
 }
 

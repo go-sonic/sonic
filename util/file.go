@@ -18,14 +18,14 @@ func ZipFile(dst string, srcs ...string) (err error) {
 		return xerr.NoType.Wrap(err).WithMsg("create zip file err")
 	}
 	defer func() {
-		if err := fw.Close(); err != nil {
+		if err = fw.Close(); err != nil {
 			err = xerr.NoType.Wrap(err).WithMsg("close file")
 		}
 	}()
 	// 通过 fw 来创建 zip.Write
 	zw := zip.NewWriter(fw)
 	defer func() {
-		if err := zw.Close(); err != nil {
+		if err = zw.Close(); err != nil {
 			err = xerr.NoType.Wrap(err).WithMsg("close zip file")
 		}
 	}()
@@ -69,10 +69,10 @@ func ZipFile(dst string, srcs ...string) (err error) {
 
 			// 打开要压缩的文件
 			fr, err := os.Open(path)
-			defer fr.Close()
 			if err != nil {
 				return
 			}
+			defer fr.Close()
 
 			// 将打开的文件 Copy 到 w
 			_, err = io.Copy(w, fr)
@@ -91,16 +91,14 @@ func ZipFile(dst string, srcs ...string) (err error) {
 }
 
 func Unzip(src string, dest string) ([]string, error) {
-	var filenames []string
-
 	r, err := zip.OpenReader(src)
 	if err != nil {
-		return filenames, err
+		return nil, err
 	}
 	defer r.Close()
 
+	filenames := make([]string, 0, len(r.File))
 	for _, f := range r.File {
-
 		// Store filename/path for returning and using later on
 		fpath := filepath.Join(dest, f.Name)
 
@@ -113,7 +111,10 @@ func Unzip(src string, dest string) ([]string, error) {
 
 		if f.FileInfo().IsDir() {
 			// Make Folder
-			os.MkdirAll(fpath, os.ModePerm)
+			err := os.MkdirAll(fpath, os.ModePerm)
+			if err != nil {
+				return nil, xerr.WithStatus(err, xerr.StatusInternalServerError)
+			}
 			continue
 		}
 
@@ -148,10 +149,8 @@ func Unzip(src string, dest string) ([]string, error) {
 func CopyDir(srcPath, desPath string) error {
 	if srcInfo, err := os.Stat(srcPath); err != nil {
 		return err
-	} else {
-		if !srcInfo.IsDir() {
-			return xerr.WithMsg(nil, "src is not dir")
-		}
+	} else if !srcInfo.IsDir() {
+		return xerr.WithMsg(nil, "src is not dir")
 	}
 
 	if err := MakeDir(desPath); err != nil {
@@ -159,10 +158,8 @@ func CopyDir(srcPath, desPath string) error {
 	}
 	if desInfo, err := os.Stat(desPath); err != nil {
 		return err
-	} else {
-		if !desInfo.IsDir() {
-			return xerr.WithMsg(nil, "dest is not dir")
-		}
+	} else if !desInfo.IsDir() {
+		return xerr.WithMsg(nil, "dest is not dir")
 	}
 
 	if strings.TrimSpace(srcPath) == strings.TrimSpace(desPath) {
@@ -178,14 +175,14 @@ func CopyDir(srcPath, desPath string) error {
 			return nil
 		}
 
-		destNewPath := strings.Replace(path, srcPath, desPath, -1)
+		destNewPath := strings.ReplaceAll(path, srcPath, desPath)
 
 		if !f.IsDir() {
-			CopyFile(path, destNewPath)
-		} else {
-			if !FileIsExisted(destNewPath) {
-				return MakeDir(destNewPath)
+			if _, err = CopyFile(path, destNewPath); err != nil {
+				return err
 			}
+		} else if !FileIsExisted(destNewPath) {
+			return MakeDir(destNewPath)
 		}
 
 		return nil

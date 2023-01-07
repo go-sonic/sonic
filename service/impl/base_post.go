@@ -114,11 +114,11 @@ func (b basePostServiceImpl) buildPostFullPath(ctx context.Context, post *entity
 		return "", err
 	}
 	if isEnabled {
-		blogBaseUrl, err := b.OptionService.GetBlogBaseURL(ctx)
+		blogBaseURL, err := b.OptionService.GetBlogBaseURL(ctx)
 		if err != nil {
 			return "", err
 		}
-		fullPath.WriteString(blogBaseUrl)
+		fullPath.WriteString(blogBaseURL)
 	}
 	fullPath.WriteString("/")
 	switch consts.PostPermalinkType(postPermaLinkType.(string)) {
@@ -180,11 +180,11 @@ func (b basePostServiceImpl) buildSheetFullPath(ctx context.Context, sheet *enti
 		return "", err
 	}
 	if isEnabled {
-		blogBaseUrl, err := b.OptionService.GetBlogBaseURL(ctx)
+		blogBaseURL, err := b.OptionService.GetBlogBaseURL(ctx)
 		if err != nil {
 			return "", err
 		}
-		fullPath.WriteString(blogBaseUrl)
+		fullPath.WriteString(blogBaseURL)
 	}
 	fullPath.WriteString("/")
 	switch consts.SheetPermaLinkType(sheetPermaLinkType.(string)) {
@@ -212,7 +212,7 @@ func (b basePostServiceImpl) GetByPostID(ctx context.Context, postID int32) (*en
 var summaryPattern = regexp.MustCompile(`[\t\r\n]`)
 
 func (b basePostServiceImpl) GenerateSummary(ctx context.Context, htmlContent string) string {
-	text := util.CleanHtmlTag(htmlContent)
+	text := util.CleanHTMLTag(htmlContent)
 	text = summaryPattern.ReplaceAllString(text, "")
 	summaryLength := b.OptionService.GetPostSummaryLength(ctx)
 	end := summaryLength
@@ -347,7 +347,6 @@ func (b basePostServiceImpl) CreateOrUpdate(ctx context.Context, post *entity.Po
 				}
 				post.Status = status
 			}
-
 		} else {
 			// update post
 			slugCount, err := postDAL.WithContext(ctx).Where(postDAL.Slug.Eq(post.Slug), postDAL.ID.Neq(post.ID)).Count()

@@ -212,8 +212,7 @@ func setWithProperType(val string, value reflect.Value, field reflect.StructFiel
 	case reflect.Int32:
 		return setIntField(val, 32, value)
 	case reflect.Int64:
-		switch value.Interface().(type) {
-		case time.Duration:
+		if _, ok := value.Interface().(time.Duration); ok {
 			return setTimeDuration(val, value)
 		}
 		return setIntField(val, 64, value)
@@ -236,8 +235,7 @@ func setWithProperType(val string, value reflect.Value, field reflect.StructFiel
 	case reflect.String:
 		value.SetString(val)
 	case reflect.Struct:
-		switch value.Interface().(type) {
-		case time.Time:
+		if _, ok := value.Interface().(time.Time); ok {
 			return setTimeField(val, field, value)
 		}
 		return json.Unmarshal(util.StringToBytes(val), value.Addr().Interface())

@@ -48,15 +48,20 @@ func (s *propertyScannerImpl) GetThemeByThemeID(ctx context.Context, themeID str
 	return nil, nil
 }
 
-func (s *propertyScannerImpl) ListAll(ctx context.Context, themeRootPath string) ([]*dto.ThemeProperty, error) {
+func (s *propertyScannerImpl) ListAll(ctx context.Context, themeRootPath string) (themes []*dto.ThemeProperty, err error) {
 	themeRootDir, err := os.Open(themeRootPath)
-	defer themeRootDir.Close()
 	if err != nil {
 		return nil, xerr.NoType.Wrap(err)
 	}
 
+	defer func() {
+		_ = themeRootDir.Close()
+	}()
+
 	themeDirs, err := themeRootDir.ReadDir(0)
-	result := make([]*dto.ThemeProperty, 0)
+	if err != nil {
+		return
+	}
 
 	for _, themeDir := range themeDirs {
 		if themeDir.IsDir() {
@@ -64,11 +69,11 @@ func (s *propertyScannerImpl) ListAll(ctx context.Context, themeRootPath string)
 			if err != nil {
 				return nil, err
 			}
-			result = append(result, themeProperty)
+			themes = append(themes, themeProperty)
 		}
 	}
 
-	return result, nil
+	return
 }
 
 func (s *propertyScannerImpl) ReadThemeProperty(ctx context.Context, themePath string) (*dto.ThemeProperty, error) {
@@ -79,10 +84,11 @@ func (s *propertyScannerImpl) ReadThemeProperty(ctx context.Context, themePath s
 	)
 	for _, themePropertyFilename := range consts.ThemePropertyFilenames {
 		themePropertyFile, err = os.Open(filepath.Join(themePath, themePropertyFilename))
-		defer themePropertyFile.Close()
+
 		if os.IsNotExist(err) {
 			continue
 		}
+		defer themePropertyFile.Close()
 		fileStat, err = themePropertyFile.Stat()
 		if err != nil {
 			continue
@@ -107,7 +113,7 @@ func (s *propertyScannerImpl) ReadThemeProperty(ctx context.Context, themePath s
 	themeProperty.ThemePath = themePath
 	themeProperty.FolderName = filepath.Base(themePath)
 	themeProperty.Activated = false
-	hasOptions, _ := s.hasSettingFile(ctx, themePath)
+	hasOptions, _ := s.hasSettingFile(themePath)
 	themeProperty.HasOptions = hasOptions
 	screenshotFilename, err := s.GetThemeScreenshotAbsPath(ctx, themePath)
 	if err != nil {
@@ -128,10 +134,12 @@ func (s *propertyScannerImpl) UnmarshalProperty(ctx context.Context, themeProper
 
 func (s *propertyScannerImpl) GetThemeScreenshotAbsPath(ctx context.Context, themePath string) (string, error) {
 	themeDir, err := os.Open(themePath)
-	defer themeDir.Close()
 	if err != nil {
 		return "", xerr.NoType.Wrapf(err, "open theme path error themePath=%s", themePath)
 	}
+
+	defer themeDir.Close()
+
 	themeFiles, err := themeDir.ReadDir(0)
 	if err != nil {
 		return "", xerr.NoType.Wrapf(err, "read theme file error themePath=%s", themePath)
@@ -150,7 +158,7 @@ func (s *propertyScannerImpl) GetThemeScreenshotAbsPath(ctx context.Context, the
 	return "", nil
 }
 
-func (s *propertyScannerImpl) hasSettingFile(ctx context.Context, themePath string) (bool, error) {
+func (s *propertyScannerImpl) hasSettingFile(themePath string) (bool, error) {
 	var (
 		err                  error
 		themeSettingFileInfo os.FileInfo
@@ -180,10 +188,12 @@ func (s *propertyScannerImpl) ReadThemeConfig(ctx context.Context, themePath str
 	)
 	for _, themeSettingFilename := range consts.ThemeSettingFilenames {
 		themeSettingFile, err = os.Open(filepath.Join(themePath, themeSettingFilename))
-		defer themeSettingFile.Close()
 		if os.IsNotExist(err) {
 			continue
 		}
+
+		defer themeSettingFile.Close()
+
 		fileStat, err = themeSettingFile.Stat()
 		if err != nil {
 			continue

@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -41,7 +42,7 @@ func (b *BackupHandler) GetDataBackup(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return b.BackupService.GetBackup(ctx, filepath.Join(config.DataExportDir, filename), service.JsonData)
+	return b.BackupService.GetBackup(ctx, filepath.Join(config.DataExportDir, filename), service.JSONData)
 }
 
 func (b *BackupHandler) GetMarkDownBackup(ctx *gin.Context) (interface{}, error) {
@@ -56,7 +57,8 @@ func (b *BackupHandler) BackupWholeSite(ctx *gin.Context) (interface{}, error) {
 	toBackupItems := make([]string, 0)
 	err := ctx.ShouldBindJSON(&toBackupItems)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
@@ -98,7 +100,7 @@ func (b *BackupHandler) DownloadBackups(ctx *gin.Context) {
 	filePath, err := b.BackupService.GetBackupFilePath(ctx, config.BackupDir, filename)
 	if err != nil {
 		log.CtxErrorf(ctx, "err=%+v", err)
-		status := xerr.GetHttpStatus(err)
+		status := xerr.GetHTTPStatus(err)
 		ctx.JSON(status, &dto.BaseDTO{Status: status, Message: xerr.GetMessage(err)})
 	}
 	ctx.File(filePath)
@@ -142,7 +144,7 @@ func (b *BackupHandler) HandleData(ctx *gin.Context) {
 }
 
 func (b *BackupHandler) ListExportData(ctx *gin.Context) (interface{}, error) {
-	return b.BackupService.ListFiles(ctx, config.DataExportDir, service.JsonData)
+	return b.BackupService.ListFiles(ctx, config.DataExportDir, service.JSONData)
 }
 
 func (b *BackupHandler) DownloadData(ctx *gin.Context) {
@@ -156,7 +158,7 @@ func (b *BackupHandler) DownloadData(ctx *gin.Context) {
 	filePath, err := b.BackupService.GetBackupFilePath(ctx, config.DataExportDir, filename)
 	if err != nil {
 		log.CtxErrorf(ctx, "err=%+v", err)
-		status := xerr.GetHttpStatus(err)
+		status := xerr.GetHTTPStatus(err)
 		ctx.JSON(status, &dto.BaseDTO{Status: status, Message: xerr.GetMessage(err)})
 	}
 	ctx.File(filePath)
@@ -174,7 +176,8 @@ func (b *BackupHandler) ExportMarkdown(ctx *gin.Context) (interface{}, error) {
 	var exportMarkdownParam param.ExportMarkdown
 	err := ctx.ShouldBindJSON(&exportMarkdownParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
@@ -206,7 +209,7 @@ func (b *BackupHandler) DownloadMarkdown(ctx *gin.Context) {
 	filePath, err := b.BackupService.GetBackupFilePath(ctx, config.BackupMarkdownDir, filename)
 	if err != nil {
 		log.CtxErrorf(ctx, "err=%+v", err)
-		status := xerr.GetHttpStatus(err)
+		status := xerr.GetHTTPStatus(err)
 		ctx.JSON(status, &dto.BaseDTO{Status: status, Message: xerr.GetMessage(err)})
 	}
 	ctx.File(filePath)
@@ -219,7 +222,7 @@ func wrapHandler(handler wrapperHandler) gin.HandlerFunc {
 		data, err := handler(ctx)
 		if err != nil {
 			log.CtxErrorf(ctx, "err=%+v", err)
-			status := xerr.GetHttpStatus(err)
+			status := xerr.GetHTTPStatus(err)
 			ctx.JSON(status, &dto.BaseDTO{Status: status, Message: xerr.GetMessage(err)})
 			return
 		}

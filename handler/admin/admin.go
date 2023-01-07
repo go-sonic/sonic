@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -35,7 +37,8 @@ func (a *AdminHandler) AuthPreCheck(ctx *gin.Context) (interface{}, error) {
 	var loginParam param.LoginParam
 	err := ctx.ShouldBindJSON(&loginParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.BadParam.Wrapf(err, "")
@@ -52,7 +55,8 @@ func (a *AdminHandler) Auth(ctx *gin.Context) (interface{}, error) {
 	var loginParam param.LoginParam
 	err := ctx.ShouldBindJSON(&loginParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.BadParam.Wrapf(err, "").WithStatus(xerr.StatusBadRequest)
@@ -70,7 +74,8 @@ func (a *AdminHandler) SendResetCode(ctx *gin.Context) (interface{}, error) {
 	var resetPasswordParam param.ResetPasswordParam
 	err := ctx.ShouldBindJSON(&resetPasswordParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.BadParam.Wrapf(err, "").WithStatus(xerr.StatusBadRequest)

@@ -31,7 +31,9 @@ func (r *RecoveryMiddleware) RecoveryWithLogger() gin.HandlerFunc {
 				// Check for a broken connection, as it is not really a
 				// condition that warrants a panic stack trace.
 				var brokenPipe bool
+				//nolint:errorlint
 				if ne, ok := err.(*net.OpError); ok {
+					//nolint:errorlint
 					if se, ok := ne.Err.(*os.SyscallError); ok {
 						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
 							brokenPipe = true

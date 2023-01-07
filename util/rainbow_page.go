@@ -11,17 +11,20 @@ func RainbowPage(page, total, display int) []int {
 	if total < display {
 		length = total
 	}
+
+	//nolint:gosimple
 	result := make([]int, length, length)
 	if total >= display {
-		if page <= left {
+		switch {
+		case page <= left:
 			for i := 0; i < length; i++ {
 				result[i] = i + 1
 			}
-		} else if page > total-right {
+		case page > total-right:
 			for i := 0; i < length; i++ {
 				result[i] = i + total - display + 1
 			}
-		} else {
+		default:
 			for i := 0; i < length; i++ {
 				if isEven {
 					result[i] = i + page - length + 1
