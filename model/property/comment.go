@@ -23,7 +23,7 @@ var (
 		DefaultValue: false,
 		Kind:         reflect.Bool,
 	}
-	CommentApiEnabled = Property{
+	CommentAPIEnabled = Property{
 		KeyValue:     "comment_api_enabled",
 		DefaultValue: true,
 		Kind:         reflect.Bool,

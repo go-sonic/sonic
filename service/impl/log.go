@@ -3,7 +3,6 @@ package impl
 import (
 	"context"
 
-	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/dal"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/model/entity"
@@ -45,7 +44,7 @@ func (l *logServiceImpl) ConvertToDTO(log *entity.Log) *dto.Log {
 	return &dto.Log{
 		ID:         log.ID,
 		LogKey:     log.LogKey,
-		LogType:    consts.LogType(log.Type),
+		LogType:    log.Type,
 		Content:    log.Content,
 		IPAddress:  log.IPAddress,
 		CreateTime: log.CreateTime.UnixMilli(),

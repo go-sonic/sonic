@@ -18,13 +18,15 @@ func (t *Template) Watch() {
 				continue
 			}
 
-			if event.Op&fsnotify.Write == fsnotify.Write {
+			switch {
+			case event.Op&fsnotify.Write == fsnotify.Write:
 				t.logger.Info("Write file:", zap.String("file", event.Name))
-			} else if event.Op&fsnotify.Create == fsnotify.Create {
+			case event.Op&fsnotify.Create == fsnotify.Create:
 				t.logger.Info("Create file:", zap.String("file", event.Name))
-			} else {
+			default:
 				continue
 			}
+
 			err := t.Reload([]string{event.Name})
 			if err != nil {
 				t.logger.Error("reload template error", zap.Error(err))

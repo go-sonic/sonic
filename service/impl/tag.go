@@ -142,11 +142,11 @@ func (t tagServiceImpl) ConvertToDTO(ctx context.Context, tag *entity.Tag) (*dto
 		return nil, err
 	}
 	if isEnabled {
-		blogBaseUrl, err := t.OptionService.GetBlogBaseURL(ctx)
+		blogBaseURL, err := t.OptionService.GetBlogBaseURL(ctx)
 		if err != nil {
 			return nil, err
 		}
-		fullPath.WriteString(blogBaseUrl)
+		fullPath.WriteString(blogBaseURL)
 	}
 	fullPath.WriteString("/")
 
@@ -171,9 +171,9 @@ func (t tagServiceImpl) ConvertToDTOs(ctx context.Context, tags []*entity.Tag) (
 	if err != nil {
 		return nil, err
 	}
-	var blogBaseUrl string
+	var blogBaseURL string
 	if isEnabled {
-		blogBaseUrl, err = t.OptionService.GetBlogBaseURL(ctx)
+		blogBaseURL, err = t.OptionService.GetBlogBaseURL(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +191,7 @@ func (t tagServiceImpl) ConvertToDTOs(ctx context.Context, tags []*entity.Tag) (
 	for _, tag := range tags {
 		fullPath := strings.Builder{}
 		if isEnabled {
-			fullPath.WriteString(blogBaseUrl)
+			fullPath.WriteString(blogBaseURL)
 		}
 		fullPath.WriteString("/")
 		fullPath.WriteString(tagPrefix.(string))

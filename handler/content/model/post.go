@@ -126,13 +126,13 @@ func (p *PostModel) Content(ctx context.Context, post *entity.Post, token string
 	if post.MetaKeywords != "" {
 		model["meta_keywords"] = post.MetaKeywords
 	} else if len(tags) > 0 {
-		meta_keywords := strings.Builder{}
-		meta_keywords.Write([]byte(tags[0].Name))
+		metaKeywords := strings.Builder{}
+		metaKeywords.Write([]byte(tags[0].Name))
 		for _, tag := range tags[1:] {
-			meta_keywords.Write([]byte(","))
-			meta_keywords.Write([]byte(tag.Name))
+			metaKeywords.Write([]byte(","))
+			metaKeywords.Write([]byte(tag.Name))
 		}
-		model["meta_keywords"] = meta_keywords.String()
+		model["meta_keywords"] = metaKeywords.String()
 	}
 	model["is_post"] = true
 

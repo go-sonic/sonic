@@ -29,7 +29,7 @@ func (l *LogEventListener) HandleEvent(ctx context.Context, logEvent event.Event
 	logDAL := dal.GetQueryByCtx(ctx).Log
 	logEntity := &entity.Log{
 		Content:   log.Content,
-		IPAddress: log.IpAddress,
+		IPAddress: log.IPAddress,
 		LogKey:    log.LogKey,
 		Type:      log.LogType,
 	}

@@ -48,7 +48,7 @@ func Md5Hex(str string) string {
 }
 
 func MapKeyToArray[K comparable, V any](m map[K]V) []K {
-	var values []K
+	values := make([]K, 0, len(m))
 
 	for k := range m {
 		values = append(values, k)

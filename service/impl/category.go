@@ -152,11 +152,11 @@ func (c categoryServiceImpl) ConvertToCategoryDTO(ctx context.Context, e *entity
 	}
 	fullPath := strings.Builder{}
 	if isEnabled {
-		blogBaseUrl, err := c.OptionService.GetBlogBaseURL(ctx)
+		blogBaseURL, err := c.OptionService.GetBlogBaseURL(ctx)
 		if err != nil {
 			return nil, err
 		}
-		fullPath.WriteString(blogBaseUrl)
+		fullPath.WriteString(blogBaseURL)
 	}
 	fullPath.WriteString("/")
 	categoryPrefix, err := c.OptionService.GetOrByDefaultWithErr(ctx, property.CategoriesPrefix, "categories")
@@ -181,7 +181,7 @@ func (c categoryServiceImpl) ConvertToCategoryDTOs(ctx context.Context, categori
 	if err != nil {
 		return nil, err
 	}
-	blogBaseUrl, err := c.OptionService.GetBlogBaseURL(ctx)
+	blogBaseURL, err := c.OptionService.GetBlogBaseURL(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +207,7 @@ func (c categoryServiceImpl) ConvertToCategoryDTOs(ctx context.Context, categori
 
 		fullPath := strings.Builder{}
 		if isEnabled {
-			fullPath.WriteString(blogBaseUrl)
+			fullPath.WriteString(blogBaseURL)
 		}
 		fullPath.WriteString("/")
 		fullPath.WriteString(categoryPrefix.(string))
@@ -700,10 +700,8 @@ func (c *categoryUpdateExecutor) refreshPostStatus(ctx context.Context) error {
 		}
 		if status == consts.PostStatusIntimate {
 			needEncryptPostID = append(needEncryptPostID, id)
-		} else {
-			if post.Status == consts.PostStatusIntimate && post.Password == "" {
-				needDecryptPostID = append(needDecryptPostID, id)
-			}
+		} else if post.Status == consts.PostStatusIntimate && post.Password == "" {
+			needDecryptPostID = append(needDecryptPostID, id)
 		}
 	}
 	if len(needEncryptPostID) > 0 {

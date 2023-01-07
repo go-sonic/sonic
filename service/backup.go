@@ -31,6 +31,6 @@ type BackupType string
 
 const (
 	WholeSite BackupType = "/api/admin/backups/work-dir"
-	JsonData  BackupType = "/api/admin/backups/data"
+	JSONData  BackupType = "/api/admin/backups/data"
 	Markdown  BackupType = "/api/admin/backups/markdown/export"
 )

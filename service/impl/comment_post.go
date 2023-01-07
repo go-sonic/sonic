@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 
@@ -26,7 +27,7 @@ func NewPostCommentService(baseCommentService service.BaseCommentService) servic
 func (p postCommentServiceImpl) CreateBy(ctx context.Context, commentParam *param.Comment) (*entity.Comment, error) {
 	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(commentParam.PostID)).First()
-	if err == gorm.ErrRecordNotFound {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, xerr.WithMsg(nil, "post not found").WithStatus(xerr.StatusBadRequest)
 	}
 	if err != nil {

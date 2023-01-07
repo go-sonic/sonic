@@ -21,7 +21,7 @@ type OptionService interface {
 	GetLinksPrefix(ctx context.Context) (string, error)
 	GetPhotoPrefix(ctx context.Context) (string, error)
 	GetJournalPrefix(ctx context.Context) (string, error)
-	GetActivatedThemeId(ctx context.Context) (string, error)
+	GetActivatedThemeID(ctx context.Context) (string, error)
 	GetPostPermalinkType(ctx context.Context) (consts.PostPermalinkType, error)
 	GetSheetPermalinkType(ctx context.Context) (consts.SheetPermaLinkType, error)
 	GetIndexPageSize(ctx context.Context) int

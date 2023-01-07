@@ -14,7 +14,7 @@ var (
 	}
 	Theme = Property{
 		KeyValue:     "theme",
-		DefaultValue: consts.DefaultThemeId,
+		DefaultValue: consts.DefaultThemeID,
 		Kind:         reflect.String,
 	}
 	BirthDay = Property{

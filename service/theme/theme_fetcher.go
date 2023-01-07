@@ -2,6 +2,7 @@ package theme
 
 import (
 	"context"
+	"errors"
 	"io"
 	"mime/multipart"
 	"os"
@@ -54,7 +55,7 @@ func (m *multipartZipThemeFetcherImpl) FetchTheme(ctx context.Context, file inte
 	}
 
 	diskFile, err := os.OpenFile(diskFilePath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o444)
-	if err != nil && err != os.ErrExist {
+	if !errors.Is(err, os.ErrExist) {
 		return nil, xerr.WithStatus(err, xerr.StatusInternalServerError).WithMsg("create file error")
 	}
 	defer diskFile.Close()

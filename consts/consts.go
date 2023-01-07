@@ -34,7 +34,7 @@ var (
 )
 
 const (
-	DefaultThemeId         = "caicai_anatole"
+	DefaultThemeID         = "caicai_anatole"
 	ThemeScreenshotsName   = "screenshot"
 	ThemeCustomSheetPrefix = "sheet_"
 	ThemeCustomPostPrefix  = "post_"

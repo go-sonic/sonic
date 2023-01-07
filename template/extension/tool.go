@@ -22,10 +22,7 @@ func RegisterToolFunc(template *template.Template) {
 
 // addRainbow 彩虹分页算法
 func (t *toolExtension) addRainbow() {
-	rainbowPage := func(page, total, display int) []int {
-		return util.RainbowPage(page, total, display)
-	}
-	t.Template.AddFunc("rainbowPage", rainbowPage)
+	t.Template.AddFunc("rainbowPage", util.RainbowPage)
 }
 
 func (t *toolExtension) addRandom() {

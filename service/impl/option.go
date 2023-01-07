@@ -68,13 +68,13 @@ func (o *optionServiceImpl) GetPostSummaryLength(ctx context.Context) int {
 func (o *optionServiceImpl) GetPostSort(ctx context.Context) param.Sort {
 	p := property.IndexSort
 	value, err := o.getFromCacheMissFromDB(ctx, p)
-	var sort string
+	sort := p.DefaultValue.(string)
+
+	//nolint:gocritic
 	if xerr.GetType(err) == xerr.NoRecord {
 		o.Cache.SetDefault(p.KeyValue, p.DefaultValue)
-		sort = p.DefaultValue.(string)
 	} else if err != nil {
 		log.CtxErrorf(ctx, "query option err=%v", err)
-		sort = p.DefaultValue.(string)
 	} else {
 		sort = value.(string)
 	}
@@ -88,10 +88,10 @@ func (o *optionServiceImpl) GetIndexPageSize(ctx context.Context) int {
 	value, err := o.getFromCacheMissFromDB(ctx, p)
 	if xerr.GetType(err) == xerr.NoRecord {
 		o.Cache.SetDefault(p.KeyValue, p.DefaultValue)
-		return int(p.DefaultValue.(int))
+		return p.DefaultValue.(int)
 	} else if err != nil {
 		log.CtxErrorf(ctx, "query option err=%v", err)
-		return int(p.DefaultValue.(int))
+		return p.DefaultValue.(int)
 	}
 	return value.(int)
 }
@@ -121,7 +121,7 @@ func (o *optionServiceImpl) GetOrByDefaultWithErr(ctx context.Context, p propert
 }
 
 func (o *optionServiceImpl) GetBlogBaseURL(ctx context.Context) (string, error) {
-	blogURL, err := o.GetOrByDefaultWithErr(ctx, property.BlogUrl, "")
+	blogURL, err := o.GetOrByDefaultWithErr(ctx, property.BlogURL, "")
 	if err != nil {
 		return "", err
 	}
@@ -364,7 +364,7 @@ func (o *optionServiceImpl) GetJournalPrefix(ctx context.Context) (string, error
 	return value.(string), nil
 }
 
-func (o *optionServiceImpl) GetActivatedThemeId(ctx context.Context) (string, error) {
+func (o *optionServiceImpl) GetActivatedThemeID(ctx context.Context) (string, error) {
 	p := property.Theme
 	value, err := o.getFromCacheMissFromDB(ctx, p)
 	if xerr.GetType(err) == xerr.NoRecord {

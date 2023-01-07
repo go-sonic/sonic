@@ -3,6 +3,7 @@ package impl
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"net/url"
 	"strconv"
 	"strings"
@@ -116,7 +117,7 @@ func (p postServiceImpl) Create(ctx context.Context, postParam *param.Post) (*en
 		LogKey:    strconv.Itoa(int(post.ID)),
 		LogType:   consts.LogTypePostPublished,
 		Content:   post.Title,
-		IpAddress: util.GetClientIP(ctx),
+		IPAddress: util.GetClientIP(ctx),
 	})
 	return post, nil
 }
@@ -147,7 +148,7 @@ func (p postServiceImpl) Update(ctx context.Context, postID int32, postParam *pa
 		LogKey:    strconv.Itoa(int(post.ID)),
 		LogType:   consts.LogTypePostEdited,
 		Content:   post.Title,
-		IpAddress: util.GetClientIP(ctx),
+		IPAddress: util.GetClientIP(ctx),
 	})
 	return post, nil
 }
@@ -181,7 +182,7 @@ func (p postServiceImpl) ConvertParam(ctx context.Context, postParam *param.Post
 		post.UpdateTime = util.TimePtr(time.UnixMilli(*postParam.UpdateTime))
 	}
 
-	post.WordCount = util.HtmlFormatWordCount(post.FormatContent)
+	post.WordCount = util.HTMLFormatWordCount(post.FormatContent)
 	if postParam.Slug == "" {
 		post.Slug = util.Slug(postParam.Title)
 	} else {
@@ -262,25 +263,24 @@ func (p postServiceImpl) GetPrevPosts(ctx context.Context, post *entity.Post, si
 	postDAL := dal.GetQueryByCtx(ctx).Post
 	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished))
 
-	if postSort == "createTime" {
+	switch postSort {
+	case "createTime":
 		postDO = postDO.Where(postDAL.CreateTime.Gt(post.CreateTime)).Order(postDAL.CreateTime)
-	} else if postSort == "editTime" {
-		var editTime time.Time
-		if post.EditTime == nil {
-			editTime = post.CreateTime
-		} else {
+	case "editTime":
+		editTime := post.CreateTime
+		if post.EditTime != nil {
 			editTime = *post.EditTime
 		}
 		postDO = postDO.Where(postDAL.EditTime.Gt(editTime)).Order(postDAL.EditTime)
-	} else if postSort == "visits" {
+	case "visits":
 		postDO = postDO.Where(postDAL.Visits.Gt(post.Visits)).Order(postDAL.EditTime)
-	} else {
+	default:
 		return nil, nil
 	}
 
 	posts, err := postDO.Find()
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, WrapDBErr(err)
@@ -293,19 +293,18 @@ func (p postServiceImpl) GetNextPosts(ctx context.Context, post *entity.Post, si
 	postDAL := dal.GetQueryByCtx(ctx).Post
 	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished))
 
-	if postSort == "createTime" {
+	switch postSort {
+	case "createTime":
 		postDO = postDO.Where(postDAL.CreateTime.Lt(post.CreateTime)).Order(postDAL.CreateTime.Desc())
-	} else if postSort == "editTime" {
-		var editTime time.Time
-		if post.EditTime == nil {
-			editTime = post.CreateTime
-		} else {
+	case "editTime":
+		editTime := post.CreateTime
+		if post.EditTime != nil {
 			editTime = *post.EditTime
 		}
 		postDO = postDO.Where(postDAL.EditTime.Lt(editTime)).Order(postDAL.EditTime.Desc())
-	} else if postSort == "visits" {
+	case "visits":
 		postDO = postDO.Where(postDAL.Visits.Lt(post.Visits)).Order(postDAL.EditTime.Desc())
-	} else {
+	default:
 		return nil, nil
 	}
 

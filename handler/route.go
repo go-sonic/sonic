@@ -45,15 +45,15 @@ func (s *Server) RegisterRouters() {
 			staticRouter.StaticFS("/themes/", gin.Dir(s.Config.Sonic.ThemeDir, false))
 		}
 		{
-			adminApiRouter := router.Group("/api/admin")
-			adminApiRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
-			adminApiRouter.GET("/is_installed", s.wrapHandler(s.AdminHandler.IsInstalled))
-			adminApiRouter.POST("/login/precheck", s.wrapHandler(s.AdminHandler.AuthPreCheck))
-			adminApiRouter.POST("/login", s.wrapHandler(s.AdminHandler.Auth))
-			adminApiRouter.POST("/refresh/:refreshToken", s.wrapHandler(s.AdminHandler.RefreshToken))
-			adminApiRouter.POST("/installations", s.wrapHandler(s.InstallHandler.InstallBlog))
+			adminAPIRouter := router.Group("/api/admin")
+			adminAPIRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
+			adminAPIRouter.GET("/is_installed", s.wrapHandler(s.AdminHandler.IsInstalled))
+			adminAPIRouter.POST("/login/precheck", s.wrapHandler(s.AdminHandler.AuthPreCheck))
+			adminAPIRouter.POST("/login", s.wrapHandler(s.AdminHandler.Auth))
+			adminAPIRouter.POST("/refresh/:refreshToken", s.wrapHandler(s.AdminHandler.RefreshToken))
+			adminAPIRouter.POST("/installations", s.wrapHandler(s.InstallHandler.InstallBlog))
 			{
-				authRouter := adminApiRouter.Group("")
+				authRouter := adminAPIRouter.Group("")
 				authRouter.Use(s.AuthMiddleware.GetWrapHandler())
 				authRouter.POST("/logout", s.wrapHandler(s.AdminHandler.LogOut))
 				authRouter.POST("/password/code", s.wrapHandler(s.AdminHandler.SendResetCode))

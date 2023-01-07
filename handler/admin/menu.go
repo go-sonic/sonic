@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -97,7 +99,8 @@ func (m *MenuHandler) CreateMenu(ctx *gin.Context) (interface{}, error) {
 	menuParam := &param.Menu{}
 	err := ctx.ShouldBindJSON(menuParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -113,7 +116,8 @@ func (m *MenuHandler) CreateMenuBatch(ctx *gin.Context) (interface{}, error) {
 	menuParams := make([]*param.Menu, 0)
 	err := ctx.ShouldBindJSON(&menuParams)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -134,7 +138,8 @@ func (m *MenuHandler) UpdateMenu(ctx *gin.Context) (interface{}, error) {
 	err = ctx.ShouldBindJSON(menuParam)
 
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -150,7 +155,8 @@ func (m *MenuHandler) UpdateMenuBatch(ctx *gin.Context) (interface{}, error) {
 	menuParams := make([]*param.Menu, 0)
 	err := ctx.ShouldBindJSON(&menuParams)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")

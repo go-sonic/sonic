@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 	"unicode"
@@ -16,7 +17,7 @@ func WrapDBErr(err error) error {
 	if err == nil {
 		return nil
 	}
-	if err == gorm.ErrRecordNotFound {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return xerr.NoRecord.Wrap(err).WithMsg("The resource does not exist or has been deleted").WithStatus(xerr.StatusNotFound)
 	}
 	return xerr.DB.Wrap(err).WithStatus(xerr.StatusInternalServerError)
@@ -100,13 +101,16 @@ func ConvertSort(sorts *param.Sort) ([]*Order, error) {
 		if len(items) == 2 {
 			order.Property = UnderscoreName(items[0])
 			items[1] = strings.ToLower(items[1])
-			if items[1] == "asc" {
+
+			switch items[1] {
+			case "asc":
 				order.Asc = true
-			} else if items[1] == "desc" {
+			case "desc":
 				order.Asc = false
-			} else {
+			default:
 				return nil, xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("sort parameter error")
 			}
+
 			result = append(result, &order)
 		}
 	}

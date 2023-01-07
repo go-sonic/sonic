@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
@@ -37,7 +39,8 @@ func (u *UserHandler) UpdateUserProfile(ctx *gin.Context) (interface{}, error) {
 	userParam := &param.User{}
 	err := ctx.ShouldBindJSON(userParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -57,7 +60,8 @@ func (u *UserHandler) UpdatePassword(ctx *gin.Context) (interface{}, error) {
 	passwordParam := &Password{}
 	err := ctx.ShouldBindJSON(passwordParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -72,7 +76,8 @@ func (u *UserHandler) GenerateMFAQRCode(ctx *gin.Context) (interface{}, error) {
 	param := &Param{}
 	err := ctx.ShouldBindJSON(param)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
@@ -92,7 +97,7 @@ func (u *UserHandler) GenerateMFAQRCode(ctx *gin.Context) (interface{}, error) {
 			return nil, err
 		}
 		mfaFactorAuthDTO.MFAType = consts.MFATFATotp
-		mfaFactorAuthDTO.OptAuthUrl = url
+		mfaFactorAuthDTO.OptAuthURL = url
 		mfaFactorAuthDTO.MFAKey = key
 		qrCode, err := u.TwoFactorMFAService.GenerateMFAQRCode(ctx, url)
 		if err != nil {
@@ -114,7 +119,8 @@ func (u *UserHandler) UpdateMFA(ctx *gin.Context) (interface{}, error) {
 	mfaParam := &Param{}
 	err := ctx.ShouldBindJSON(mfaParam)
 	if err != nil {
-		if e, ok := err.(validator.ValidationErrors); ok {
+		e := validator.ValidationErrors{}
+		if errors.As(err, &e) {
 			return nil, xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")

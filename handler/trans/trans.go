@@ -37,7 +37,7 @@ func init() {
 }
 
 func Translate(errs validator.ValidationErrors) string {
-	var errList []string
+	errList := make([]string, 0, len(errs))
 	for _, e := range errs {
 		// can translate each error one at a time.
 		errList = append(errList, e.Translate(trans))

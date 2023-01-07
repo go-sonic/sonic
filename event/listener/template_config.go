@@ -163,7 +163,7 @@ func (t *TemplateConfigListener) loadOption(ctx context.Context) error {
 	for _, option := range options {
 		optionMap[option.Key] = option.Value
 	}
-	blogBaseURL := t.OptionService.GetOrByDefault(ctx, property.BlogUrl)
+	blogBaseURL := t.OptionService.GetOrByDefault(ctx, property.BlogURL)
 	blogTitle := t.OptionService.GetOrByDefault(ctx, property.BlogTitle)
 	blogLogo := t.OptionService.GetOrByDefault(ctx, property.BlogLogo)
 	globalAbsolutePathEnabled := t.OptionService.GetOrByDefault(ctx, property.GlobalAbsolutePathEnabled)

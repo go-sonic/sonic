@@ -28,7 +28,7 @@ var (
 		KeyValue:     "default_editor",
 		Kind:         reflect.String,
 	}
-	ApiAccessKey = Property{
+	APIAccessKey = Property{
 		DefaultValue: nil,
 		KeyValue:     "api_access_key",
 		Kind:         reflect.String,

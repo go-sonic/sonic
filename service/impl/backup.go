@@ -86,11 +86,12 @@ func (b *backupServiceImpl) ListFiles(ctx context.Context, path string, backupTy
 		return nil, xerr.NoType.Wrap(err).WithMsg("Failed to fetch backups")
 	}
 	prefix := ""
-	if backupType == service.WholeSite {
+	switch backupType {
+	case service.WholeSite:
 		prefix = consts.SonicBackupPrefix
-	} else if backupType == service.JsonData {
+	case service.JSONData:
 		prefix = consts.SonicDataExportPrefix
-	} else if backupType == service.Markdown {
+	case service.Markdown:
 		prefix = consts.SonicBackupMarkdownPrefix
 	}
 	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
@@ -198,7 +199,7 @@ func (b *backupServiceImpl) ExportData(ctx context.Context) (*dto.BackupDTO, err
 	if err != nil {
 		return nil, xerr.NoType.Wrap(err).WithMsg("write to file err")
 	}
-	return b.buildBackupDTO(ctx, string(service.JsonData), filepath.Join(backupFilePath, backupFilename))
+	return b.buildBackupDTO(ctx, string(service.JSONData), filepath.Join(backupFilePath, backupFilename))
 }
 
 func (b *backupServiceImpl) ExportMarkdown(ctx context.Context, needFrontMatter bool) (*dto.BackupDTO, error) {

@@ -54,14 +54,13 @@ func (g *GinLoggerMiddleware) LoggerWithConfig(conf GinLoggerConfig) gin.Handler
 		}
 		// Log only when path is not being skipped
 		if _, ok := skip[path]; !ok {
-
 			if raw != "" {
 				path = path + "?" + raw
 			}
-			path = strings.Replace(path, "\n", "", -1)
-			path = strings.Replace(path, "\r", "", -1)
-			clientIP := strings.Replace(ctx.ClientIP(), "\n", "", -1)
-			clientIP = strings.Replace(clientIP, "\r", "", -1)
+			path = strings.ReplaceAll(path, "\n", "")
+			path = strings.ReplaceAll(path, "\r", "")
+			clientIP := strings.ReplaceAll(ctx.ClientIP(), "\n", "")
+			clientIP = strings.ReplaceAll(clientIP, "\r", "")
 
 			logger.Info("[GIN]",
 				zap.Time("beginTime", start),
