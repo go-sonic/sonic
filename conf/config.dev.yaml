@@ -25,7 +25,12 @@ mysql:
   username: "root"
   password: "12345678"
 
-
+postgre:
+  host: 140.210.215.244
+  port: 31877
+  db: blog
+  username: "blog"
+  password: "140240Glx"
 
 sonic:
   mode: "development"

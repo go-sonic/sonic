@@ -7,6 +7,7 @@ import (
 
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -19,7 +20,10 @@ import (
 )
 
 // mysqlDsn example  user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local
-const mysqlDsn = "%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=3s&readTimeout=1s&writeTimeout=1s&interpolateParams=true"
+const (
+	mysqlDsn    = "%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=3s&readTimeout=1s&writeTimeout=1s&interpolateParams=true"
+	postgresDsn = "host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/shanghai"
+)
 
 var (
 	DB     *gorm.DB
@@ -59,6 +63,23 @@ func NewGormDB(conf *config.Config, gormLogger logger.Interface) *gorm.DB {
 	SetDefault(DB)
 	dbMigrate()
 	return DB
+}
+
+func initPostGres(conf *config.Config, gormLogger logger.Interface) (*gorm.DB, error) {
+	postgresConf := conf.PostgreSQL
+	if postgresConf == nil {
+		return nil, xerr.WithMsg(nil, "nil postgres config")
+	}
+
+	dsn := fmt.Sprintf(postgresDsn, postgresConf.Host, postgresConf.Username, postgresConf.Password, postgresConf.DB, postgresConf.Port)
+	sonicLog.Info("try connect to PostGres", zap.String("dsn", fmt.Sprintf(postgresDsn, postgresConf.Host, postgresConf.Username, "***", postgresConf.DB, postgresConf.Port)))
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger:                   gormLogger,
+		PrepareStmt:              true,
+		SkipDefaultTransaction:   true,
+		DisableNestedTransaction: true,
+	})
+	return db, err
 }
 
 func initMySQL(conf *config.Config, gormLogger logger.Interface) (*gorm.DB, error) {
