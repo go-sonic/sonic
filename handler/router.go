@@ -151,7 +151,7 @@ func (s *Server) RegisterRouters() {
 					sheetRouter.GET("", s.wrapHandler(s.SheetHandler.ListSheet))
 					sheetRouter.POST("", s.wrapHandler(s.SheetHandler.CreateSheet))
 					sheetRouter.PUT("/:sheetID", s.wrapHandler(s.SheetHandler.UpdateSheet))
-					sheetRouter.PUT("/:sheetID/status", s.wrapHandler(s.SheetHandler.UpdateSheetStatus))
+					sheetRouter.PUT("/:sheetID/:status", s.wrapHandler(s.SheetHandler.UpdateSheetStatus))
 					sheetRouter.PUT("/:sheetID/status/draft/content", s.wrapHandler(s.SheetHandler.UpdateSheetDraft))
 					sheetRouter.DELETE("/:sheetID", s.wrapHandler(s.SheetHandler.DeleteSheet))
 					sheetRouter.GET("/preview/:sheetID", s.wrapHandler(s.SheetHandler.PreviewSheet))
