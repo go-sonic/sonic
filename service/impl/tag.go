@@ -90,15 +90,19 @@ func (t tagServiceImpl) Update(ctx context.Context, id int32, tagParam *param.Ta
 }
 
 func (t tagServiceImpl) Delete(ctx context.Context, id int32) error {
-	tagDAL := dal.GetQueryByCtx(ctx).Tag
-	deleteResult, err := tagDAL.WithContext(ctx).Where(tagDAL.ID.Value(id)).Delete()
-	if err != nil {
-		return WrapDBErr(err)
-	}
-	if deleteResult.RowsAffected != 1 {
-		return xerr.NoType.New("delete tag failed id=%v", id).WithMsg("delete tag failed").WithStatus(xerr.StatusInternalServerError)
-	}
-	return nil
+	err := dal.Transaction(ctx, func(txCtx context.Context) error {
+		tagDAL := dal.GetQueryByCtx(txCtx).Tag
+		_, err := tagDAL.WithContext(txCtx).Where(tagDAL.ID.Value(id)).Delete()
+		if err != nil {
+			return WrapDBErr(err)
+		}
+
+		postTagDAL := dal.GetQueryByCtx(txCtx).PostTag
+		_, err = tagDAL.WithContext(txCtx).Where(postTagDAL.TagID.Eq(id)).Delete()
+		return err
+	})
+
+	return err
 }
 
 func (t tagServiceImpl) ListAll(ctx context.Context, sort *param.Sort) ([]*entity.Tag, error) {
