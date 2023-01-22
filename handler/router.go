@@ -220,7 +220,7 @@ func (s *Server) RegisterRouters() {
 					tagRouter.GET("/:id", s.wrapHandler(s.TagHandler.GetTagByID))
 					tagRouter.POST("", s.wrapHandler(s.TagHandler.CreateTag))
 					tagRouter.PUT("", s.wrapHandler(s.TagHandler.UpdateTag))
-					tagRouter.DELETE("", s.wrapHandler(s.TagHandler.DeleteTag))
+					tagRouter.DELETE("/:id", s.wrapHandler(s.TagHandler.DeleteTag))
 				}
 				{
 					photoRouter := authRouter.Group("/photos")
