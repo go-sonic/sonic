@@ -111,7 +111,7 @@ func (s *SheetHandler) UpdateSheet(ctx *gin.Context) (interface{}, error) {
 }
 
 func (s *SheetHandler) UpdateSheetStatus(ctx *gin.Context) (interface{}, error) {
-	sheetID, err := util.MustGetQueryInt32(ctx, "sheetID")
+	sheetID, err := util.ParamInt32(ctx, "sheetID")
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func (s *SheetHandler) UpdateSheetDraft(ctx *gin.Context) (interface{}, error) {
 }
 
 func (s *SheetHandler) DeleteSheet(ctx *gin.Context) (interface{}, error) {
-	sheetID, err := util.MustGetQueryInt32(ctx, "sheetID")
+	sheetID, err := util.ParamInt32(ctx, "sheetID")
 	if err != nil {
 		return nil, err
 	}
