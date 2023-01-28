@@ -1,6 +1,6 @@
 {{define "global.custom_content_head"}}
     {{if or .is_post .is_sheet}}
-        {{.options.blog_custom_content_head}}
+        {{noescape .options.blog_custom_content_head}}
     {{end}}
 {{end}}
 

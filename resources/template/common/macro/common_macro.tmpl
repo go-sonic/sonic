@@ -1,6 +1,6 @@
 {{- /* 统计代码 */ -}}
 {{define "global.statistics"}}
-    {{.options.blog_statistics_code}}
+    {{noescape .options.blog_statistics_code}}
 {{end}}
 
 {{- /* 页脚信息 */ -}}
@@ -12,7 +12,7 @@
 {{- /* 页眉信息 */ -}}
 
 {{define "global.custom_head"}}
-    {{.options.blog_custom_head}}
+    {{noescape .options.blog_custom_head}}
 {{end}}
 
 {{- /* favicon */ -}}
@@ -26,11 +26,11 @@
 {{define "global.head"}}
     {{if .options.seo_spider_disabled }}
         <meta name="robots" content="none">
-    {{else}}
+    {{end}}
         <meta name="generator" content="Sonic {{.version}}"/>
         {{template "global.custom_head" .}}
+        {{template "global.custom_content_head" .}}
         {{template "global.favicon" .}}
-    {{end}}
 {{end}}}
 
 
