@@ -261,7 +261,7 @@ func (p postServiceImpl) CountLike(ctx context.Context) (int64, error) {
 func (p postServiceImpl) GetPrevPosts(ctx context.Context, post *entity.Post, size int) ([]*entity.Post, error) {
 	postSort := p.OptionService.GetOrByDefault(ctx, property.IndexSort)
 	postDAL := dal.GetQueryByCtx(ctx).Post
-	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished))
+	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished), postDAL.Type.Eq(consts.PostTypePost))
 
 	switch postSort {
 	case "createTime":
@@ -291,7 +291,7 @@ func (p postServiceImpl) GetPrevPosts(ctx context.Context, post *entity.Post, si
 func (p postServiceImpl) GetNextPosts(ctx context.Context, post *entity.Post, size int) ([]*entity.Post, error) {
 	postSort := p.OptionService.GetOrByDefault(ctx, property.IndexSort)
 	postDAL := dal.GetQueryByCtx(ctx).Post
-	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished))
+	postDO := postDAL.WithContext(ctx).Where(postDAL.Status.Eq(consts.PostStatusPublished), postDAL.Type.Eq(consts.PostTypePost))
 
 	switch postSort {
 	case "createTime":
