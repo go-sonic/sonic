@@ -1,6 +1,6 @@
 FROM golang:1.19.3-alpine as builder
 
-RUN apk --no-cache add git ca-certificates gcc g++ upx
+RUN apk --no-cache add git ca-certificates gcc g++
 
 WORKDIR /go/src/github.com/go-sonic/
 
@@ -8,9 +8,7 @@ RUN git clone --recursive --depth 1 https://github.com/go-sonic/sonic.git
 
 WORKDIR /go/src/github.com/go-sonic/sonic
 
-RUN GOPROXY=https://goproxy.cn CGO_ENABLED=1 GOOS=linux go build -o sonic -ldflags="-s -w" -trimpath . && \
-    upx  sonic -o upx_sonic && \
-    mv -f upx_sonic sonic
+RUN GOPROXY=https://goproxy.cn CGO_ENABLED=1 GOOS=linux go build -o sonic -ldflags="-s -w" -trimpath .
 
 RUN mkdir -p /app/conf && \
     mkdir /app/resources && \
