@@ -307,7 +307,7 @@ func (*baseCommentServiceImpl) CountChildren(ctx context.Context, parentCommentI
 	}
 
 	commentDAL := dal.GetQueryByCtx(ctx).Comment
-	err := commentDAL.WithContext(ctx).Select(commentDAL.ParentID, commentDAL.ID.Count()).Where(commentDAL.Status.Eq(consts.CommentStatusPublished), commentDAL.ID.In(parentCommentIDs...)).Group(commentDAL.ParentID).Scan(&projections)
+	err := commentDAL.WithContext(ctx).Select(commentDAL.ParentID, commentDAL.ID.Count().As("comment_count")).Where(commentDAL.Status.Eq(consts.CommentStatusPublished), commentDAL.ParentID.In(parentCommentIDs...)).Group(commentDAL.ParentID).Scan(&projections)
 	if err != nil {
 		return nil, WrapDBErr(err)
 	}
@@ -326,7 +326,9 @@ func (b *baseCommentServiceImpl) GetChildren(ctx context.Context, parentCommentI
 	children := make([]*entity.Comment, 0)
 	parentIDMap := make(map[int32][]*entity.Comment, 0)
 	for _, comment := range allComments {
-		parentIDMap[comment.ParentID] = append(parentIDMap[comment.ParentID], comment)
+		if comment.Status == consts.CommentStatusPublished {
+			parentIDMap[comment.ParentID] = append(parentIDMap[comment.ParentID], comment)
+		}
 	}
 	queue := util.NewQueue[int32]()
 	queue.Push(parentCommentID)
