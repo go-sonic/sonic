@@ -50,9 +50,7 @@ func (*baseCommentAssembler) ClearSensitiveField(ctx context.Context, comments [
 func (b *baseCommentAssembler) ConvertToWithHasChildren(ctx context.Context, comments []*entity.Comment) ([]*vo.CommentWithHasChildren, error) {
 	parentIDs := make([]int32, 0)
 	for _, comment := range comments {
-		if comment.ParentID != 0 {
-			parentIDs = append(parentIDs, comment.ID)
-		}
+		parentIDs = append(parentIDs, comment.ID)
 	}
 	dtos, err := b.ConvertToDTOList(ctx, comments)
 	if err != nil {

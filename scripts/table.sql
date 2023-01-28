@@ -64,7 +64,7 @@ create table if not exists comment
     is_admin           tinyint(1)   default 0  not null,
     parent_id          int       default 0  not null,
     post_id            int                     not null,
-    status             int          default 1  not null,
+    status             int          default 0  not null,
     top_priority       int          default 0  not null,
     user_agent         varchar(511) default '' not null,
     index comment_parent_id (parent_id),
