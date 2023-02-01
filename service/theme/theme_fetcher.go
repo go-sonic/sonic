@@ -55,9 +55,10 @@ func (m *multipartZipThemeFetcherImpl) FetchTheme(ctx context.Context, file inte
 	}
 
 	diskFile, err := os.OpenFile(diskFilePath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o444)
-	if !errors.Is(err, os.ErrExist) {
+	if err != nil && !errors.Is(err, os.ErrExist) {
 		return nil, xerr.WithStatus(err, xerr.StatusInternalServerError).WithMsg("create file error")
 	}
+
 	defer diskFile.Close()
 
 	_, err = io.Copy(diskFile, srcThemeFile)
