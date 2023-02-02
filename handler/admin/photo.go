@@ -122,11 +122,3 @@ func (p *PhotoHandler) DeletePhoto(ctx *gin.Context) (interface{}, error) {
 func (p *PhotoHandler) ListPhotoTeams(ctx *gin.Context) (interface{}, error) {
 	return p.PhotoService.ListTeams(ctx)
 }
-
-func (p *PhotoHandler) IncreasePhotoLike(ctx *gin.Context) (interface{}, error) {
-	id, err := util.ParamInt32(ctx, "id")
-	if err != nil {
-		return nil, err
-	}
-	return nil, p.PhotoService.IncreaseLike(ctx, id)
-}
