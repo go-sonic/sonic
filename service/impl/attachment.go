@@ -147,7 +147,7 @@ func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipar
 			WithStatus(xerr.StatusBadRequest).
 			WithMsg("附件路径为 " + attachmentDTO.Path + " 已经存在")
 	}
-	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, WrapDBErr(err)
 	}
 	attachmentEntity := &entity.Attachment{
