@@ -103,7 +103,6 @@ func (s *Server) RegisterRouters() {
 					postRouter.GET("/latest", s.wrapHandler(s.PostHandler.ListLatestPosts))
 					postRouter.GET("/status/:status", s.wrapHandler(s.PostHandler.ListPostsByStatus))
 					postRouter.GET("/:postID", s.wrapHandler(s.PostHandler.GetByPostID))
-					postRouter.PUT("/:postID/likes", s.wrapHandler(s.PostHandler.LikePost))
 					postRouter.POST("", s.wrapHandler(s.PostHandler.CreatePost))
 					postRouter.PUT("/:postID", s.wrapHandler(s.PostHandler.UpdatePost))
 					postRouter.PUT("/:postID/status/:status", s.wrapHandler(s.PostHandler.UpdatePostStatus))
@@ -230,7 +229,6 @@ func (s *Server) RegisterRouters() {
 					photoRouter.DELETE("/:id", s.wrapHandler(s.PhotoHandler.DeletePhoto))
 					photoRouter.POST("", s.wrapHandler(s.PhotoHandler.CreatePhoto))
 					photoRouter.PUT("/:id", s.wrapHandler(s.PhotoHandler.UpdatePhoto))
-					photoRouter.POST("/:id/likes", s.wrapHandler(s.PhotoHandler.IncreasePhotoLike))
 					photoRouter.GET("/teams", s.wrapHandler(s.PhotoHandler.ListPhotoTeams))
 				}
 				{
@@ -327,11 +325,14 @@ func (s *Server) RegisterRouters() {
 			contentAPIRouter.GET("/journals/:journalID/comments/list_view", s.wrapHandler(s.ContentAPIJournalHandler.ListComment))
 			contentAPIRouter.POST("/journals/comments", s.wrapHandler(s.ContentAPIJournalHandler.CreateComment))
 
+			contentAPIRouter.POST("/photos/:photoID/likes", s.wrapHandler(s.ContentAPIPhotoHandler.Like))
+
 			contentAPIRouter.GET("/posts/:postID/comments/top_view", s.wrapHandler(s.ContentAPIPostHandler.ListTopComment))
 			contentAPIRouter.GET("/posts/:postID/comments/:parentID/children", s.wrapHandler(s.ContentAPIPostHandler.ListChildren))
 			contentAPIRouter.GET("/posts/:postID/comments/tree_view", s.wrapHandler(s.ContentAPIPostHandler.ListCommentTree))
 			contentAPIRouter.GET("/posts/:postID/comments/list_view", s.wrapHandler(s.ContentAPIPostHandler.ListComment))
 			contentAPIRouter.POST("/posts/comments", s.wrapHandler(s.ContentAPIPostHandler.CreateComment))
+			contentAPIRouter.POST("/posts/:postID/likes", s.wrapHandler(s.ContentAPIPostHandler.Like))
 
 			contentAPIRouter.GET("/sheets/:sheetID/comments/top_view", s.wrapHandler(s.ContentAPISheetHandler.ListTopComment))
 			contentAPIRouter.GET("/sheets/:sheetID/comments/:parentID/children", s.wrapHandler(s.ContentAPISheetHandler.ListChildren))
