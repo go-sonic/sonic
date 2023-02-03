@@ -218,7 +218,7 @@ func (s *Server) RegisterRouters() {
 					tagRouter.GET("", s.wrapHandler(s.TagHandler.ListTags))
 					tagRouter.GET("/:id", s.wrapHandler(s.TagHandler.GetTagByID))
 					tagRouter.POST("", s.wrapHandler(s.TagHandler.CreateTag))
-					tagRouter.PUT("", s.wrapHandler(s.TagHandler.UpdateTag))
+					tagRouter.PUT("/:id", s.wrapHandler(s.TagHandler.UpdateTag))
 					tagRouter.DELETE("/:id", s.wrapHandler(s.TagHandler.DeleteTag))
 				}
 				{
