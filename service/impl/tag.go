@@ -98,7 +98,7 @@ func (t tagServiceImpl) Delete(ctx context.Context, id int32) error {
 		}
 
 		postTagDAL := dal.GetQueryByCtx(txCtx).PostTag
-		_, err = tagDAL.WithContext(txCtx).Where(postTagDAL.TagID.Eq(id)).Delete()
+		_, err = postTagDAL.WithContext(txCtx).Where(postTagDAL.TagID.Eq(id)).Delete()
 		return err
 	})
 
