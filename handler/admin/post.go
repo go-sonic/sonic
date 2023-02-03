@@ -150,14 +150,6 @@ func (p *PostHandler) GetByPostID(ctx *gin.Context) (interface{}, error) {
 	return postDetailVO, nil
 }
 
-func (p *PostHandler) LikePost(ctx *gin.Context) (interface{}, error) {
-	postID, err := util.ParamInt32(ctx, "postID")
-	if err != nil {
-		return nil, err
-	}
-	return nil, p.PostService.IncreaseLike(ctx, postID)
-}
-
 func (p *PostHandler) CreatePost(ctx *gin.Context) (interface{}, error) {
 	var postParam param.Post
 	err := ctx.ShouldBindJSON(&postParam)

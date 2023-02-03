@@ -182,9 +182,5 @@ func (p *PostHandler) Like(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = p.PostService.IncreaseLike(ctx, postID)
-	if err != nil {
-		return nil, err
-	}
-	return nil, err
+	return nil, p.PostService.IncreaseLike(ctx, postID)
 }
