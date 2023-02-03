@@ -75,7 +75,7 @@ func (a *adminServiceImpl) Authenticate(ctx context.Context, loginParam param.Lo
 	}
 
 	if !a.UserService.PasswordMatch(ctx, user.Password, loginParam.Password) {
-		return nil, xerr.BadParam.New(missMatchTip).WithStatus(xerr.StatusBadRequest)
+		return nil, xerr.BadParam.New("").WithMsg(missMatchTip).WithStatus(xerr.StatusBadRequest)
 	}
 	return user, nil
 }
