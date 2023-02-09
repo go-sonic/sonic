@@ -110,7 +110,7 @@ func (s *Server) RegisterRouters() {
 					postRouter.PUT("/:postID/status/draft/content", s.wrapHandler(s.PostHandler.UpdatePostDraft))
 					postRouter.DELETE("/:postID", s.wrapHandler(s.PostHandler.DeletePost))
 					postRouter.DELETE("", s.wrapHandler(s.PostHandler.DeletePostBatch))
-					postRouter.GET("/preview/:postID", s.wrapHandler(s.PostHandler.PreviewPost))
+					postRouter.GET("/:postID/preview", s.wrapHandler(s.PostHandler.PreviewPost))
 					{
 						postCommentRouter := postRouter.Group("/comments")
 						postCommentRouter.GET("", s.wrapHandler(s.PostCommentHandler.ListPostComment))
