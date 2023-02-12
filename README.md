@@ -64,6 +64,23 @@ Next, you can access sonic through the browser.
 The URL of the admin console is http://ip:port/admin
 
 The default port is 8080.
+
+## 🔨️  Build
+**1. Pull Project**
+```bash
+git clone https://github.com/go-sonic/sonic
+```
+**2. Pull Default Theme**
+```bash
+cd sonic
+rm -r resources/template/theme/default-theme-anatole 
+git submodule update --init --recursive
+```
+**3. Run**
+```bash
+go run main.go
+```
+
 ## Docker
 See: https://hub.docker.com/r/gosonic/sonic
 
