@@ -64,6 +64,21 @@ Next, you can access sonic through the browser.
 The URL of the admin console is http://ip:port/admin
 
 The default port is 8080.
+
+## 🔨️  Build
+**1. Pull Project**
+```bash
+git clone --recursive --depth 1 https://github.com/go-sonic/sonic
+```
+**2. Run**
+```bash
+cd sonic
+go run main.go
+```
+> To compile this package on Windows, you must have the gcc compiler installed，for example the TDM-GCC Toolchain can be found ([here](https://jmeubank.github.io/tdm-gcc/)).
+
+🚀 Done! Your project is now compiled and ready to use.
+
 ## Docker
 See: https://hub.docker.com/r/gosonic/sonic
 

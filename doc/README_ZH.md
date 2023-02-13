@@ -57,6 +57,20 @@ cd sonic
 
 后台管理路径是 http://ip:port/admin
 
+## 🔨️  构建
+**1. 拉取项目**
+```bash
+git clone --recursive --depth 1 https://github.com/go-sonic/sonic
+```
+**2. 运行**
+```bash
+cd sonic
+go run main.go
+```
+> 如果你在windows上构建该项目，请确保你已经正确安装了gcc编译器，比如，你可以在[这里](https://jmeubank.github.io/tdm-gcc/)找到一个TDM版本的gcc编译器。
+
+🚀 完成! 你的项目现在已经运行起来了。
+
 ## Docker
 See: https://hub.docker.com/r/gosonic/sonic
 
