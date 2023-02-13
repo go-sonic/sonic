@@ -109,7 +109,7 @@ func (e *emailServiceImpl) getEmailProperties(ctx context.Context) (emailPropert
 
 func (e *emailServiceImpl) sendEmail(email *email.Email, properties emailProperties) error {
 	err := email.SendWithTLS(fmt.Sprintf("%s:%d", properties.Host, properties.SSLPort),
-		smtp.PlainAuth("", properties.Username, properties.Password, properties.Host), &tls.Config{ServerName: properties.Host, MinVersion: tls.VersionTLS13})
+		smtp.PlainAuth("", properties.Username, properties.Password, properties.Host), &tls.Config{ServerName: properties.Host, MinVersion: tls.VersionTLS12})
 	if err != nil {
 		return xerr.Email.Wrapf(err, "发送邮件错误 emailProperties=%v", properties).WithStatus(xerr.StatusInternalServerError).
 			WithMsg("发送邮件错误")
