@@ -21,6 +21,11 @@ FROM alpine:latest as prod
 
 COPY --from=builder /app/ /app/
 
+RUN apk update \
+    && apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone
+
 VOLUME /sonic
 EXPOSE 8080
 
