@@ -166,7 +166,7 @@ func (s sheetServiceImpl) Preview(ctx context.Context, sheetID int32) (string, e
 	if err != nil {
 		return "", err
 	}
-	previewURL.WriteString("/")
+	previewURL.WriteString("/admin_preview")
 	previewURL.WriteString(fullPath)
 	previewURL.WriteString("?token=")
 	previewURL.WriteString(token)

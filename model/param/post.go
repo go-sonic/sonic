@@ -26,7 +26,8 @@ type Post struct {
 }
 
 type PostContent struct {
-	Content string `json:"content" form:"content"`
+	Content         string `json:"content" form:"content"`
+	OriginalContent string `json:"originalContent" form:"orginalContent"`
 }
 
 type PostQuery struct {

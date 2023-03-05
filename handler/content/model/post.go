@@ -215,7 +215,7 @@ func (p *PostModel) Archives(ctx context.Context, page int, model template.Model
 	return p.ThemeService.Render(ctx, "archives")
 }
 
-func (p *PostModel) AdminPreview(ctx context.Context, post *entity.Post, token string, model template.Model) (string, error) {
+func (p *PostModel) AdminPreview(ctx context.Context, post *entity.Post, model template.Model) (string, error) {
 	if post == nil {
 		return "", xerr.WithStatus(nil, int(xerr.StatusBadRequest)).WithMsg("查询不到文章信息")
 	}
