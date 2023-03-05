@@ -2,6 +2,7 @@ package admin
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -130,7 +131,7 @@ func (s *SheetHandler) UpdateSheetStatus(ctx *gin.Context) (interface{}, error) 
 }
 
 func (s *SheetHandler) UpdateSheetDraft(ctx *gin.Context) (interface{}, error) {
-	sheetID, err := util.MustGetQueryInt32(ctx, "sheetID")
+	sheetID, err := util.ParamInt32(ctx, "sheetID")
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +140,7 @@ func (s *SheetHandler) UpdateSheetDraft(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("content param error")
 	}
-	post, err := s.SheetService.UpdateDraftContent(ctx, sheetID, postContentParam.Content)
+	post, err := s.SheetService.UpdateDraftContent(ctx, sheetID, postContentParam.Content, postContentParam.OriginalContent)
 	if err != nil {
 		return nil, err
 	}
@@ -154,10 +155,19 @@ func (s *SheetHandler) DeleteSheet(ctx *gin.Context) (interface{}, error) {
 	return nil, s.SheetService.Delete(ctx, sheetID)
 }
 
-func (s *SheetHandler) PreviewSheet(ctx *gin.Context) (interface{}, error) {
+func (s *SheetHandler) PreviewSheet(ctx *gin.Context) {
 	sheetID, err := util.ParamInt32(ctx, "sheetID")
 	if err != nil {
-		return nil, err
+		ctx.Status(http.StatusInternalServerError)
+		_ = ctx.Error(err)
+		return
 	}
-	return s.PostService.Preview(ctx, sheetID)
+
+	previewPath, err := s.SheetService.Preview(ctx, sheetID)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		_ = ctx.Error(err)
+		return
+	}
+	ctx.String(http.StatusOK, previewPath)
 }

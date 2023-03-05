@@ -153,7 +153,7 @@ func (s *Server) RegisterRouters() {
 					sheetRouter.PUT("/:sheetID/:status", s.wrapHandler(s.SheetHandler.UpdateSheetStatus))
 					sheetRouter.PUT("/:sheetID/status/draft/content", s.wrapHandler(s.SheetHandler.UpdateSheetDraft))
 					sheetRouter.DELETE("/:sheetID", s.wrapHandler(s.SheetHandler.DeleteSheet))
-					sheetRouter.GET("/preview/:sheetID", s.wrapHandler(s.SheetHandler.PreviewSheet))
+					sheetRouter.GET("/preview/:sheetID", s.SheetHandler.PreviewSheet)
 					sheetRouter.GET("/independent", s.wrapHandler(s.SheetHandler.IndependentSheets))
 					{
 						sheetCommentRouter := sheetRouter.Group("/comments")
@@ -412,5 +412,6 @@ func (s *Server) registerDynamicRouters(contentRouter *gin.RouterGroup) error {
 	} else {
 		contentRouter.GET(sheetPath+"/:slug", s.wrapHTMLHandler(s.ContentSheetHandler.SheetBySlug))
 	}
+	contentRouter.GET("admin_preview/"+sheetPath+"/:slug", s.wrapHTMLHandler(s.ContentSheetHandler.AdminSheetBySlug))
 	return nil
 }

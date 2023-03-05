@@ -126,5 +126,5 @@ func (a *ArchiveHandler) AdminArchivesBySlug(ctx *gin.Context, model template.Mo
 			return "", err
 		}
 	}
-	return a.PostModel.AdminPreview(ctx, post, "", model)
+	return a.PostModel.AdminPreview(ctx, post, model)
 }
