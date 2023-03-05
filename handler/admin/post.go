@@ -2,6 +2,7 @@ package admin
 
 import (
 	"errors"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -271,10 +272,18 @@ func (p *PostHandler) DeletePostBatch(ctx *gin.Context) (interface{}, error) {
 	return nil, p.PostService.DeleteBatch(ctx, postIDs)
 }
 
-func (p *PostHandler) PreviewPost(ctx *gin.Context) (interface{}, error) {
+func (p *PostHandler) PreviewPost(ctx *gin.Context) {
 	postID, err := util.ParamInt32(ctx, "postID")
 	if err != nil {
-		return nil, err
+		ctx.Status(http.StatusBadRequest)
+		_ = ctx.Error(err)
+		return
 	}
-	return p.PostService.Preview(ctx, postID)
+	previewPath, err := p.PostService.Preview(ctx, postID)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		_ = ctx.Error(err)
+		return
+	}
+	ctx.String(http.StatusOK, previewPath)
 }

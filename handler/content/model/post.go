@@ -214,3 +214,78 @@ func (p *PostModel) Archives(ctx context.Context, page int, model template.Model
 	model["meta_description"] = seoDescription
 	return p.ThemeService.Render(ctx, "archives")
 }
+
+func (p *PostModel) AdminPreview(ctx context.Context, post *entity.Post, token string, model template.Model) (string, error) {
+	if post == nil {
+		return "", xerr.WithStatus(nil, int(xerr.StatusBadRequest)).WithMsg("查询不到文章信息")
+	}
+
+	postVO, err := p.PostAssembler.ConvertToDetailVO(ctx, post)
+	if err != nil {
+		return "", err
+	}
+	model["post"] = postVO
+
+	prevPosts, err := p.PostService.GetPrevPosts(ctx, post, 1)
+	if err != nil {
+		return "", err
+	}
+	nextPosts, err := p.PostService.GetNextPosts(ctx, post, 1)
+	if err != nil {
+		return "", err
+	}
+	if len(prevPosts) > 0 {
+		prePost, err := p.PostAssembler.ConvertToDetailVO(ctx, prevPosts[0])
+		if err != nil {
+			return "", err
+		}
+		model["prevPost"] = prePost
+	}
+	if len(nextPosts) > 0 {
+		nextPost, err := p.PostAssembler.ConvertToDetailVO(ctx, nextPosts[0])
+		if err != nil {
+			return "", err
+		}
+		model["nextPost"] = nextPost
+	}
+
+	categories, err := p.PostCategoryService.ListCategoryByPostID(ctx, post.ID)
+	if err != nil {
+		return "", err
+	}
+	model["categories"], _ = p.CategoryService.ConvertToCategoryDTOs(ctx, categories)
+
+	tags, err := p.PostTagService.ListTagByPostID(ctx, post.ID)
+	if err != nil {
+		return "", err
+	}
+	model["tags"], _ = p.TagService.ConvertToDTOs(ctx, tags)
+
+	metas, err := p.MetaService.GetPostMeta(ctx, post.ID)
+	if err != nil {
+		return "", err
+	}
+	model["metas"] = p.MetaService.ConvertToMetaDTOs(metas)
+
+	if post.MetaDescription != "" {
+		model["meta_description"] = post.MetaDescription
+	} else {
+		model["meta_description"] = post.Summary
+	}
+	if post.MetaKeywords != "" {
+		model["meta_keywords"] = post.MetaKeywords
+	} else if len(tags) > 0 {
+		metaKeywords := strings.Builder{}
+		metaKeywords.Write([]byte(tags[0].Name))
+		for _, tag := range tags[1:] {
+			metaKeywords.Write([]byte(","))
+			metaKeywords.Write([]byte(tag.Name))
+		}
+		model["meta_keywords"] = metaKeywords.String()
+	}
+	model["is_post"] = true
+
+	model["target"] = postVO
+	model["type"] = "post"
+	return p.ThemeService.Render(ctx, "post")
+}
