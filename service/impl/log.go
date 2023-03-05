@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"gorm.io/gorm"
 
 	"github.com/go-sonic/sonic/dal"
 	"github.com/go-sonic/sonic/model/dto"
@@ -18,7 +19,7 @@ func NewLogService() service.LogService {
 
 func (l *logServiceImpl) Clear(ctx context.Context) error {
 	logDAL := dal.GetQueryByCtx(ctx).Log
-	_, err := logDAL.WithContext(ctx).Delete()
+	_, err := logDAL.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete()
 	if err != nil {
 		return WrapDBErr(err)
 	}
