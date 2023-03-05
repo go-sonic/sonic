@@ -324,6 +324,7 @@ func (s *Server) RegisterRouters() {
 			contentAPIRouter.GET("/journals/:journalID/comments/tree_view", s.wrapHandler(s.ContentAPIJournalHandler.ListCommentTree))
 			contentAPIRouter.GET("/journals/:journalID/comments/list_view", s.wrapHandler(s.ContentAPIJournalHandler.ListComment))
 			contentAPIRouter.POST("/journals/comments", s.wrapHandler(s.ContentAPIJournalHandler.CreateComment))
+			contentAPIRouter.POST("/journals/:journalID/likes", s.wrapHandler(s.ContentAPIJournalHandler.Like))
 
 			contentAPIRouter.POST("/photos/:photoID/likes", s.wrapHandler(s.ContentAPIPhotoHandler.Like))
 
