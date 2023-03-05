@@ -110,7 +110,7 @@ func (s *Server) RegisterRouters() {
 					postRouter.PUT("/:postID/status/draft/content", s.wrapHandler(s.PostHandler.UpdatePostDraft))
 					postRouter.DELETE("/:postID", s.wrapHandler(s.PostHandler.DeletePost))
 					postRouter.DELETE("", s.wrapHandler(s.PostHandler.DeletePostBatch))
-					postRouter.GET("/:postID/preview", s.wrapHandler(s.PostHandler.PreviewPost))
+					postRouter.GET("/:postID/preview", s.PostHandler.PreviewPost)
 					{
 						postCommentRouter := postRouter.Group("/comments")
 						postCommentRouter.GET("", s.wrapHandler(s.PostCommentHandler.ListPostComment))
@@ -406,7 +406,7 @@ func (s *Server) registerDynamicRouters(contentRouter *gin.RouterGroup) error {
 
 	contentRouter.GET(journalPath, s.wrapHTMLHandler(s.ContentJournalHandler.Journals))
 	contentRouter.GET(journalPath+"/page/:page", s.wrapHTMLHandler(s.ContentJournalHandler.JournalsPage))
-
+	contentRouter.GET("admin_preview/"+archivePath+"/:slug", s.wrapHTMLHandler(s.ArchiveHandler.AdminArchivesBySlug))
 	if sheetPermaLinkType == consts.SheetPermaLinkTypeRoot {
 		contentRouter.GET("/:slug")
 	} else {

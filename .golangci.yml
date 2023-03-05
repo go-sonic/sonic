@@ -5,7 +5,7 @@ run:
     - .pb.go
 
 issues:
-  new: true
+  new: false
 
 linters:
   enable:
