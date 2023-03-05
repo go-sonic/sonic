@@ -248,7 +248,7 @@ func (p *PostHandler) UpdatePostDraft(ctx *gin.Context) (interface{}, error) {
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("content param error")
 	}
-	post, err := p.PostService.UpdateDraftContent(ctx, postID, postContentParam.Content)
+	post, err := p.PostService.UpdateDraftContent(ctx, postID, postContentParam.Content, postContentParam.OriginalContent)
 	if err != nil {
 		return nil, err
 	}

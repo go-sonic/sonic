@@ -486,14 +486,14 @@ func (b basePostServiceImpl) UpdateStatusBatch(ctx context.Context, status const
 	return posts, nil
 }
 
-func (b basePostServiceImpl) UpdateDraftContent(ctx context.Context, postID int32, content string) (*entity.Post, error) {
+func (b basePostServiceImpl) UpdateDraftContent(ctx context.Context, postID int32, content, originalContent string) (*entity.Post, error) {
 	postDAL := dal.GetQueryByCtx(ctx).Post
 	post, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).First()
 	if err != nil {
 		return nil, WrapDBErr(err)
 	}
 	if post.OriginalContent != content {
-		updateResult, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).UpdateColumnSimple(postDAL.OriginalContent.Value(content))
+		updateResult, err := postDAL.WithContext(ctx).Where(postDAL.ID.Eq(postID)).UpdateColumnSimple(postDAL.OriginalContent.Value(originalContent), postDAL.FormatContent.Value(content))
 		if err != nil {
 			return nil, WrapDBErr(err)
 		}

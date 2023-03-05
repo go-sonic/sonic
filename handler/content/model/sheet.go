@@ -105,3 +105,50 @@ func (s *SheetModel) Content(ctx context.Context, sheet *entity.Post, token stri
 
 	return s.ThemeService.Render(ctx, "sheet")
 }
+
+func (s *SheetModel) AdminPreviewContent(ctx context.Context, sheet *entity.Post, model template.Model) (string, error) {
+	if sheet == nil {
+		return "", xerr.WithStatus(nil, int(xerr.StatusBadRequest)).WithMsg("查询不到文章信息")
+	}
+
+	sheetVO, err := s.SheetAssembler.ConvertToDetailVO(ctx, sheet)
+	if err != nil {
+		return "", err
+	}
+	model["target"] = sheetVO
+	model["type"] = "sheet"
+	model["post"] = sheetVO
+	model["sheet"] = sheetVO
+	model["is_sheet"] = true
+
+	metas, err := s.MetaService.GetPostMeta(ctx, sheet.ID)
+	if err != nil {
+		return "", err
+	}
+	model["metas"] = s.MetaService.ConvertToMetaDTOs(metas)
+
+	tags, err := s.PostTagService.ListTagByPostID(ctx, sheet.ID)
+	if err != nil {
+		return "", err
+	}
+	model["tags"], _ = s.TagService.ConvertToDTOs(ctx, tags)
+
+	if sheet.MetaDescription != "" {
+		model["meta_description"] = sheet.MetaDescription
+	} else {
+		model["meta_description"] = sheet.Summary
+	}
+	if sheet.MetaKeywords != "" {
+		model["meta_keywords"] = sheet.MetaKeywords
+	} else if len(tags) > 0 {
+		metaKeywords := strings.Builder{}
+		metaKeywords.Write([]byte(tags[0].Name))
+		for _, tag := range tags[1:] {
+			metaKeywords.Write([]byte(","))
+			metaKeywords.Write([]byte(tag.Name))
+		}
+		model["meta_keywords"] = metaKeywords.String()
+	}
+
+	return s.ThemeService.Render(ctx, "sheet")
+}
