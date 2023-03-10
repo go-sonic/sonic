@@ -427,10 +427,16 @@ func (c *categoryUpdateExecutor) UpdateBatch(ctx context.Context, categoryParams
 
 	err := dal.Transaction(ctx, func(txCtx context.Context) error {
 		categoryDAL := dal.GetQueryByCtx(txCtx).Category
-		err := categoryDAL.WithContext(txCtx).Omit(categoryDAL.CreateTime).Save(categories...)
-		if err != nil {
-			return WrapDBErr(err)
+		for _, category := range categories {
+			resultInfo, err := categoryDAL.WithContext(txCtx).Where(categoryDAL.ID.Eq(category.ID)).Select(field.Star).Omit(categoryDAL.CreateTime).Updates(category)
+			if err != nil {
+				return WrapDBErr(err)
+			}
+			if resultInfo.RowsAffected != 1 {
+				return xerr.DB.New("").WithMsg("update failed")
+			}
 		}
+
 		if err := c.prepare(txCtx, categoryParams); err != nil {
 			return err
 		}
