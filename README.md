@@ -42,7 +42,7 @@ Thanks to the [Halo](https://github.com/halo-dev) project team, who inspired thi
 **Download the latest installation package**
 > Please pay attention to the operating os and instruction set  and the version
 ```bash
-wget https://github.com/go-sonic/sonic/releases/download/v1.0.3/sonic-linux-amd64.zip -O sonic.zip
+wget https://github.com/go-sonic/sonic/releases/latest/download/sonic-linux-amd64.zip -O sonic.zip
 ```
 **Decompression**
 ```bash
