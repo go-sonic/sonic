@@ -89,7 +89,7 @@ func (u *userServiceImpl) UpdateMFA(ctx context.Context, mfaKey string, mfaType 
 		if !ok {
 			return xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("Invalid Validation Code")
 		}
-	} else {
+	} else if mfaType != consts.MFANone {
 		return xerr.WithMsg(nil, "Not supported authentication").WithStatus(xerr.StatusBadRequest)
 	}
 	user, err := MustGetAuthorizedUser(ctx)
