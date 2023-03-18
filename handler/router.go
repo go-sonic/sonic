@@ -293,7 +293,7 @@ func (s *Server) RegisterRouters() {
 			contentRouter.GET("/feed.xml", s.wrapTextHandler(s.FeedHandler.Feed))
 			contentRouter.GET("/feed/categories/:slug", s.wrapTextHandler(s.FeedHandler.CategoryFeed))
 			contentRouter.GET("/atom/categories/:slug", s.wrapTextHandler(s.FeedHandler.CategoryAtom))
-			contentRouter.GET("/sitemap", s.wrapTextHandler(s.FeedHandler.SitemapXML))
+			contentRouter.GET("/sitemap.xml", s.wrapTextHandler(s.FeedHandler.SitemapXML))
 			contentRouter.GET("/sitemap.html", s.wrapHTMLHandler(s.FeedHandler.SitemapHTML))
 
 			contentRouter.GET("/version", s.wrapHandler(s.ViewHandler.Version))
