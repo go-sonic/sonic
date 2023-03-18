@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"go.uber.org/fx"
 
 	"github.com/go-sonic/sonic/cache"
 	"github.com/go-sonic/sonic/config"
+	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/dal"
 	"github.com/go-sonic/sonic/event"
 	"github.com/go-sonic/sonic/event/listener"
@@ -21,6 +23,9 @@ import (
 var eventBus event.Bus
 
 func main() {
+	fmt.Println(consts.BuildCommit)
+	fmt.Println(consts.BuildTime)
+	fmt.Println(consts.SonicVersion)
 	app := InitApp()
 
 	if err := app.Start(context.Background()); err != nil {
