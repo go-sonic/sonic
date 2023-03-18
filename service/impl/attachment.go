@@ -158,7 +158,7 @@ func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipar
 		Path:      strings.ReplaceAll(attachmentDTO.Path, string(os.PathSeparator), "/"),
 		Size:      attachmentDTO.Size,
 		Suffix:    attachmentDTO.Suffix,
-		ThumbPath: attachmentDTO.ThumbPath,
+		ThumbPath: strings.ReplaceAll(attachmentDTO.Path, string(os.PathSeparator), "/"),
 		Type:      attachmentDTO.AttachmentType,
 		Width:     attachmentDTO.Width,
 	}
@@ -168,6 +168,14 @@ func (a *attachmentServiceImpl) Upload(ctx context.Context, fileHeader *multipar
 		return nil, WrapDBErr(err)
 	}
 	attachmentDTO.ID = attachmentEntity.ID
+	attachmentDTO.Path, err = fileStorage.GetFilePath(ctx, attachmentEntity.Path)
+	if err != nil {
+		return nil, err
+	}
+	attachmentDTO.ThumbPath, err = fileStorage.GetFilePath(ctx, attachmentEntity.ThumbPath)
+	if err != nil {
+		return nil, err
+	}
 
 	return attachmentDTO, nil
 }
