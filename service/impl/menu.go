@@ -45,7 +45,9 @@ func (m *menuServiceImpl) UpdateBatch(ctx context.Context, menuParams []*param.M
 			if err != nil {
 				return WrapDBErr(err)
 			}
-			if updateResult.RowsAffected != 1 {
+			// 如果使用 updateResult.RowsAffected != 1 来判断，此处逻辑有的数据未发生变化，所以返回值为0，返回异常，导致后续语句不执行，
+			// 应该判断是否有异常即可.
+			if updateResult.Error != nil {
 				return xerr.NoType.New("update menu failed").WithMsg("update menu failed").WithStatus(xerr.StatusInternalServerError)
 			}
 		}
