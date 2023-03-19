@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"go.uber.org/fx"
 
@@ -21,6 +22,9 @@ import (
 var eventBus event.Bus
 
 func main() {
+	index := 0
+	index = 1
+	fmt.Println(index)
 	app := InitApp()
 
 	if err := app.Start(context.Background()); err != nil {
