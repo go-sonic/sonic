@@ -45,7 +45,7 @@ func (m *menuServiceImpl) UpdateBatch(ctx context.Context, menuParams []*param.M
 			if err != nil {
 				return WrapDBErr(err)
 			}
-			if updateResult.RowsAffected != 1 {
+			if updateResult.Error != nil {
 				return xerr.NoType.New("update menu failed").WithMsg("update menu failed").WithStatus(xerr.StatusInternalServerError)
 			}
 		}
