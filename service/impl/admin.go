@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
 	uuid2 "github.com/google/uuid"
@@ -184,7 +183,7 @@ func (a *adminServiceImpl) RefreshToken(ctx context.Context, refreshToken string
 func (a *adminServiceImpl) GetEnvironments(ctx context.Context) *dto.EnvironmentDTO {
 	environments := &dto.EnvironmentDTO{
 		Database:  string(dal.DBType) + " " + consts.DatabaseVersion,
-		Version:   runtime.Version(),
+		Version:   consts.SonicVersion,
 		StartTime: consts.StartTime.UnixMilli(),
 		Mode:      util.IfElse(a.Config.Sonic.Mode == "", "production", a.Config.Sonic.Mode).(string),
 	}

@@ -3,7 +3,6 @@ package listener
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -37,7 +36,6 @@ func (s *StartListener) HandleEvent(ctx context.Context, startEvent event.Event)
 	if _, ok := startEvent.(*event.StartEvent); !ok {
 		return nil
 	}
-	consts.StartTime = time.Now()
 
 	err := s.createOptions()
 	if err != nil {
