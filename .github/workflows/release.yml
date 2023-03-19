@@ -54,7 +54,7 @@ jobs:
       - name: Show workflow information
         run: |
           echo "GOOS: $GOOS, GOARCH: $GOARCH"
-          echo "BUILD_TIME=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+          echo "BUILD_TIME=$(date +%FT%T%z)" >> $GITHUB_ENV
 
       - name: Build
         uses: crazy-max/ghaction-xgo@v2
