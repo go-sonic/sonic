@@ -2,7 +2,6 @@ package dal
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"go.uber.org/zap"
@@ -17,9 +16,6 @@ import (
 	"github.com/go-sonic/sonic/model/entity"
 	"github.com/go-sonic/sonic/util/xerr"
 )
-
-// mysqlDsn example  user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local
-const mysqlDsn = "%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=3s&readTimeout=1s&writeTimeout=1s&interpolateParams=true"
 
 var (
 	DB     *gorm.DB
@@ -66,8 +62,9 @@ func initMySQL(conf *config.Config, gormLogger logger.Interface) (*gorm.DB, erro
 	if mysqlConfig == nil {
 		return nil, xerr.WithMsg(nil, "nil MySQL config")
 	}
-	dsn := fmt.Sprintf(mysqlDsn, mysqlConfig.Username, mysqlConfig.Password, mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DB)
-	sonicLog.Info("try connect to MySQL", zap.String("dsn", fmt.Sprintf(mysqlDsn, mysqlConfig.Username, "***", mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DB)))
+	dsn := mysqlConfig.Dsn
+
+	sonicLog.Info("try connect to MySQL", zap.String("dsn", `Use dsn in config`))
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger:                   gormLogger,
 		PrepareStmt:              true,

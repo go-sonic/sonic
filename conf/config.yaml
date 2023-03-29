@@ -19,12 +19,7 @@ sqlite3:
 
 
 mysql:
-  host: 127.0.0.1
-  port: 3306
-  db: sonicdb
-  username: "root"
-  password: "12345678"
-
+  dsn: username:password@tcp(host:port)/db_name?charset=utf8mb4&parseTime=True&loc=Local&interpolateParams=true
 
 sonic:
   mode: "production"
