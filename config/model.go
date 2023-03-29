@@ -16,13 +16,11 @@ type PostgreSQL struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
+
 type MySQL struct {
-	Host     string `mapstructure:"host"`
-	Port     string `mapstructure:"port"`
-	DB       string `mapstructure:"db"`
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
+	Dsn string `mapstructure:"dsn"`
 }
+
 type SQLite3 struct {
 	Enable bool `mapstructure:"enable"`
 	File   string
