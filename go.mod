@@ -27,7 +27,7 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/yeqown/go-qrcode v1.5.10
 	github.com/yuin/goldmark v1.5.3
-	go.uber.org/dig v1.15.0
+	go.uber.org/dig v1.17.0
 	go.uber.org/fx v1.18.2
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.7.0
