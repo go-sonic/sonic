@@ -128,5 +128,5 @@ func (u *UserHandler) UpdateMFA(ctx *gin.Context) (interface{}, error) {
 	if mfaParam.MFAType == nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	return u.UserService.UpdateMFA(ctx, mfaParam.MFAKey, *mfaParam.MFAType, mfaParam.AuthCode), nil
+	return nil, u.UserService.UpdateMFA(ctx, mfaParam.MFAKey, *mfaParam.MFAType, mfaParam.AuthCode)
 }

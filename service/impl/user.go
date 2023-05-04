@@ -84,18 +84,26 @@ func (u *userServiceImpl) Update(ctx context.Context, userParam *param.User) (*e
 }
 
 func (u *userServiceImpl) UpdateMFA(ctx context.Context, mfaKey string, mfaType consts.MFAType, mfaCode string) error {
-	if mfaType == consts.MFATFATotp {
-		ok := u.TwoFactorMFAService.ValidateTFACode(mfaKey, mfaCode)
-		if !ok {
-			return xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("Invalid Validation Code")
-		}
-	} else if mfaType != consts.MFANone {
-		return xerr.WithMsg(nil, "Not supported authentication").WithStatus(xerr.StatusBadRequest)
-	}
 	user, err := MustGetAuthorizedUser(ctx)
 	if err != nil {
 		return err
 	}
+
+	switch mfaType {
+	case consts.MFATFATotp:
+		ok := u.TwoFactorMFAService.ValidateTFACode(mfaKey, mfaCode)
+		if !ok {
+			return xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("Invalid Validation Code")
+		}
+	case consts.MFANone:
+		ok := u.TwoFactorMFAService.ValidateTFACode(user.MfaKey, mfaCode)
+		if !ok {
+			return xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("Invalid Validation Code")
+		}
+	default:
+		return xerr.WithMsg(nil, "Not supported authentication").WithStatus(xerr.StatusBadRequest)
+	}
+
 	userDal := dal.GetQueryByCtx(ctx).User
 	updateResult, err := userDal.WithContext(ctx).Where(userDal.ID.Eq(user.ID)).UpdateSimple(
 		userDal.MfaKey.Value(mfaKey),
