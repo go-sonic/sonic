@@ -163,7 +163,13 @@ func (p *PostHandler) CreateComment(ctx *gin.Context) (interface{}, error) {
 	comment := param.Comment{}
 	err := ctx.ShouldBindJSON(&comment)
 	if err != nil {
-		return nil, err
+		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
+	}
+	if comment.AuthorURL != "" {
+		err = util.Validate.Var(comment.AuthorURL, "http_url")
+		if err != nil {
+			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
+		}
 	}
 	comment.Author = template.HTMLEscapeString(comment.Author)
 	comment.AuthorURL = template.HTMLEscapeString(comment.AuthorURL)
