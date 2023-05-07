@@ -81,9 +81,9 @@ func (e *exportImport) CreateByMarkdown(ctx context.Context, filename string, re
 		case "title":
 			post.Title = value.(string)
 		case "permalink":
-			post.Slug = value.(string)
+			post.Slug = cast.ToString(value)
 		case "slug":
-			post.Slug = value.(string)
+			post.Slug = cast.ToString(value)
 		case "date":
 			if s, ok := value.(string); ok {
 				date, err := cast.StringToDate(s)
