@@ -88,6 +88,7 @@ See: https://hub.docker.com/r/gosonic/sonic
 |---------|---------------------------------------------------|
 | Anatole | https://github.com/go-sonic/default-theme-anatole |
 | Journal | https://github.com/hooxuu/sonic-theme-Journal     |
+| Clark   | https://github.com/ClarkQAQ/sonic_theme_clark     |
 
 ## TODO
 - [ ] i18n
