@@ -30,7 +30,14 @@ func (*journalServiceImpl) Page(ctx context.Context, page param.Page, sort *para
 	if err != nil {
 		return nil, 0, WrapDBErr(err)
 	}
-	return journals, totalCount, nil
+	var journalsPublic []*entity.Journal
+	for i := range journals {
+		if journals[i].Type != consts.JournalTypeIntimate {
+			journalsPublic = append(journalsPublic, journals[i])
+		}
+	}
+	totalCount = int64(len(journalsPublic))
+	return journalsPublic, totalCount, nil
 }
 
 func NewJournalService(journalCommentService service.JournalCommentService) service.JournalService {
