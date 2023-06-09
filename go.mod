@@ -33,9 +33,9 @@ require (
 	golang.org/x/crypto v0.9.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.4.4
-	gorm.io/driver/sqlite v1.4.3
+	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gen v0.3.18
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55
 	gorm.io/plugin/dbresolver v1.4.0
 )
 
@@ -60,7 +60,7 @@ require (
 	github.com/leodido/go-urn v1.2.3 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
-	github.com/mattn/go-sqlite3 v1.14.15 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
