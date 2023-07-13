@@ -27,4 +27,5 @@ type ThemeService interface {
 	ReloadTheme(ctx context.Context) error
 	TemplateExist(ctx context.Context, template string) (bool, error)
 	Render(ctx context.Context, name string) (string, error)
+	Fetch(ctx context.Context, themeURL string) (*dto.ThemeProperty, error)
 }

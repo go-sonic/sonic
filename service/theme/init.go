@@ -1,11 +1,16 @@
 package theme
 
-import "github.com/go-sonic/sonic/injection"
+import (
+	"go.uber.org/fx"
+
+	"github.com/go-sonic/sonic/injection"
+)
 
 func init() {
 	injection.Provide(
 		NewFileScanner,
 		NewPropertyScanner,
-		NewMultipartZipThemeFetcher,
+		fx.Annotated{Target: NewMultipartZipThemeFetcher, Name: "multipartZipThemeFetcher"},
+		fx.Annotated{Target: NewGitThemeFetcher, Name: "gitRepoThemeFetcher"},
 	)
 }
