@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"go.uber.org/fx"
+
 	"github.com/go-sonic/sonic/config"
 	"github.com/go-sonic/sonic/dal"
 	"github.com/go-sonic/sonic/event"
@@ -27,17 +29,23 @@ type themeServiceImpl struct {
 	Event                    event.Bus
 	PropertyScanner          theme.PropertyScanner
 	FileScanner              theme.FileScanner
-	MultipartZipThemeFetcher theme.MultipartZipThemeFetcher
+	ThemeFetchers            themeFetchers
 }
 
-func NewThemeService(optionService service.OptionService, config *config.Config, event event.Bus, propertyScanner theme.PropertyScanner, fileScanner theme.FileScanner, multipartZipThemeFetcher theme.MultipartZipThemeFetcher) service.ThemeService {
+type themeFetchers struct {
+	fx.In
+	MultipartZipThemeFetcher theme.ThemeFetcher `name:"multipartZipThemeFetcher"`
+	GitRepoThemeFetcher      theme.ThemeFetcher `name:"gitRepoThemeFetcher"`
+}
+
+func NewThemeService(optionService service.OptionService, config *config.Config, event event.Bus, propertyScanner theme.PropertyScanner, fileScanner theme.FileScanner, themeFetcher themeFetchers) service.ThemeService {
 	return &themeServiceImpl{
 		OptionService:            optionService,
 		Config:                   config,
 		Event:                    event,
 		PropertyScanner:          propertyScanner,
 		FileScanner:              fileScanner,
-		MultipartZipThemeFetcher: multipartZipThemeFetcher,
+		ThemeFetchers:            themeFetcher,
 	}
 }
 
@@ -390,7 +398,7 @@ func (t *themeServiceImpl) DeleteTheme(ctx context.Context, themeID string, dele
 }
 
 func (t *themeServiceImpl) UploadTheme(ctx context.Context, file *multipart.FileHeader) (*dto.ThemeProperty, error) {
-	themeProperty, err := t.MultipartZipThemeFetcher.FetchTheme(ctx, file)
+	themeProperty, err := t.ThemeFetchers.MultipartZipThemeFetcher.FetchTheme(ctx, file)
 	if err != nil {
 		return nil, err
 	}
@@ -402,7 +410,7 @@ func (t *themeServiceImpl) UpdateThemeByUpload(ctx context.Context, themeID stri
 	if err != nil {
 		return nil, err
 	}
-	newThemeProperty, err := t.MultipartZipThemeFetcher.FetchTheme(ctx, file)
+	newThemeProperty, err := t.ThemeFetchers.MultipartZipThemeFetcher.FetchTheme(ctx, file)
 	if err != nil {
 		return nil, err
 	}
@@ -467,4 +475,12 @@ func (t *themeServiceImpl) Render(ctx context.Context, name string) (string, err
 		return "", err
 	}
 	return activatedThemeID + "/" + name, nil
+}
+
+func (t *themeServiceImpl) Fetch(ctx context.Context, themeURL string) (*dto.ThemeProperty, error) {
+	fetchTheme, err := t.ThemeFetchers.GitRepoThemeFetcher.FetchTheme(ctx, themeURL)
+	if err != nil {
+		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg(err.Error())
+	}
+	return t.addTheme(ctx, fetchTheme)
 }

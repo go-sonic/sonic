@@ -289,7 +289,8 @@ func (t *ThemeHandler) UpdateThemeByUpload(ctx *gin.Context) (interface{}, error
 }
 
 func (t *ThemeHandler) FetchTheme(ctx *gin.Context) (interface{}, error) {
-	return nil, xerr.WithMsg(nil, "not support").WithStatus(xerr.StatusInternalServerError)
+	uri, _ := util.MustGetQueryString(ctx, "uri")
+	return t.ThemeService.Fetch(ctx, uri)
 }
 
 func (t *ThemeHandler) UpdateThemeByFetching(ctx *gin.Context) (interface{}, error) {
