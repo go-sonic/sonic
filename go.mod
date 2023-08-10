@@ -36,7 +36,7 @@ require (
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gen v0.3.18
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.3
 	gorm.io/plugin/dbresolver v1.4.0
 )
 
