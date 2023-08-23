@@ -91,7 +91,7 @@ func (p *postExtension) addGetPostArchiveMonth() {
 		}
 		return p.PostAssembler.ConvertTOArchiveMonthVOs(ctx, posts)
 	}
-	p.Template.AddFunc("listYearArchives", getPostArchiveMonthFunc)
+	p.Template.AddFunc("listMonthArchives", getPostArchiveMonthFunc)
 }
 
 func (p *postExtension) addListPostByCategoryID() {
