@@ -151,6 +151,9 @@ func (t *Template) addUtilFunc() {
 		}
 		return result
 	}
+	t.funcMap["is_last"] = func(index, total int) bool {
+		return index == total-1
+	}
 	for name, f := range sprig.FuncMap() {
 		t.funcMap[name] = f
 	}
