@@ -135,6 +135,15 @@ func (t *Template) addUtilFunc() {
 	t.funcMap["noescape"] = func(str string) htmlTemplate.HTML {
 		return htmlTemplate.HTML(str)
 	}
+	t.funcMap["map"] = func(values ...interface{}) map[string]interface{} {
+		m := make(map[string]interface{})
+		for i := 0; i < len(values); i += 2 {
+			key := values[i].(string)
+			value := values[i+1]
+			m[key] = value
+		}
+		return m
+	}
 	for name, f := range sprig.FuncMap() {
 		t.funcMap[name] = f
 	}
