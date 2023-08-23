@@ -144,6 +144,13 @@ func (t *Template) addUtilFunc() {
 		}
 		return m
 	}
+	t.funcMap["concatenate_strings"] = func(values ...string) string {
+		var result string
+		for i := 0; i < len(values); i++ {
+			result += values[i]
+		}
+		return result
+	}
 	for name, f := range sprig.FuncMap() {
 		t.funcMap[name] = f
 	}
