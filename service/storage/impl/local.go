@@ -15,6 +15,8 @@ import (
 	"github.com/disintegration/imaging"
 	"go.uber.org/zap"
 
+	_ "golang.org/x/image/webp"
+
 	"github.com/go-sonic/sonic/config"
 	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/log"
@@ -101,6 +103,9 @@ func (l *LocalFileStorage) Upload(ctx context.Context, fileHeader *multipart.Fil
 	}
 
 	thumbnailFn := func(srcImage image.Image) (string, error) {
+		if fd.getExtensionName() == "webp" {
+			return fd.getRelativePath(), nil
+		}
 		thumbnailFd, err := newLocalFileDescriptor(
 			withOriginalName(fileHeader.Filename),
 			withBasePath(l.Config.Sonic.WorkDir),
