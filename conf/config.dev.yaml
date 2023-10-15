@@ -16,14 +16,12 @@ logging:
 ### The Database configuration,You should choose one between MySQL and SQLite3,if both MySQL and SQLite3 are configured ,use Sqlite3 first
 
 sqlite3:
-  enable: true
+  enable: false
 
+### mysql数据库配置,请将用户名、密码、ip地址、端口、数据库名称替换为你自己的配置
+### mysql database configuration, please replace the user name, password, ip address, port, database name to your own configuration.
 mysql:
-  host: 127.0.0.1
-  port: 3306
-  db: sonicdb
-  username: "root"
-  password: "12345678"
+  dsn: root:12345678@tcp(127.0.0.1:3306)/sonicdb?charset=utf8mb4&parseTime=True&loc=Local&interpolateParams=true
 
 
 
