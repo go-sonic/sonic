@@ -20,7 +20,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.45
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/pelletier/go-toml/v2 v2.0.6
+	github.com/pelletier/go-toml/v2 v2.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/pquerna/otp v1.4.0
 	github.com/spf13/afero v1.9.3
@@ -32,6 +32,7 @@ require (
 	go.uber.org/fx v1.19.3
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.9.0
+	golang.org/x/image v0.13.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/driver/sqlite v1.4.3
@@ -94,7 +95,6 @@ require (
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
-	golang.org/x/image v0.13.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
