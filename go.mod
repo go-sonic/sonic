@@ -32,11 +32,12 @@ require (
 	go.uber.org/fx v1.19.3
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.9.0
+	golang.org/x/image v0.13.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gen v0.3.18
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.5
 	gorm.io/plugin/dbresolver v1.4.0
 )
 
@@ -94,7 +95,6 @@ require (
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
-	golang.org/x/image v0.13.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
