@@ -84,11 +84,12 @@ See: https://hub.docker.com/r/gosonic/sonic
 
 ## Theme ecology
 
-| Theme   | URL                                               |
-|---------|---------------------------------------------------|
-| Anatole | https://github.com/go-sonic/default-theme-anatole |
-| Journal | https://github.com/hooxuu/sonic-theme-Journal     |
-| Clark   | https://github.com/ClarkQAQ/sonic_theme_clark     |
+| Theme   | 
+|---------|
+| [Anatole](https://github.com/go-sonic/default-theme-anatole) |
+| [Journal](https://github.com/hooxuu/sonic-theme-Journal) |
+| [Clark](https://github.com/ClarkQAQ/sonic_theme_clark)   |
+| [Earth](https://github.com/Meepoljdx/sonic-theme-earth) |
 
 ## TODO
 - [ ] i18n
