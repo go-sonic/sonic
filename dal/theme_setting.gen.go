@@ -83,6 +83,10 @@ func (t themeSetting) TableName() string { return t.themeSettingDo.TableName() }
 
 func (t themeSetting) Alias() string { return t.themeSettingDo.Alias() }
 
+func (t themeSetting) Columns(cols ...field.Expr) gen.Columns {
+	return t.themeSettingDo.Columns(cols...)
+}
+
 func (t *themeSetting) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -156,10 +160,6 @@ func (t themeSettingDo) Select(conds ...field.Expr) *themeSettingDo {
 
 func (t themeSettingDo) Where(conds ...gen.Condition) *themeSettingDo {
 	return t.withDO(t.DO.Where(conds...))
-}
-
-func (t themeSettingDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *themeSettingDo {
-	return t.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (t themeSettingDo) Order(conds ...field.Expr) *themeSettingDo {

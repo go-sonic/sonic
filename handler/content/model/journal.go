@@ -2,8 +2,8 @@ package model
 
 import (
 	"context"
-	"github.com/go-sonic/sonic/consts"
 
+	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/model/property"

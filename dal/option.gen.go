@@ -81,6 +81,8 @@ func (o option) TableName() string { return o.optionDo.TableName() }
 
 func (o option) Alias() string { return o.optionDo.Alias() }
 
+func (o option) Columns(cols ...field.Expr) gen.Columns { return o.optionDo.Columns(cols...) }
+
 func (o *option) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := o.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -154,10 +156,6 @@ func (o optionDo) Select(conds ...field.Expr) *optionDo {
 
 func (o optionDo) Where(conds ...gen.Condition) *optionDo {
 	return o.withDO(o.DO.Where(conds...))
-}
-
-func (o optionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *optionDo {
-	return o.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (o optionDo) Order(conds ...field.Expr) *optionDo {

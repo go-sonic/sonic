@@ -84,6 +84,8 @@ func (t tag) TableName() string { return t.tagDo.TableName() }
 
 func (t tag) Alias() string { return t.tagDo.Alias() }
 
+func (t tag) Columns(cols ...field.Expr) gen.Columns { return t.tagDo.Columns(cols...) }
+
 func (t *tag) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -158,10 +160,6 @@ func (t tagDo) Select(conds ...field.Expr) *tagDo {
 
 func (t tagDo) Where(conds ...gen.Condition) *tagDo {
 	return t.withDO(t.DO.Where(conds...))
-}
-
-func (t tagDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *tagDo {
-	return t.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (t tagDo) Order(conds ...field.Expr) *tagDo {

@@ -95,6 +95,10 @@ func (f flywaySchemaHistory) TableName() string { return f.flywaySchemaHistoryDo
 
 func (f flywaySchemaHistory) Alias() string { return f.flywaySchemaHistoryDo.Alias() }
 
+func (f flywaySchemaHistory) Columns(cols ...field.Expr) gen.Columns {
+	return f.flywaySchemaHistoryDo.Columns(cols...)
+}
+
 func (f *flywaySchemaHistory) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := f.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -172,10 +176,6 @@ func (f flywaySchemaHistoryDo) Select(conds ...field.Expr) *flywaySchemaHistoryD
 
 func (f flywaySchemaHistoryDo) Where(conds ...gen.Condition) *flywaySchemaHistoryDo {
 	return f.withDO(f.DO.Where(conds...))
-}
-
-func (f flywaySchemaHistoryDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *flywaySchemaHistoryDo {
-	return f.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (f flywaySchemaHistoryDo) Order(conds ...field.Expr) *flywaySchemaHistoryDo {

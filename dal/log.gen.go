@@ -84,6 +84,8 @@ func (l log) TableName() string { return l.logDo.TableName() }
 
 func (l log) Alias() string { return l.logDo.Alias() }
 
+func (l log) Columns(cols ...field.Expr) gen.Columns { return l.logDo.Columns(cols...) }
+
 func (l *log) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := l.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -158,10 +160,6 @@ func (l logDo) Select(conds ...field.Expr) *logDo {
 
 func (l logDo) Where(conds ...gen.Condition) *logDo {
 	return l.withDO(l.DO.Where(conds...))
-}
-
-func (l logDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *logDo {
-	return l.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (l logDo) Order(conds ...field.Expr) *logDo {

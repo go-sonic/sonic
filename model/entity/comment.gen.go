@@ -28,7 +28,7 @@ type Comment struct {
 	IsAdmin           bool                 `gorm:"column:is_admin;type:tinyint(1);not null" json:"is_admin"`
 	ParentID          int32                `gorm:"column:parent_id;type:int;not null;index:comment_parent_id,priority:1" json:"parent_id"`
 	PostID            int32                `gorm:"column:post_id;type:int;not null;index:comment_post_id,priority:1" json:"post_id"`
-	Status            consts.CommentStatus `gorm:"column:status;type:bigint;not null;index:comment_type_status,priority:2;default:0" json:"status"`
+	Status            consts.CommentStatus `gorm:"column:status;type:bigint;not null;index:comment_type_status,priority:2" json:"status"`
 	TopPriority       int32                `gorm:"column:top_priority;type:int;not null" json:"top_priority"`
 	UserAgent         string               `gorm:"column:user_agent;type:varchar(511);not null" json:"user_agent"`
 }
