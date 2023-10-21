@@ -96,6 +96,8 @@ func (p photo) TableName() string { return p.photoDo.TableName() }
 
 func (p photo) Alias() string { return p.photoDo.Alias() }
 
+func (p photo) Columns(cols ...field.Expr) gen.Columns { return p.photoDo.Columns(cols...) }
+
 func (p *photo) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := p.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -174,10 +176,6 @@ func (p photoDo) Select(conds ...field.Expr) *photoDo {
 
 func (p photoDo) Where(conds ...gen.Condition) *photoDo {
 	return p.withDO(p.DO.Where(conds...))
-}
-
-func (p photoDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *photoDo {
-	return p.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (p photoDo) Order(conds ...field.Expr) *photoDo {

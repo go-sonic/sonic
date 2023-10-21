@@ -80,6 +80,10 @@ func (p postCategory) TableName() string { return p.postCategoryDo.TableName() }
 
 func (p postCategory) Alias() string { return p.postCategoryDo.Alias() }
 
+func (p postCategory) Columns(cols ...field.Expr) gen.Columns {
+	return p.postCategoryDo.Columns(cols...)
+}
+
 func (p *postCategory) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := p.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -152,10 +156,6 @@ func (p postCategoryDo) Select(conds ...field.Expr) *postCategoryDo {
 
 func (p postCategoryDo) Where(conds ...gen.Condition) *postCategoryDo {
 	return p.withDO(p.DO.Where(conds...))
-}
-
-func (p postCategoryDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *postCategoryDo {
-	return p.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (p postCategoryDo) Order(conds ...field.Expr) *postCategoryDo {

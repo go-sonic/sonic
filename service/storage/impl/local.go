@@ -14,7 +14,6 @@ import (
 
 	"github.com/disintegration/imaging"
 	"go.uber.org/zap"
-
 	_ "golang.org/x/image/webp"
 
 	"github.com/go-sonic/sonic/config"

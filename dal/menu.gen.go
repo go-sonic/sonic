@@ -93,6 +93,8 @@ func (m menu) TableName() string { return m.menuDo.TableName() }
 
 func (m menu) Alias() string { return m.menuDo.Alias() }
 
+func (m menu) Columns(cols ...field.Expr) gen.Columns { return m.menuDo.Columns(cols...) }
+
 func (m *menu) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -170,10 +172,6 @@ func (m menuDo) Select(conds ...field.Expr) *menuDo {
 
 func (m menuDo) Where(conds ...gen.Condition) *menuDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m menuDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *menuDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m menuDo) Order(conds ...field.Expr) *menuDo {

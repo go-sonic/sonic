@@ -20,7 +20,6 @@ linters:
     - asciicheck
     - bodyclose
     - decorder
-    - depguard
     - dogsled
     - errname
     - errorlint

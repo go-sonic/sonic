@@ -104,6 +104,8 @@ func (a attachment) TableName() string { return a.attachmentDo.TableName() }
 
 func (a attachment) Alias() string { return a.attachmentDo.Alias() }
 
+func (a attachment) Columns(cols ...field.Expr) gen.Columns { return a.attachmentDo.Columns(cols...) }
+
 func (a *attachment) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := a.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -184,10 +186,6 @@ func (a attachmentDo) Select(conds ...field.Expr) *attachmentDo {
 
 func (a attachmentDo) Where(conds ...gen.Condition) *attachmentDo {
 	return a.withDO(a.DO.Where(conds...))
-}
-
-func (a attachmentDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *attachmentDo {
-	return a.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (a attachmentDo) Order(conds ...field.Expr) *attachmentDo {

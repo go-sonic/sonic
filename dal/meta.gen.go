@@ -84,6 +84,8 @@ func (m meta) TableName() string { return m.metaDo.TableName() }
 
 func (m meta) Alias() string { return m.metaDo.Alias() }
 
+func (m meta) Columns(cols ...field.Expr) gen.Columns { return m.metaDo.Columns(cols...) }
+
 func (m *meta) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -158,10 +160,6 @@ func (m metaDo) Select(conds ...field.Expr) *metaDo {
 
 func (m metaDo) Where(conds ...gen.Condition) *metaDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m metaDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *metaDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m metaDo) Order(conds ...field.Expr) *metaDo {

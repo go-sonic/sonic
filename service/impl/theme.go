@@ -24,12 +24,12 @@ import (
 )
 
 type themeServiceImpl struct {
-	OptionService            service.OptionService
-	Config                   *config.Config
-	Event                    event.Bus
-	PropertyScanner          theme.PropertyScanner
-	FileScanner              theme.FileScanner
-	ThemeFetchers            themeFetchers
+	OptionService   service.OptionService
+	Config          *config.Config
+	Event           event.Bus
+	PropertyScanner theme.PropertyScanner
+	FileScanner     theme.FileScanner
+	ThemeFetchers   themeFetchers
 }
 
 type themeFetchers struct {
@@ -40,12 +40,12 @@ type themeFetchers struct {
 
 func NewThemeService(optionService service.OptionService, config *config.Config, event event.Bus, propertyScanner theme.PropertyScanner, fileScanner theme.FileScanner, themeFetcher themeFetchers) service.ThemeService {
 	return &themeServiceImpl{
-		OptionService:            optionService,
-		Config:                   config,
-		Event:                    event,
-		PropertyScanner:          propertyScanner,
-		FileScanner:              fileScanner,
-		ThemeFetchers:            themeFetcher,
+		OptionService:   optionService,
+		Config:          config,
+		Event:           event,
+		PropertyScanner: propertyScanner,
+		FileScanner:     fileScanner,
+		ThemeFetchers:   themeFetcher,
 	}
 }
 

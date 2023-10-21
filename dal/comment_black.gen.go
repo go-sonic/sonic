@@ -80,6 +80,10 @@ func (c commentBlack) TableName() string { return c.commentBlackDo.TableName() }
 
 func (c commentBlack) Alias() string { return c.commentBlackDo.Alias() }
 
+func (c commentBlack) Columns(cols ...field.Expr) gen.Columns {
+	return c.commentBlackDo.Columns(cols...)
+}
+
 func (c *commentBlack) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := c.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -152,10 +156,6 @@ func (c commentBlackDo) Select(conds ...field.Expr) *commentBlackDo {
 
 func (c commentBlackDo) Where(conds ...gen.Condition) *commentBlackDo {
 	return c.withDO(c.DO.Where(conds...))
-}
-
-func (c commentBlackDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *commentBlackDo {
-	return c.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (c commentBlackDo) Order(conds ...field.Expr) *commentBlackDo {
