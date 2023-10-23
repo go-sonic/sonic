@@ -39,6 +39,7 @@ func RegisterPostFunc(template *template.Template, postService service.PostServi
 	p.addListPostByCategorySlug()
 	p.addListPostByTagID()
 	p.addListPostByTagSlug()
+	p.addListMostPopularPost()
 }
 
 func (p *postExtension) addListLatestPost() {
@@ -60,6 +61,27 @@ func (p *postExtension) addListLatestPost() {
 		return p.PostAssembler.ConvertToListVO(ctx, posts)
 	}
 	p.Template.AddFunc("listLatestPost", listLatestPostFunc)
+}
+
+func (p *postExtension) addListMostPopularPost() {
+	listMostPopularPost := func(top int) ([]*vo.Post, error) {
+		ctx := context.Background()
+		posts, _, err := p.PostService.Page(ctx, param.PostQuery{
+			Page: param.Page{
+				PageNum:  0,
+				PageSize: top,
+			},
+			Sort: &param.Sort{
+				Fields: []string{"visits,desc"},
+			},
+			Statuses: []*consts.PostStatus{consts.PostStatusPublished.Ptr()},
+		})
+		if err != nil {
+			return nil, err
+		}
+		return p.PostAssembler.ConvertToListVO(ctx, posts)
+	}
+	p.Template.AddFunc("listMostPopularPost", listMostPopularPost)
 }
 
 func (p *postExtension) addGetPostCount() {

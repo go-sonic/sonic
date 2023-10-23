@@ -65,6 +65,7 @@ func InitApp() *fx.App {
 			extension.RegisterToolFunc,
 			extension.RegisterPaginationFunc,
 			extension.RegisterPostFunc,
+			extension.RegisterStatisticFunc,
 			func(s *handler.Server) {
 				s.RegisterRouters()
 			},
