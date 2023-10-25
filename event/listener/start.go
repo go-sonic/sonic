@@ -86,7 +86,12 @@ func (s *StartListener) printStartInfo(ctx context.Context) error {
 	site := logger.BlueBold + "Sonic started at         " + blogURL + logger.Reset
 	log.Info(site)
 	fmt.Println(site)
-	adminSite := logger.BlueBold + "Sonic admin started at         " + blogURL + "/admin" + logger.Reset
+
+	adminUrlPath, err := s.optionService.GetAdminUrlPath(ctx)
+	if err != nil {
+		return err
+	}
+	adminSite := logger.BlueBold + "Sonic admin started at         " + blogURL + "/" + adminUrlPath + logger.Reset
 	log.Info(adminSite)
 	fmt.Println(adminSite)
 	return nil
