@@ -90,6 +90,7 @@ See: https://hub.docker.com/r/gosonic/sonic
 | [Journal](https://github.com/hooxuu/sonic-theme-Journal) |
 | [Clark](https://github.com/ClarkQAQ/sonic_theme_clark)   |
 | [Earth](https://github.com/Meepoljdx/sonic-theme-earth) |
+| [PaperMod](https://github.com/jakezhu9/sonic-theme-papermod) |
 
 ## TODO
 - [ ] i18n
