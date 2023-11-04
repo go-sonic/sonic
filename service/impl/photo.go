@@ -78,6 +78,27 @@ func (p *photoServiceImpl) Create(ctx context.Context, photoParam *param.Photo) 
 	return photo, nil
 }
 
+func (*photoServiceImpl) CreateBatch(ctx context.Context, photosParam []*param.Photo) ([]*entity.Photo, error) {
+	photos := make([]*entity.Photo, len(photosParam))
+	for i, photoParam := range photosParam {
+		photo := &entity.Photo{
+			Name:        photoParam.Name,
+			Description: photoParam.Description,
+			URL:         photoParam.URL,
+			Thumbnail:   photoParam.Thumbnail,
+			Location:    photoParam.Location,
+			Team:        photoParam.Team,
+		}
+		photos[i] = photo
+	}
+	photoDAL := dal.GetQueryByCtx(ctx).Photo
+	err := photoDAL.WithContext(ctx).CreateInBatches(photos, 100)
+	if err != nil {
+		return nil, WrapDBErr(err)
+	}
+	return photos, err
+}
+
 func (p *photoServiceImpl) Update(ctx context.Context, id int32, photoParam *param.Photo) (*entity.Photo, error) {
 	photoDAL := dal.GetQueryByCtx(ctx).Photo
 	var takeTime *time.Time
