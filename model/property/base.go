@@ -53,6 +53,7 @@ var AllProperty = []Property{
 	EmailPassword,
 	EmailFromName,
 	EmailIsEnabled,
+	EmailStarttls,
 	CustomHead,
 	CustomContentHead,
 	StatisticsCode,

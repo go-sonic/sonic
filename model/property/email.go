@@ -38,4 +38,9 @@ var (
 		DefaultValue: false,
 		Kind:         reflect.Bool,
 	}
+	EmailStarttls = Property{
+		KeyValue:     "email_starttls",
+		DefaultValue: false,
+		Kind:         reflect.Bool,
+	}
 )
