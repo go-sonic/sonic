@@ -10,6 +10,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/go-sonic/sonic/model/dto"
+	"github.com/go-sonic/sonic/util"
 	"github.com/go-sonic/sonic/util/xerr"
 )
 
@@ -25,6 +26,13 @@ func (g gitThemeFetcherImpl) FetchTheme(ctx context.Context, file interface{}) (
 	tempDir := os.TempDir()
 
 	themeDirName := lastSplit
+	tmpThemeDir := filepath.Join(tempDir, themeDirName)
+	if util.FileIsExisted(tmpThemeDir) {
+		err := os.RemoveAll(tmpThemeDir)
+		if err != nil {
+			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("delete tmp theme directory err")
+		}
+	}
 	_, err := git.PlainClone(filepath.Join(tempDir, themeDirName), false, &git.CloneOptions{
 		URL: gitURL,
 	})
