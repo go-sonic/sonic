@@ -13,6 +13,7 @@ type PhotoService interface {
 	Page(ctx context.Context, page param.Page, sort *param.Sort) ([]*entity.Photo, int64, error)
 	GetByID(ctx context.Context, id int32) (*entity.Photo, error)
 	Create(ctx context.Context, photoParam *param.Photo) (*entity.Photo, error)
+	CreateBatch(ctx context.Context, photosParam []*param.Photo) ([]*entity.Photo, error)
 	Update(ctx context.Context, id int32, photoParam *param.Photo) (*entity.Photo, error)
 	Delete(ctx context.Context, id int32) error
 	ConvertToDTO(ctx context.Context, photo *entity.Photo) *dto.Photo
