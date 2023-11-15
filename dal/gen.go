@@ -8,18 +8,20 @@ import (
 	"context"
 	"database/sql"
 
-	"gorm.io/gen"
 	"gorm.io/gorm"
+
+	"gorm.io/gen"
+
 	"gorm.io/plugin/dbresolver"
 )
 
 var (
 	Q                   = new(Query)
+	ApplicationPassword *applicationPassword
 	Attachment          *attachment
 	Category            *category
 	Comment             *comment
 	CommentBlack        *commentBlack
-	FlywaySchemaHistory *flywaySchemaHistory
 	Journal             *journal
 	Link                *link
 	Log                 *log
@@ -37,11 +39,11 @@ var (
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	ApplicationPassword = &Q.ApplicationPassword
 	Attachment = &Q.Attachment
 	Category = &Q.Category
 	Comment = &Q.Comment
 	CommentBlack = &Q.CommentBlack
-	FlywaySchemaHistory = &Q.FlywaySchemaHistory
 	Journal = &Q.Journal
 	Link = &Q.Link
 	Log = &Q.Log
@@ -60,11 +62,11 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                  db,
+		ApplicationPassword: newApplicationPassword(db, opts...),
 		Attachment:          newAttachment(db, opts...),
 		Category:            newCategory(db, opts...),
 		Comment:             newComment(db, opts...),
 		CommentBlack:        newCommentBlack(db, opts...),
-		FlywaySchemaHistory: newFlywaySchemaHistory(db, opts...),
 		Journal:             newJournal(db, opts...),
 		Link:                newLink(db, opts...),
 		Log:                 newLog(db, opts...),
@@ -84,11 +86,11 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	ApplicationPassword applicationPassword
 	Attachment          attachment
 	Category            category
 	Comment             comment
 	CommentBlack        commentBlack
-	FlywaySchemaHistory flywaySchemaHistory
 	Journal             journal
 	Link                link
 	Log                 log
@@ -109,11 +111,11 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                  db,
+		ApplicationPassword: q.ApplicationPassword.clone(db),
 		Attachment:          q.Attachment.clone(db),
 		Category:            q.Category.clone(db),
 		Comment:             q.Comment.clone(db),
 		CommentBlack:        q.CommentBlack.clone(db),
-		FlywaySchemaHistory: q.FlywaySchemaHistory.clone(db),
 		Journal:             q.Journal.clone(db),
 		Link:                q.Link.clone(db),
 		Log:                 q.Log.clone(db),
@@ -141,11 +143,11 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                  db,
+		ApplicationPassword: q.ApplicationPassword.replaceDB(db),
 		Attachment:          q.Attachment.replaceDB(db),
 		Category:            q.Category.replaceDB(db),
 		Comment:             q.Comment.replaceDB(db),
 		CommentBlack:        q.CommentBlack.replaceDB(db),
-		FlywaySchemaHistory: q.FlywaySchemaHistory.replaceDB(db),
 		Journal:             q.Journal.replaceDB(db),
 		Link:                q.Link.replaceDB(db),
 		Log:                 q.Log.replaceDB(db),
@@ -163,11 +165,11 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 }
 
 type queryCtx struct {
+	ApplicationPassword *applicationPasswordDo
 	Attachment          *attachmentDo
 	Category            *categoryDo
 	Comment             *commentDo
 	CommentBlack        *commentBlackDo
-	FlywaySchemaHistory *flywaySchemaHistoryDo
 	Journal             *journalDo
 	Link                *linkDo
 	Log                 *logDo
@@ -185,11 +187,11 @@ type queryCtx struct {
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		ApplicationPassword: q.ApplicationPassword.WithContext(ctx),
 		Attachment:          q.Attachment.WithContext(ctx),
 		Category:            q.Category.WithContext(ctx),
 		Comment:             q.Comment.WithContext(ctx),
 		CommentBlack:        q.CommentBlack.WithContext(ctx),
-		FlywaySchemaHistory: q.FlywaySchemaHistory.WithContext(ctx),
 		Journal:             q.Journal.WithContext(ctx),
 		Link:                q.Link.WithContext(ctx),
 		Log:                 q.Log.WithContext(ctx),

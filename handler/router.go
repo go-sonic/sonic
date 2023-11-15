@@ -272,6 +272,12 @@ func (s *Server) RegisterRouters() {
 					themeRouter.GET("activation/template/exists", s.wrapHandler(s.ThemeHandler.TemplateExist))
 				}
 				{
+					appPwdRouter := authRouter.Group("application_password")
+					appPwdRouter.POST("", s.wrapHandler(s.ApplicationPasswordHandler.Create))
+					appPwdRouter.DELETE("/:name", s.wrapHandler(s.ApplicationPasswordHandler.Delete))
+					appPwdRouter.GET("", s.wrapHandler(s.ApplicationPasswordHandler.List))
+				}
+				{
 					emailRouter := authRouter.Group("/mails")
 					emailRouter.POST("/test", s.wrapHandler(s.EmailHandler.Test))
 				}

@@ -294,3 +294,15 @@ create table if not exists user
 ) ENGINE = INNODB
   DEFAULT charset = utf8mb4;
 
+create table if not exists application_password
+(
+    id                 int auto_increment primary key,
+    create_time        datetime(6)             not null,
+    update_time        datetime(6)                 null,
+    name               varchar(32)             not null,
+    password           varchar(256)            not null,
+    user_id            int                     not null,
+    last_activate_time datetime(6)                 null,
+    last_activate_ip   varchar(128) default '' not null
+) ENGINE = INNODB
+  DEFAULT charset = utf8mb4;
