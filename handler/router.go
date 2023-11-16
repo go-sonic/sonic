@@ -36,7 +36,7 @@ func (s *Server) RegisterRouters() {
 		})
 		{
 			staticRouter := router.Group("/")
-			staticRouter.StaticFS("admin", gin.Dir(s.Config.Sonic.AdminResourcesDir, false))
+			staticRouter.StaticFS(s.Config.Sonic.AdminURLPath, gin.Dir(s.Config.Sonic.AdminResourcesDir, false))
 			staticRouter.StaticFS("/css", gin.Dir(filepath.Join(s.Config.Sonic.AdminResourcesDir, "css"), false))
 			staticRouter.StaticFS("/js", gin.Dir(filepath.Join(s.Config.Sonic.AdminResourcesDir, "js"), false))
 			staticRouter.StaticFS("/images", gin.Dir(filepath.Join(s.Config.Sonic.AdminResourcesDir, "images"), false))

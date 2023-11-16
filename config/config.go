@@ -30,6 +30,8 @@ func NewConfig() *Config {
 		viper.SetConfigName("config")
 	}
 
+	viper.SetDefault("sonic.admin_url_path", "admin")
+
 	conf := &Config{}
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)

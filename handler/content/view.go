@@ -60,7 +60,8 @@ func (v *ViewHandler) Install(ctx *gin.Context) {
 	if isInstall {
 		return
 	}
-	ctx.Redirect(http.StatusTemporaryRedirect, "admin/#install")
+	adminURLPath, _ := v.OptionService.GetAdminURLPath(ctx)
+	ctx.Redirect(http.StatusTemporaryRedirect, adminURLPath+"/#install")
 }
 
 func (v *ViewHandler) Logo(ctx *gin.Context) (interface{}, error) {

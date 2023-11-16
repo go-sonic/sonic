@@ -32,6 +32,7 @@ type OptionService interface {
 	GetLinkPrefix(ctx context.Context) (string, error)
 	GetSheetPrefix(ctx context.Context) (string, error)
 	GetAttachmentType(ctx context.Context) consts.AttachmentType
+	GetAdminURLPath(ctx context.Context) (string, error)
 }
 
 type ClientOptionService interface {
