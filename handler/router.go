@@ -45,6 +45,13 @@ func (s *Server) RegisterRouters() {
 			staticRouter.StaticFS("/themes/", gin.Dir(s.Config.Sonic.ThemeDir, false))
 		}
 		{
+			wpCompatibleRouter := router.Group("/wp-json/wp/v2")
+			wpCompatibleRouter.Use(s.ApplicationPasswordMiddleware.GetWrapHandler())
+			wpCompatibleRouter.POST("/posts", s.wrapHandler(s.WpPostHandler.Create))
+			wpCompatibleRouter.GET("/users", s.wrapHandler(s.WpUserHandler.List))
+			wpCompatibleRouter.GET("/categories", s.wrapHandler(s.WpCategoryHandler.List))
+		}
+		{
 			adminAPIRouter := router.Group("/api/admin")
 			adminAPIRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
 			adminAPIRouter.GET("/is_installed", s.wrapHandler(s.AdminHandler.IsInstalled))
@@ -353,6 +360,7 @@ func (s *Server) RegisterRouters() {
 
 			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHandler.Comment))
 		}
+
 	}
 }
 

@@ -1,6 +1,10 @@
 package util
 
 import (
+	"errors"
+	"github.com/go-playground/validator/v10"
+	"github.com/go-sonic/sonic/handler/trans"
+	"github.com/go-sonic/sonic/util/xerr"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -44,4 +48,12 @@ var blankRegexp = regexp.MustCompile(`\s`)
 func HTMLFormatWordCount(html string) int64 {
 	text := CleanHTMLTag(html)
 	return int64(utf8.RuneCountInString(text) - len(blankRegexp.FindSubmatchIndex(StringToBytes(text))))
+}
+
+func WrapJsonBindErr(err error) error {
+	e := validator.ValidationErrors{}
+	if errors.As(err, &e) {
+		return xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))
+	}
+	return xerr.WithStatus(err, xerr.StatusBadRequest)
 }

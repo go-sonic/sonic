@@ -117,18 +117,56 @@ func (a *applicationPasswordServiceImpl) List(ctx context.Context) ([]*dto.Appli
 	appPwdDTOList := make([]*dto.ApplicationPasswordDTO, len(entities))
 
 	for _, appPwdEntity := range entities {
-		var lastActivateTime int64
-		if appPwdEntity.LastActivateTime == nil {
-			lastActivateTime = appPwdEntity.LastActivateTime.Unix()
-		}
-		appPwdDTO := &dto.ApplicationPasswordDTO{
-			Name:             appPwdEntity.Name,
-			LastActivateIp:   appPwdEntity.LastActivateIP,
-			LastActivateTime: lastActivateTime,
-			CreateTime:       appPwdEntity.CreateTime.Unix(),
-		}
-		appPwdDTOList = append(appPwdDTOList, appPwdDTO)
+		appPwdDTOList = append(appPwdDTOList, a.ConvertToDTO(appPwdEntity))
 	}
 
 	return appPwdDTOList, nil
+}
+
+func (a *applicationPasswordServiceImpl) Verify(ctx context.Context, userId int32, pwd string) (*entity.ApplicationPassword, error) {
+	appPwdDAL := dal.GetQueryByCtx(ctx).ApplicationPassword
+	entityList, err := appPwdDAL.WithContext(ctx).Where(appPwdDAL.UserID.Eq(userId)).Find()
+	if err != nil {
+		return nil, WrapDBErr(err)
+	}
+
+	pwdMd5 := util.Md5(pwd)
+
+	for _, appPwdEntity := range entityList {
+		if appPwdEntity.Password == pwdMd5 {
+			return appPwdEntity, nil
+		}
+	}
+	return nil, nil
+}
+
+func (a *applicationPasswordServiceImpl) Update(ctx context.Context, entityId int32, ip string) error {
+	appPwdDAL := dal.GetQueryByCtx(ctx).ApplicationPassword
+	now := time.Now()
+
+	_, err := appPwdDAL.WithContext(ctx).Where(appPwdDAL.ID.Eq(entityId)).Updates(entity.ApplicationPassword{
+		LastActivateIP:   ip,
+		LastActivateTime: &now,
+	})
+
+	if err != nil {
+		return WrapDBErr(err)
+	}
+
+	return nil
+}
+
+func (a *applicationPasswordServiceImpl) ConvertToDTO(appPwdEntity *entity.ApplicationPassword) *dto.ApplicationPasswordDTO {
+	var lastActivateTime int64
+	if appPwdEntity.LastActivateTime == nil {
+		lastActivateTime = appPwdEntity.LastActivateTime.Unix()
+	}
+	appPwdDTO := &dto.ApplicationPasswordDTO{
+		Name:             appPwdEntity.Name,
+		LastActivateIp:   appPwdEntity.LastActivateIP,
+		LastActivateTime: lastActivateTime,
+		CreateTime:       appPwdEntity.CreateTime.Unix(),
+	}
+
+	return appPwdDTO
 }
