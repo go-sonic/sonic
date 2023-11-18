@@ -470,6 +470,6 @@ func (o *optionServiceImpl) GetAttachmentType(ctx context.Context) consts.Attach
 	}
 }
 
-func (o *optionServiceImpl) GetAdminUrlPath(ctx context.Context) (string, error) {
-	return o.Config.Sonic.AdminUrlPath, nil
+func (o *optionServiceImpl) GetAdminURLPath(ctx context.Context) (string, error) {
+	return o.Config.Sonic.AdminURLPath, nil
 }
