@@ -27,7 +27,7 @@ func (c *CategoryHandler) List(ctx *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	categoryDTOList := make([]*wp.CategoryDTO, len(categoryEntities))
+	categoryDTOList := make([]*wp.CategoryDTO, 0, len(categoryEntities))
 	for _, categoryEntity := range categoryEntities {
 		categoryDTOList = append(categoryDTOList, convertToCategoryDTO(categoryEntity))
 	}

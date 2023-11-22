@@ -14,6 +14,12 @@ type BaseDTO struct {
 	Data    interface{} `json:"data"`
 }
 
+type BaseWpDTO struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
 type Page struct {
 	Content     interface{} `json:"content"`
 	Pages       int         `json:"pages"`

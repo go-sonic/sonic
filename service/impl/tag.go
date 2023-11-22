@@ -230,3 +230,19 @@ func (t tagServiceImpl) GetByName(ctx context.Context, name string) (*entity.Tag
 	tag, err := tagDAL.WithContext(ctx).Where(tagDAL.Name.Eq(name)).First()
 	return tag, WrapDBErr(err)
 }
+
+func (t tagServiceImpl) ListByOption(ctx context.Context, option *param.TagListParam) ([]*entity.Tag, error) {
+	tagDAL := dal.GetQueryByCtx(ctx).Tag
+	if option == nil {
+		return tagDAL.WithContext(ctx).Where().Find()
+	}
+
+	query := tagDAL.WithContext(ctx)
+
+	search := strings.TrimSpace(option.Search)
+	if search != "" {
+		query.Where(tagDAL.Name.Like("%" + search + "%"))
+	}
+
+	return query.Find()
+}

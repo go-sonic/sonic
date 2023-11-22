@@ -47,9 +47,21 @@ func (s *Server) RegisterRouters() {
 		{
 			wpCompatibleRouter := router.Group("/wp-json/wp/v2")
 			wpCompatibleRouter.Use(s.ApplicationPasswordMiddleware.GetWrapHandler())
-			wpCompatibleRouter.POST("/posts", s.wrapHandler(s.WpPostHandler.Create))
-			wpCompatibleRouter.GET("/users", s.wrapHandler(s.WpUserHandler.List))
-			wpCompatibleRouter.GET("/categories", s.wrapHandler(s.WpCategoryHandler.List))
+			{
+				wpCompatibleRouter.GET("/posts", s.wrapWpHandler(s.WpPostHandler.List))
+				wpCompatibleRouter.POST("/posts", s.wrapWpHandler(s.WpPostHandler.Create))
+				wpCompatibleRouter.POST("/posts/:postID", s.wrapWpHandler(s.WpPostHandler.Update))
+				wpCompatibleRouter.DELETE("/posts/:postID", s.wrapWpHandler(s.WpPostHandler.Delete))
+			}
+			{
+				wpCompatibleRouter.GET("/tags", s.wrapWpHandler(s.WpTagHandler.List))
+			}
+			{
+				wpCompatibleRouter.GET("/users", s.wrapWpHandler(s.WpUserHandler.List))
+			}
+			{
+				wpCompatibleRouter.GET("/categories", s.wrapWpHandler(s.WpCategoryHandler.List))
+			}
 		}
 		{
 			adminAPIRouter := router.Group("/api/admin")

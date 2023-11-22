@@ -22,7 +22,7 @@ func (u *UserHandler) List(ctx *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	userDTOList := make([]*dto.User, len(allUser))
+	userDTOList := make([]*dto.User, 0, len(allUser))
 	for _, user := range allUser {
 		userDTO := u.UserService.ConvertToDTO(ctx, user)
 		userDTOList = append(userDTOList, userDTO)

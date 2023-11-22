@@ -83,6 +83,7 @@ type Server struct {
 	WpPostHandler                 *wp.PostHandler
 	WpUserHandler                 *wp.UserHandler
 	WpCategoryHandler             *wp.CategoryHandler
+	WpTagHandler                  *wp.TagHandler
 }
 
 type ServerParams struct {
@@ -143,6 +144,7 @@ type ServerParams struct {
 	WpPostHandler                 *wp.PostHandler
 	WpUserHandler                 *wp.UserHandler
 	WpCategoryHandler             *wp.CategoryHandler
+	WpTagHandler                  *wp.TagHandler
 }
 
 func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
@@ -213,6 +215,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		WpPostHandler:                 param.WpPostHandler,
 		WpUserHandler:                 param.WpUserHandler,
 		WpCategoryHandler:             param.WpCategoryHandler,
+		WpTagHandler:                  param.WpTagHandler,
 	}
 	lifecycle.Append(fx.Hook{
 		OnStop:  httpServer.Shutdown,
@@ -253,6 +256,21 @@ func (s *Server) wrapHandler(handler wrapperHandler) gin.HandlerFunc {
 			Data:    data,
 			Message: "OK",
 		})
+	}
+}
+
+func (s *Server) wrapWpHandler(handler wrapperHandler) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		data, err := handler(ctx)
+		if err != nil {
+			s.logger.Error("handler error", zap.Error(err))
+			status := xerr.GetHTTPStatus(err)
+			ctx.JSON(status, &dto.BaseWpDTO{Code: status, Message: xerr.GetMessage(err), Data: map[string]interface{}{"status": status}})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, data)
+		return
 	}
 }
 

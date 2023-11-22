@@ -7,5 +7,6 @@ func init() {
 		NewPostHandler,
 		NewUserHandler,
 		NewCategoryHandler,
+		NewTagHandler,
 	)
 }

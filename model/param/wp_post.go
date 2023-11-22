@@ -28,3 +28,8 @@ type WpPost struct {
 	Categories        []int32                `json:"categories"`
 	Tags              []int32                `json:"tags"`
 }
+
+type WpPostQuery struct {
+	Page    int `form:"page" default:"1"`
+	PerPage int `form:"per_page" default:"10"`
+}

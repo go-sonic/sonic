@@ -46,3 +46,7 @@ var (
 	BuildTime       string
 	BuildCommit     string
 )
+
+const (
+	LocalDateTimeFormat = "2006-01-02T15:04:05"
+)
