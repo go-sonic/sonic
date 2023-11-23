@@ -55,6 +55,7 @@ func (s *Server) RegisterRouters() {
 			}
 			{
 				wpCompatibleRouter.GET("/tags", s.wrapWpHandler(s.WpTagHandler.List))
+				wpCompatibleRouter.POST("/tags", s.wrapWpHandler(s.WpTagHandler.Create))
 			}
 			{
 				wpCompatibleRouter.GET("/users", s.wrapWpHandler(s.WpUserHandler.List))

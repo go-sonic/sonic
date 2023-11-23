@@ -241,7 +241,7 @@ func (t tagServiceImpl) ListByOption(ctx context.Context, option *param.TagListP
 
 	search := strings.TrimSpace(option.Search)
 	if search != "" {
-		query.Where(tagDAL.Name.Like("%" + search + "%"))
+		query = query.Where(tagDAL.Name.Like("%" + search + "%"))
 	}
 
 	return query.Find()
