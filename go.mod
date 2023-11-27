@@ -8,7 +8,7 @@ require (
 	github.com/clbanning/mxj/v2 v2.7.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/fsnotify/fsnotify v1.6.0
-	github.com/gin-contrib/cors v1.4.0
+	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-git/go-git/v5 v5.9.0
 	github.com/go-playground/locales v0.14.1
