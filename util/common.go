@@ -2,12 +2,13 @@ package util
 
 import (
 	"errors"
-	"github.com/go-playground/validator/v10"
-	"github.com/go-sonic/sonic/handler/trans"
-	"github.com/go-sonic/sonic/util/xerr"
 	"regexp"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/go-sonic/sonic/handler/trans"
+	"github.com/go-sonic/sonic/util/xerr"
 )
 
 func IfElse(condition bool, a, b interface{}) interface{} {
@@ -50,7 +51,7 @@ func HTMLFormatWordCount(html string) int64 {
 	return int64(utf8.RuneCountInString(text) - len(blankRegexp.FindSubmatchIndex(StringToBytes(text))))
 }
 
-func WrapJsonBindErr(err error) error {
+func WrapJSONBindErr(err error) error {
 	e := validator.ValidationErrors{}
 	if errors.As(err, &e) {
 		return xerr.WithStatus(e, xerr.StatusBadRequest).WithMsg(trans.Translate(e))

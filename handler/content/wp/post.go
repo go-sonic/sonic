@@ -2,6 +2,10 @@ package wp
 
 import (
 	"encoding/json"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	sonicconst "github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/log"
@@ -11,9 +15,6 @@ import (
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/util"
 	"github.com/go-sonic/sonic/util/xerr"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type PostHandler struct {
@@ -29,7 +30,7 @@ func NewPostHandler(postService service.PostService) *PostHandler {
 func (handler *PostHandler) List(ctx *gin.Context) (interface{}, error) {
 	var wpPostQuery param.WpPostQuery
 	if err := ctx.ShouldBind(&wpPostQuery); err != nil {
-		return nil, util.WrapJsonBindErr(err)
+		return nil, util.WrapJSONBindErr(err)
 	}
 
 	var postQuery param.PostQuery
@@ -51,7 +52,7 @@ func (handler *PostHandler) List(ctx *gin.Context) (interface{}, error) {
 func (handler *PostHandler) Create(ctx *gin.Context) (interface{}, error) {
 	postParam, err := parsePostParam(ctx)
 	if err != nil {
-		return nil, util.WrapJsonBindErr(err)
+		return nil, util.WrapJSONBindErr(err)
 	}
 
 	create, err := handler.PostService.Create(ctx, postParam)
@@ -64,7 +65,7 @@ func (handler *PostHandler) Create(ctx *gin.Context) (interface{}, error) {
 func (handler *PostHandler) Update(ctx *gin.Context) (interface{}, error) {
 	postParam, err := parsePostParam(ctx)
 	if err != nil {
-		return nil, util.WrapJsonBindErr(err)
+		return nil, util.WrapJSONBindErr(err)
 	}
 
 	postIDStr := ctx.Param("postID")
@@ -104,7 +105,7 @@ func parsePostParam(ctx *gin.Context) (*param.Post, error) {
 	var wpPost param.WpPost
 	err := ctx.ShouldBindJSON(&wpPost)
 	if err != nil {
-		return nil, util.WrapJsonBindErr(err)
+		return nil, util.WrapJSONBindErr(err)
 	}
 
 	bytes, err := json.Marshal(wpPost)
