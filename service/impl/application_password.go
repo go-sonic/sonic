@@ -123,9 +123,9 @@ func (a *applicationPasswordServiceImpl) List(ctx context.Context) ([]*dto.Appli
 	return appPwdDTOList, nil
 }
 
-func (a *applicationPasswordServiceImpl) Verify(ctx context.Context, userId int32, pwd string) (*entity.ApplicationPassword, error) {
+func (a *applicationPasswordServiceImpl) Verify(ctx context.Context, userID int32, pwd string) (*entity.ApplicationPassword, error) {
 	appPwdDAL := dal.GetQueryByCtx(ctx).ApplicationPassword
-	entityList, err := appPwdDAL.WithContext(ctx).Where(appPwdDAL.UserID.Eq(userId)).Find()
+	entityList, err := appPwdDAL.WithContext(ctx).Where(appPwdDAL.UserID.Eq(userID)).Find()
 	if err != nil {
 		return nil, WrapDBErr(err)
 	}
@@ -140,11 +140,11 @@ func (a *applicationPasswordServiceImpl) Verify(ctx context.Context, userId int3
 	return nil, nil
 }
 
-func (a *applicationPasswordServiceImpl) Update(ctx context.Context, entityId int32, ip string) error {
+func (a *applicationPasswordServiceImpl) Update(ctx context.Context, entityID int32, ip string) error {
 	appPwdDAL := dal.GetQueryByCtx(ctx).ApplicationPassword
 	now := time.Now()
 
-	_, err := appPwdDAL.WithContext(ctx).Where(appPwdDAL.ID.Eq(entityId)).Updates(entity.ApplicationPassword{
+	_, err := appPwdDAL.WithContext(ctx).Where(appPwdDAL.ID.Eq(entityID)).Updates(entity.ApplicationPassword{
 		LastActivateIP:   ip,
 		LastActivateTime: &now,
 	})
@@ -163,7 +163,7 @@ func (a *applicationPasswordServiceImpl) ConvertToDTO(appPwdEntity *entity.Appli
 	}
 	appPwdDTO := &dto.ApplicationPasswordDTO{
 		Name:             appPwdEntity.Name,
-		LastActivateIp:   appPwdEntity.LastActivateIP,
+		LastActiveIP:     appPwdEntity.LastActivateIP,
 		LastActivateTime: lastActivateTime,
 		CreateTime:       appPwdEntity.CreateTime.Unix(),
 	}

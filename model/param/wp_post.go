@@ -3,8 +3,8 @@ package param
 type WpPost struct {
 	Date              string                 `json:"date"`
 	DateGmt           string                 `json:"date_gmt"`
-	Guid              map[string]interface{} `json:"guid"`
-	Id                int32                  `json:"id"`
+	GUID              map[string]interface{} `json:"guid"`
+	ID                int32                  `json:"id"`
 	Link              string                 `json:"link"`
 	Modified          string                 `json:"modified"`
 	ModifiedGmt       string                 `json:"modified_gmt"`

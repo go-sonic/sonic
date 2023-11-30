@@ -184,8 +184,8 @@ func convertToWpPost(postEntity *entity.Post) *wp.PostDTO {
 	var postDTO = &wp.PostDTO{
 		Date:              postEntity.CreateTime.Format(timeFormat),
 		DateGmt:           postEntity.CreateTime.UTC().Format(timeFormat),
-		Guid:              nil,
-		Id:                postEntity.ID,
+		GUID:              nil,
+		ID:                postEntity.ID,
 		Link:              "",
 		Modified:          "",
 		ModifiedGmt:       "",

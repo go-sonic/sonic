@@ -373,7 +373,6 @@ func (s *Server) RegisterRouters() {
 
 			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHandler.Comment))
 		}
-
 	}
 }
 

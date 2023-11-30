@@ -11,6 +11,6 @@ type ApplicationPasswordService interface {
 	CreatePwd(ctx context.Context, appPwdParam *param.ApplicationPasswordParam) (*dto.ApplicationPasswordDTO, error)
 	DeletePwd(ctx context.Context, appPwdParam *param.ApplicationPasswordParam) error
 	List(ctx context.Context) ([]*dto.ApplicationPasswordDTO, error)
-	Verify(ctx context.Context, userId int32, pwd string) (*entity.ApplicationPassword, error)
-	Update(ctx context.Context, entityId int32, ip string) error
+	Verify(ctx context.Context, userID int32, pwd string) (*entity.ApplicationPassword, error)
+	Update(ctx context.Context, entityID int32, ip string) error
 }

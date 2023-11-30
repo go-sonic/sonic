@@ -12,6 +12,10 @@ import (
 	"strings"
 )
 
+var (
+	basicAuthRegexp = regexp.MustCompile(`^Basic [a-z\\d/+]*={0,2}`)
+)
+
 type ApplicationPasswordMiddleware struct {
 	PasswordService service.ApplicationPasswordService
 	UserService     service.UserService
@@ -30,7 +34,6 @@ func (a *ApplicationPasswordMiddleware) Get() error {
 }
 
 func (a *ApplicationPasswordMiddleware) GetWrapHandler() gin.HandlerFunc {
-
 	return func(ctx *gin.Context) {
 		header := ctx.GetHeader("Authorization")
 		if len(header) == 0 {
@@ -91,6 +94,5 @@ func abortUnauthorized(ctx *gin.Context) {
 }
 
 func verifyHeader(header string) bool {
-	compile, err := regexp.Compile("^Basic [a-z\\d/+]*={0,2}")
-	return err != nil || compile.MatchString(header)
+	return basicAuthRegexp.MatchString(header)
 }

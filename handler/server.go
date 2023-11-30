@@ -270,7 +270,6 @@ func (s *Server) wrapWpHandler(handler wrapperHandler) gin.HandlerFunc {
 		}
 
 		ctx.JSON(http.StatusOK, data)
-		return
 	}
 }
 
