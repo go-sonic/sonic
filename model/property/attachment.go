@@ -54,6 +54,12 @@ var MinioAccessSecret = Property{
 	Kind:         reflect.String,
 }
 
+var MinioProtocol = Property{
+	DefaultValue: "https://",
+	KeyValue:     "minio_protocol",
+	Kind:         reflect.String,
+}
+
 var MinioSource = Property{
 	DefaultValue: "",
 	KeyValue:     "minio_source",
@@ -63,6 +69,12 @@ var MinioSource = Property{
 var MinioRegion = Property{
 	DefaultValue: "",
 	KeyValue:     "minio_region",
+	Kind:         reflect.String,
+}
+
+var MinioFrontBase = Property{
+	DefaultValue: "",
+	KeyValue:     "minio_front_base",
 	Kind:         reflect.String,
 }
 
