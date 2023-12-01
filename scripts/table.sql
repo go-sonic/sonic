@@ -67,6 +67,7 @@ create table if not exists comment
     status             int          default 0  not null,
     top_priority       int          default 0  not null,
     user_agent         varchar(511) default '' not null,
+    likes              int          default 0 not null ,
     index comment_parent_id (parent_id),
     index comment_post_id (post_id),
     index comment_type_status (type, status)

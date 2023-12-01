@@ -17,4 +17,5 @@ type Comment struct {
 	AllowNotification bool                 `json:"allowNotification"`
 	CreateTime        int64                `json:"createTime"`
 	Avatar            string               `json:"avatar"`
+	Likes             int32                `json:"likes"`
 }

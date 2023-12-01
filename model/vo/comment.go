@@ -28,5 +28,6 @@ type JournalCommentWithJournal struct {
 
 type CommentWithHasChildren struct {
 	*dto.Comment
-	HasChildren bool `json:"hasChildren"`
+	HasChildren   bool  `json:"hasChildren"`
+	ChildrenCount int64 `json:"childrenCount"`
 }

@@ -13,3 +13,18 @@
         <halo-comment id="{{.target.ID}}" type="{{.type}}"/>
     {{end}}
 {{end}}
+
+{{define "global.sonic_comment"}}
+    {{if or (eq .type "journal") (not .target.DisallowComment)}}
+        <div id="comment"></div>
+        <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.prod.js"></script>
+        <script src="{{.options.comment_internal_plugin_js}}"></script>
+        <script>
+            SonicComment.init("#comment", {
+                target: "{{.type}}s",
+                targetId: {{.target.ID}},
+                colorScheme: "light"
+            });
+        </script>
+    {{end}}
+{{end}}

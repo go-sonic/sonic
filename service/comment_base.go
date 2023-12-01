@@ -26,4 +26,5 @@ type BaseCommentService interface {
 	CountByStatusAndContentIDs(ctx context.Context, status consts.CommentStatus, contentIDs []int32) (map[int32]int64, error)
 	CountChildren(ctx context.Context, parentCommentIDs []int32) (map[int32]int64, error)
 	GetChildren(ctx context.Context, parentCommentID int32, contentID int32, commentType consts.CommentType) ([]*entity.Comment, error)
+	IncreaseLike(ctx context.Context, commentID int32) error
 }

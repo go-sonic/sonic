@@ -67,8 +67,10 @@ func (b *baseCommentAssembler) ConvertToWithHasChildren(ctx context.Context, com
 		}
 		if count, ok := countMap[commentDTO.ID]; ok && count > 0 {
 			commentWithHasChildren.HasChildren = true
+			commentWithHasChildren.ChildrenCount = count
 		} else {
 			commentWithHasChildren.HasChildren = false
+			commentWithHasChildren.ChildrenCount = 0
 		}
 		result = append(result, commentWithHasChildren)
 	}
@@ -90,6 +92,7 @@ func (b *baseCommentAssembler) ConvertToDTO(ctx context.Context, comment *entity
 		IsAdmin:           comment.IsAdmin,
 		AllowNotification: comment.AllowNotification,
 		CreateTime:        comment.CreateTime.UnixMilli(),
+		Likes:             comment.Likes,
 	}
 	avatarURL, err := b.BaseCommentService.BuildAvatarURL(ctx, comment.GravatarMd5, nil, nil)
 	if err != nil {
@@ -124,6 +127,7 @@ func (b *baseCommentAssembler) ConvertToDTOList(ctx context.Context, comments []
 			IsAdmin:           comment.IsAdmin,
 			AllowNotification: comment.AllowNotification,
 			CreateTime:        comment.CreateTime.UnixMilli(),
+			Likes:             comment.Likes,
 		}
 		avatarURL, err := b.BaseCommentService.BuildAvatarURL(ctx, comment.GravatarMd5, util.StringPtr(gravatarSource.(string)), util.StringPtr(gravatarDefault.(string)))
 		if err != nil {
