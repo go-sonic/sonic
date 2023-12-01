@@ -7,6 +7,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/go-playground/validator/v10"
+
 	"github.com/go-sonic/sonic/handler/trans"
 	"github.com/go-sonic/sonic/util/xerr"
 )

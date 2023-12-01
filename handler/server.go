@@ -3,10 +3,11 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/go-sonic/sonic/handler/content/wp"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/go-sonic/sonic/handler/content/wp"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/dig"

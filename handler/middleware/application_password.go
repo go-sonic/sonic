@@ -3,13 +3,15 @@ package middleware
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/go-sonic/sonic/consts"
-	"github.com/go-sonic/sonic/model/dto"
-	"github.com/go-sonic/sonic/service"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/go-sonic/sonic/consts"
+	"github.com/go-sonic/sonic/model/dto"
+	"github.com/go-sonic/sonic/service"
 )
 
 var (
