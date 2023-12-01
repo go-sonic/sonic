@@ -41,9 +41,17 @@ type Levels struct {
 	Gorm string `mapstructure:"gorm"`
 }
 
+type LogMode string
+
+const (
+	Console LogMode = "console"
+	File    LogMode = "file"
+)
+
 type Sonic struct {
-	Mode              string `mapstructure:"mode"`
-	WorkDir           string `mapstructure:"work_dir"`
+	Mode              string  `mapstructure:"mode"`
+	LogMode           LogMode `mapstructure:"log_mode"`
+	WorkDir           string  `mapstructure:"work_dir"`
 	UploadDir         string
 	LogDir            string `mapstructure:"log_dir"`
 	TemplateDir       string `mapstructure:"template_dir"`

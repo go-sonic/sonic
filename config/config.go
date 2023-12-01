@@ -84,6 +84,7 @@ func NewConfig() *Config {
 
 	initDirectory(conf)
 	mode = conf.Sonic.Mode
+	logMode = conf.Sonic.LogMode
 	return conf
 }
 
@@ -104,7 +105,19 @@ func initDirectory(conf *Config) {
 }
 
 var mode string
+var logMode LogMode
 
 func IsDev() bool {
 	return mode == "development"
+}
+
+func LogToConsole() bool {
+	switch logMode {
+	case Console:
+		return true
+	case File:
+		return false
+	default:
+		return IsDev()
+	}
 }
