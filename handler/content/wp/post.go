@@ -116,11 +116,10 @@ func parsePostParam(ctx *gin.Context) (*param.Post, error) {
 	log.CtxInfo(ctx, "wpPost: "+string(bytes))
 
 	return convertToPostParam(&wpPost)
-
 }
 
 func convertToPostParam(wpPost *param.WpPost) (*param.Post, error) {
-	var paramPostStatus = sonicconst.PostStatusPublished
+	paramPostStatus := sonicconst.PostStatusPublished
 	if strings.ToLower(wpPost.Status) == "draft" {
 		paramPostStatus = sonicconst.PostStatusDraft
 	}
@@ -168,9 +167,9 @@ func convertToPostParam(wpPost *param.WpPost) (*param.Post, error) {
 
 func convertToWpPost(postEntity *entity.Post) *wp.PostDTO {
 	timeFormat := time.RFC3339
-	var wpStatus = "publish"
-	var wpCommentStatus = "open"
-	var wpContent = make(map[string]interface{})
+	wpStatus := "publish"
+	wpCommentStatus := "open"
+	wpContent := make(map[string]interface{})
 
 	if postEntity.Status == sonicconst.PostStatusDraft {
 		wpStatus = "draft"
@@ -183,7 +182,7 @@ func convertToWpPost(postEntity *entity.Post) *wp.PostDTO {
 	wpContent["rendered"] = postEntity.OriginalContent
 	wpContent["protected"] = false
 
-	var postDTO = &wp.PostDTO{
+	postDTO := &wp.PostDTO{
 		Date:              postEntity.CreateTime.Format(timeFormat),
 		DateGmt:           postEntity.CreateTime.UTC().Format(timeFormat),
 		GUID:              nil,

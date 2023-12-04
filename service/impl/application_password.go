@@ -149,7 +149,6 @@ func (a *applicationPasswordServiceImpl) Update(ctx context.Context, entityID in
 		LastActivateIP:   ip,
 		LastActivateTime: &now,
 	})
-
 	if err != nil {
 		return WrapDBErr(err)
 	}

@@ -14,9 +14,7 @@ import (
 	"github.com/go-sonic/sonic/service"
 )
 
-var (
-	basicAuthRegexp = regexp.MustCompile(`^Basic [a-z\\d/+]*={0,2}`)
-)
+var basicAuthRegexp = regexp.MustCompile(`^Basic [a-z\\d/+]*={0,2}`)
 
 type ApplicationPasswordMiddleware struct {
 	PasswordService service.ApplicationPasswordService
