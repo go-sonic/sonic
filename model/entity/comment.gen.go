@@ -31,7 +31,7 @@ type Comment struct {
 	Status            consts.CommentStatus `gorm:"column:status;type:bigint;not null;index:comment_type_status,priority:2" json:"status"`
 	TopPriority       int32                `gorm:"column:top_priority;type:int;not null" json:"top_priority"`
 	UserAgent         string               `gorm:"column:user_agent;type:varchar(511);not null" json:"user_agent"`
-	Likes             int32                `gorm:"column:likes;type:int;not null" json:"likes"`
+	Likes             int32                `gorm:"column:likes;type:int;not null;default: 0" json:"likes"`
 }
 
 // TableName Comment's table name
