@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+
 	"github.com/go-sonic/sonic/handler/trans"
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/service"
