@@ -14,7 +14,7 @@ const TableNameOption = "option"
 
 // Option mapped from table <option>
 type Option struct {
-	ID          int32             `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
+	ID          *int32            `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime  time.Time         `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime  *time.Time        `gorm:"column:update_time;type:datetime" json:"update_time"`
 	OptionKey   string            `gorm:"column:option_key;type:varchar(100);not null" json:"option_key"`

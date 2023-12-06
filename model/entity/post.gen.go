@@ -14,9 +14,9 @@ const TableNamePost = "post"
 
 // Post mapped from table <post>
 type Post struct {
-	ID              int32             `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
-	Type            consts.PostType   `gorm:"column:type;type:bigint;not null;index:post_type_status,priority:1" json:"type"`
-	CreateTime      time.Time         `gorm:"column:create_time;type:datetime;not null;index:post_create_time,priority:1" json:"create_time"`
+	ID              *int32            `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	Type            consts.PostType   `gorm:"column:type;type:bigint;not null" json:"type"`
+	CreateTime      time.Time         `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime      *time.Time        `gorm:"column:update_time;type:datetime" json:"update_time"`
 	DisallowComment bool              `gorm:"column:disallow_comment;type:tinyint(1);not null" json:"disallow_comment"`
 	EditTime        *time.Time        `gorm:"column:edit_time;type:datetime" json:"edit_time"`
@@ -27,13 +27,13 @@ type Post struct {
 	MetaKeywords    string            `gorm:"column:meta_keywords;type:varchar(511);not null" json:"meta_keywords"`
 	OriginalContent string            `gorm:"column:original_content;type:longtext;not null" json:"original_content"`
 	Password        string            `gorm:"column:password;type:varchar(255);not null" json:"password"`
-	Slug            string            `gorm:"column:slug;type:varchar(255);not null;uniqueIndex:uniq_post_slug,priority:1" json:"slug"`
-	Status          consts.PostStatus `gorm:"column:status;type:bigint;not null;index:post_type_status,priority:2;default:1" json:"status"`
+	Slug            string            `gorm:"column:slug;type:varchar(255);not null" json:"slug"`
+	Status          consts.PostStatus `gorm:"column:status;type:bigint;not null;default:1" json:"status"`
 	Summary         string            `gorm:"column:summary;type:longtext;not null" json:"summary"`
 	Template        string            `gorm:"column:template;type:varchar(255);not null" json:"template"`
 	Thumbnail       string            `gorm:"column:thumbnail;type:varchar(1023);not null" json:"thumbnail"`
 	Title           string            `gorm:"column:title;type:varchar(255);not null" json:"title"`
-	TopPriority     int32             `gorm:"column:top_priority;type:int;not null" json:"top_priority"`
+	TopPriority     int32             `gorm:"column:top_priority;type:integer;not null" json:"top_priority"`
 	Visits          int64             `gorm:"column:visits;type:bigint;not null" json:"visits"`
 	WordCount       int64             `gorm:"column:word_count;type:bigint;not null" json:"word_count"`
 }

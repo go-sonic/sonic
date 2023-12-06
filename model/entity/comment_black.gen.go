@@ -12,7 +12,7 @@ const TableNameCommentBlack = "comment_black"
 
 // CommentBlack mapped from table <comment_black>
 type CommentBlack struct {
-	ID         int32      `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
+	ID         *int32     `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime time.Time  `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime *time.Time `gorm:"column:update_time;type:datetime" json:"update_time"`
 	BanTime    time.Time  `gorm:"column:ban_time;type:datetime;not null" json:"ban_time"`

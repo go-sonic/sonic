@@ -12,11 +12,11 @@ const TableNamePostCategory = "post_category"
 
 // PostCategory mapped from table <post_category>
 type PostCategory struct {
-	ID         int32      `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
+	ID         *int32     `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime time.Time  `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime *time.Time `gorm:"column:update_time;type:datetime" json:"update_time"`
-	CategoryID int32      `gorm:"column:category_id;type:int;not null;index:post_category_category_id,priority:1" json:"category_id"`
-	PostID     int32      `gorm:"column:post_id;type:int;not null;index:post_category_post_id,priority:1" json:"post_id"`
+	CategoryID int32      `gorm:"column:category_id;type:integer;not null" json:"category_id"`
+	PostID     int32      `gorm:"column:post_id;type:integer;not null" json:"post_id"`
 }
 
 // TableName PostCategory's table name

@@ -7,11 +7,13 @@ package dal
 import (
 	"context"
 
-	"gorm.io/gen"
-	"gorm.io/gen/field"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
+
+	"gorm.io/gen"
+	"gorm.io/gen/field"
+
 	"gorm.io/plugin/dbresolver"
 
 	"github.com/go-sonic/sonic/model/entity"
