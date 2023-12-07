@@ -14,7 +14,7 @@ const TableNameAttachment = "attachment"
 
 // Attachment mapped from table <attachment>
 type Attachment struct {
-	ID         *int32                `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	ID         int32                 `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime time.Time             `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime *time.Time            `gorm:"column:update_time;type:datetime" json:"update_time"`
 	FileKey    string                `gorm:"column:file_key;type:varchar(2047);not null" json:"file_key"`

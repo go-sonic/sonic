@@ -12,7 +12,7 @@ const TableNameMenu = "menu"
 
 // Menu mapped from table <menu>
 type Menu struct {
-	ID         *int32     `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	ID         int32      `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime time.Time  `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime *time.Time `gorm:"column:update_time;type:datetime" json:"update_time"`
 	Icon       string     `gorm:"column:icon;type:varchar(50);not null" json:"icon"`

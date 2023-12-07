@@ -56,7 +56,7 @@ func main() {
 		g.GenerateModel("tag"),
 		g.GenerateModel("theme_setting"),
 		g.GenerateModel("user", gen.FieldType("mfa_type", "consts.MFAType")),
-		//g.GenerateModel("application_password"),
+		g.GenerateModel("application_password"),
 		g.GenerateModel("scrap_page"),
 	)
 

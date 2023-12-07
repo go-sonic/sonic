@@ -35,7 +35,7 @@ func newScrapPage(db *gorm.DB, opts ...gen.DOOption) scrapPage {
 	_scrapPage.Summary = field.NewString(tableName, "summary")
 	_scrapPage.CreateAt = field.NewInt64(tableName, "create_at")
 	_scrapPage.Domain = field.NewString(tableName, "domain")
-	_scrapPage.Resource = field.NewString(tableName, "resource")
+	_scrapPage.OutLink = field.NewString(tableName, "out_link")
 
 	_scrapPage.fillFieldMap()
 
@@ -54,7 +54,7 @@ type scrapPage struct {
 	Summary  field.String
 	CreateAt field.Int64
 	Domain   field.String
-	Resource field.String
+	OutLink  field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -79,7 +79,7 @@ func (s *scrapPage) updateTableName(table string) *scrapPage {
 	s.Summary = field.NewString(table, "summary")
 	s.CreateAt = field.NewInt64(table, "create_at")
 	s.Domain = field.NewString(table, "domain")
-	s.Resource = field.NewString(table, "resource")
+	s.OutLink = field.NewString(table, "out_link")
 
 	s.fillFieldMap()
 
@@ -115,7 +115,7 @@ func (s *scrapPage) fillFieldMap() {
 	s.fieldMap["summary"] = s.Summary
 	s.fieldMap["create_at"] = s.CreateAt
 	s.fieldMap["domain"] = s.Domain
-	s.fieldMap["resource"] = s.Resource
+	s.fieldMap["out_link"] = s.OutLink
 }
 
 func (s scrapPage) clone(db *gorm.DB) scrapPage {

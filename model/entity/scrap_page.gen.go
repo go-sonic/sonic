@@ -9,14 +9,14 @@ const TableNameScrapPage = "scrap_page"
 // ScrapPage mapped from table <scrap_page>
 type ScrapPage struct {
 	ID       *int32  `gorm:"column:id;type:INTEGER" json:"id"`
-	Title    *string `gorm:"column:title;type:varchar(128)" json:"title"`
-	Md5      *string `gorm:"column:md5;type:varchar(128)" json:"md5"`
-	URL      *string `gorm:"column:url;type:text" json:"url"`
-	Content  *string `gorm:"column:content;type:text" json:"content"`
+	Title    string  `gorm:"column:title;type:varchar(128);not null" json:"title"`
+	Md5      string  `gorm:"column:md5;type:varchar(128);not null" json:"md5"`
+	URL      string  `gorm:"column:url;type:text;not null" json:"url"`
+	Content  string  `gorm:"column:content;type:text;not null" json:"content"`
 	Summary  *string `gorm:"column:summary;type:text" json:"summary"`
 	CreateAt *int64  `gorm:"column:create_at;type:bigint" json:"create_at"`
-	Domain   *string `gorm:"column:domain;type:varchar(128)" json:"domain"`
-	Resource *string `gorm:"column:resource;type:text" json:"resource"`
+	Domain   string  `gorm:"column:domain;type:varchar(128);not null" json:"domain"`
+	OutLink  *string `gorm:"column:out_link;type:text" json:"out_link"`
 }
 
 // TableName ScrapPage's table name

@@ -12,7 +12,7 @@ const TableNameTag = "tag"
 
 // Tag mapped from table <tag>
 type Tag struct {
-	ID         *int32     `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	ID         int32      `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime time.Time  `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime *time.Time `gorm:"column:update_time;type:datetime" json:"update_time"`
 	Name       string     `gorm:"column:name;type:varchar(255);not null" json:"name"`

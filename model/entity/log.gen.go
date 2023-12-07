@@ -14,7 +14,7 @@ const TableNameLog = "log"
 
 // Log mapped from table <log>
 type Log struct {
-	ID         *int64         `gorm:"column:id;type:bigint;primaryKey" json:"id"`
+	ID         int64          `gorm:"column:id;type:bigint;primaryKey" json:"id"`
 	CreateTime time.Time      `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime *time.Time     `gorm:"column:update_time;type:datetime" json:"update_time"`
 	Content    string         `gorm:"column:content;type:varchar(1023);not null" json:"content"`

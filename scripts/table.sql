@@ -306,3 +306,19 @@ create table if not exists application_password
     last_activate_ip   varchar(128) default '' not null
 ) ENGINE = INNODB
   DEFAULT charset = utf8mb4;
+
+
+create table scrap_page
+(
+    id        INTEGER
+        constraint scrap_page_pk
+            primary key,
+    title     varchar(128) not null,
+    md5       varchar(128) not null,
+    url       text         not null,
+    content   text         not null,
+    summary   text,
+    create_at bigint,
+    domain    varchar(128) not null,
+    out_link  text
+);

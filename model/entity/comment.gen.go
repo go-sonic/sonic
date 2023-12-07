@@ -14,7 +14,7 @@ const TableNameComment = "comment"
 
 // Comment mapped from table <comment>
 type Comment struct {
-	ID                *int32               `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	ID                int32                `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	Type              consts.CommentType   `gorm:"column:type;type:bigint;not null" json:"type"`
 	CreateTime        time.Time            `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime        *time.Time           `gorm:"column:update_time;type:datetime" json:"update_time"`

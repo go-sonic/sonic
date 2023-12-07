@@ -2,11 +2,13 @@ package impl
 
 import (
 	"context"
+	"net/url"
 
 	"github.com/go-sonic/sonic/dal"
 	"github.com/go-sonic/sonic/model/entity"
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/service"
+	"github.com/go-sonic/sonic/util/xerr"
 )
 
 type scrapServiceImpl struct{}
@@ -24,26 +26,42 @@ func (impl *scrapServiceImpl) QueryMd5List(ctx context.Context) ([]string, error
 
 	md5List := make([]string, len(entities))
 	for _, v := range entities {
-		md5List = append(md5List, *v.Md5)
+		md5List = append(md5List, v.Md5)
 	}
 
 	return md5List, nil
 }
 
 func (impl *scrapServiceImpl) Create(ctx context.Context, pageParam *param.ScrapPage) error {
+	pageEntity, err := convertToModel(pageParam)
+	if err != nil {
+		return xerr.BadParam.Wrap(err)
+	}
 
+	scrapPageDAL := dal.GetQueryByCtx(ctx).ScrapPage
+	err = scrapPageDAL.WithContext(ctx).Create(pageEntity)
+	if err != nil {
+		return WrapDBErr(err)
+	}
+
+	return nil
 }
 
-func convertToModel(pageParam *param.ScrapPage) *entity.ScrapPage {
-	pageModel := &entity.ScrapPage{
+func convertToModel(pageParam *param.ScrapPage) (*entity.ScrapPage, error) {
+	pageURL, err := url.Parse(pageParam.URL)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.ScrapPage{
 		ID:       nil,
 		Title:    pageParam.Title,
 		Md5:      pageParam.Md5,
 		URL:      pageParam.URL,
 		Content:  pageParam.Content,
 		Summary:  pageParam.Summary,
-		CreateAt: ,
-		Domain:   nil,
-		Resource: nil,
-	}
+		CreateAt: pageParam.AddAt,
+		Domain:   pageURL.Hostname(),
+		OutLink:  nil,
+	}, nil
 }

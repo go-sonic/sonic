@@ -14,7 +14,7 @@ const TableNameCategory = "category"
 
 // Category mapped from table <category>
 type Category struct {
-	ID          *int32              `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	ID          int32               `gorm:"column:id;type:integer;primaryKey" json:"id"`
 	CreateTime  time.Time           `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
 	UpdateTime  *time.Time          `gorm:"column:update_time;type:datetime" json:"update_time"`
 	Description string              `gorm:"column:description;type:varchar(100);not null" json:"description"`
