@@ -105,7 +105,7 @@ jobs:
           openssl dgst -sha512 $FILE | sed 's/([^)]*)//g' >>$DGST
 
       - name: Upload ZIP file to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sonic-${{matrix.goos}}-${{matrix.goarch}}.zip
           path: sonic-${{matrix.goos}}-${{matrix.goarch}}.zip
