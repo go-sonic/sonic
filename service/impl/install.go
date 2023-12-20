@@ -129,7 +129,8 @@ func (i installServiceImpl) createDefaultSetting(ctx context.Context, installPar
 
 func (i installServiceImpl) createUser(ctx context.Context, user param.User) (*entity.User, error) {
 	emailMd5 := md5.Sum([]byte(user.Email))
-	avatar := "//cn.gravatar.com/avatar/" + hex.EncodeToString(emailMd5[:]) + "?s=256&d=mm"
+	avatarSource, err := i.OptionService.GetOrByDefaultWithErr(ctx, property.CommentGravatarSource, property.CommentGravatarSource.DefaultValue)
+	avatar := avatarSource.(string) + hex.EncodeToString(emailMd5[:]) + "?s=256&d=mm"
 	user.Avatar = avatar
 	userEntity, err := i.UerService.CreateByParam(ctx, user)
 	return userEntity, err
