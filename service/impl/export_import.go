@@ -266,7 +266,7 @@ func (e *exportImport) ExportMarkdown(ctx context.Context, needFrontMatter bool)
 		markdown.WriteString(post.OriginalContent)
 
 		fileName := post.CreateTime.Format("2006-01-02") + "-" + post.Slug + ".md"
-		file, err := os.OpenFile(filepath.Join(backupFilePath, fileName), os.O_WRONLY|os.O_CREATE, 0o666)
+		file, err := os.OpenFile(filepath.Join(backupFilePath, fileName), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o666)
 		if err != nil {
 			return "", xerr.WithStatus(err, xerr.StatusInternalServerError).WithMsg("create file err")
 		}
