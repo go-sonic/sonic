@@ -65,6 +65,14 @@ func (s *Server) RegisterRouters() {
 			}
 		}
 		{
+			restAPIRouter := router.Group("/rest-api/")
+			restAPIRouter.Use(s.ApplicationPasswordMiddleware.GetWrapHandler())
+			{
+				restAPIRouter.GET("/scrap_page/md5_list", s.wrapHandler(s.ScrapPageHandler.QueryMd5List))
+				restAPIRouter.POST("/scrap_page", s.wrapHandler(s.ScrapPageHandler.Create))
+			}
+		}
+		{
 			adminAPIRouter := router.Group("/api/admin")
 			adminAPIRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
 			adminAPIRouter.GET("/is_installed", s.wrapHandler(s.AdminHandler.IsInstalled))
@@ -372,6 +380,11 @@ func (s *Server) RegisterRouters() {
 			contentAPIRouter.GET("/links/team_view", s.wrapHandler(s.ContentAPILinkHandler.LinkTeamVO))
 
 			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHandler.Comment))
+		}
+		{
+			router.GET("/scrap_page/:id", s.ScrapPageHandler.Get)
+			router.GET("/api/scrap_page", s.wrapHandler(s.ScrapPageHandler.Query))
+			router.GET("/scrap_page", s.wrapHTMLHandler(s.ContentScrapHandler.Index))
 		}
 	}
 }

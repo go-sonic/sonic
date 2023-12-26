@@ -308,17 +308,21 @@ create table if not exists application_password
   DEFAULT charset = utf8mb4;
 
 
-create table scrap_page
+create table if not exists scrap_page
 (
-    id        INTEGER
-        constraint scrap_page_pk
-            primary key,
-    title     varchar(128) not null,
-    md5       varchar(128) not null,
-    url       text         not null,
-    content   text         not null,
-    summary   text,
-    create_at bigint,
-    domain    varchar(128) not null,
-    out_link  text
-);
+    id          int auto_increment
+        primary key,
+    create_time datetime(6)  not null,
+    update_time datetime(6)  null,
+    title       text         not null,
+    md5         varchar(128) not null,
+    url         text         not null,
+    origin_url  text         null,
+    content     longtext     null,
+    summary     text         null,
+    domain      varchar(128) not null,
+    resource    text         null,
+    attachment  int          null comment '附件'
+)
+    charset = utf8mb4;
+

@@ -23,6 +23,8 @@ type BaseWpDTO struct {
 type Page struct {
 	Content     interface{} `json:"content"`
 	Pages       int         `json:"pages"`
+	PrePage     int         `json:"pre_page"`
+	NextPage    int         `json:"next_page"`
 	Total       int64       `json:"total"`
 	RPP         int         `json:"rpp"`
 	PageNum     int         `json:"pageNum"`
@@ -48,12 +50,14 @@ func NewPage(content interface{}, totalCount int64, page param.Page) *Page {
 		Content:     content,
 		Total:       totalCount,
 		Pages:       totalPage,
+		PrePage:     page.PageNum - 1,
+		NextPage:    page.PageNum + 1,
 		PageNum:     page.PageNum,
 		RPP:         page.PageNum,
-		HasNext:     page.PageNum+1 < totalPage,
-		HasPrevious: page.PageNum > 0,
-		IsFirst:     page.PageNum == 0,
-		IsLast:      page.PageNum+1 == totalPage,
+		HasNext:     page.PageNum < totalPage,
+		HasPrevious: page.PageNum > 1,
+		IsFirst:     page.PageNum == 1,
+		IsLast:      page.PageNum == totalPage,
 		IsEmpty:     contentLen == 0,
 		HasContent:  contentLen > 0,
 	}

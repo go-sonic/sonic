@@ -1,4 +1,5 @@
 FROM golang:1.19.3-alpine as builder
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 RUN apk --no-cache add git ca-certificates gcc g++
 
 COPY . /go/src/github.com/go-sonic/sonic/

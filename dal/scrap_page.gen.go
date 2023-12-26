@@ -28,14 +28,17 @@ func newScrapPage(db *gorm.DB, opts ...gen.DOOption) scrapPage {
 	tableName := _scrapPage.scrapPageDo.TableName()
 	_scrapPage.ALL = field.NewAsterisk(tableName)
 	_scrapPage.ID = field.NewInt32(tableName, "id")
+	_scrapPage.CreateTime = field.NewTime(tableName, "create_time")
+	_scrapPage.UpdateTime = field.NewTime(tableName, "update_time")
 	_scrapPage.Title = field.NewString(tableName, "title")
 	_scrapPage.Md5 = field.NewString(tableName, "md5")
 	_scrapPage.URL = field.NewString(tableName, "url")
+	_scrapPage.OriginURL = field.NewString(tableName, "origin_url")
 	_scrapPage.Content = field.NewString(tableName, "content")
 	_scrapPage.Summary = field.NewString(tableName, "summary")
-	_scrapPage.CreateAt = field.NewInt64(tableName, "create_at")
 	_scrapPage.Domain = field.NewString(tableName, "domain")
-	_scrapPage.OutLink = field.NewString(tableName, "out_link")
+	_scrapPage.Resource = field.NewString(tableName, "resource")
+	_scrapPage.Attachment = field.NewInt32(tableName, "attachment")
 
 	_scrapPage.fillFieldMap()
 
@@ -45,16 +48,19 @@ func newScrapPage(db *gorm.DB, opts ...gen.DOOption) scrapPage {
 type scrapPage struct {
 	scrapPageDo scrapPageDo
 
-	ALL      field.Asterisk
-	ID       field.Int32
-	Title    field.String
-	Md5      field.String
-	URL      field.String
-	Content  field.String
-	Summary  field.String
-	CreateAt field.Int64
-	Domain   field.String
-	OutLink  field.String
+	ALL        field.Asterisk
+	ID         field.Int32
+	CreateTime field.Time
+	UpdateTime field.Time
+	Title      field.String
+	Md5        field.String
+	URL        field.String
+	OriginURL  field.String
+	Content    field.String
+	Summary    field.String
+	Domain     field.String
+	Resource   field.String
+	Attachment field.Int32 // 附件
 
 	fieldMap map[string]field.Expr
 }
@@ -72,14 +78,17 @@ func (s scrapPage) As(alias string) *scrapPage {
 func (s *scrapPage) updateTableName(table string) *scrapPage {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt32(table, "id")
+	s.CreateTime = field.NewTime(table, "create_time")
+	s.UpdateTime = field.NewTime(table, "update_time")
 	s.Title = field.NewString(table, "title")
 	s.Md5 = field.NewString(table, "md5")
 	s.URL = field.NewString(table, "url")
+	s.OriginURL = field.NewString(table, "origin_url")
 	s.Content = field.NewString(table, "content")
 	s.Summary = field.NewString(table, "summary")
-	s.CreateAt = field.NewInt64(table, "create_at")
 	s.Domain = field.NewString(table, "domain")
-	s.OutLink = field.NewString(table, "out_link")
+	s.Resource = field.NewString(table, "resource")
+	s.Attachment = field.NewInt32(table, "attachment")
 
 	s.fillFieldMap()
 
@@ -106,16 +115,19 @@ func (s *scrapPage) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *scrapPage) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
+	s.fieldMap["create_time"] = s.CreateTime
+	s.fieldMap["update_time"] = s.UpdateTime
 	s.fieldMap["title"] = s.Title
 	s.fieldMap["md5"] = s.Md5
 	s.fieldMap["url"] = s.URL
+	s.fieldMap["origin_url"] = s.OriginURL
 	s.fieldMap["content"] = s.Content
 	s.fieldMap["summary"] = s.Summary
-	s.fieldMap["create_at"] = s.CreateAt
 	s.fieldMap["domain"] = s.Domain
-	s.fieldMap["out_link"] = s.OutLink
+	s.fieldMap["resource"] = s.Resource
+	s.fieldMap["attachment"] = s.Attachment
 }
 
 func (s scrapPage) clone(db *gorm.DB) scrapPage {

@@ -74,7 +74,7 @@ func (a *ApplicationPasswordMiddleware) GetWrapHandler() gin.HandlerFunc {
 			return
 		}
 
-		err = a.PasswordService.Update(ctx, *pwdEntity.ID, ctx.ClientIP())
+		err = a.PasswordService.Update(ctx, pwdEntity.ID, ctx.ClientIP())
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, &dto.BaseDTO{
 				Status:  http.StatusInternalServerError,

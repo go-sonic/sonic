@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -62,6 +63,7 @@ type Server struct {
 	UserHandler                   *admin.UserHandler
 	EmailHandler                  *admin.EmailHandler
 	ApplicationPasswordHandler    *admin.ApplicationPasswordHandler
+	ScrapPageHandler              *admin.ScrapPageHandler
 	IndexHandler                  *content.IndexHandler
 	FeedHandler                   *content.FeedHandler
 	ArchiveHandler                *content.ArchiveHandler
@@ -73,6 +75,7 @@ type Server struct {
 	ContentPhotoHandler           *content.PhotoHandler
 	ContentJournalHandler         *content.JournalHandler
 	ContentSearchHandler          *content.SearchHandler
+	ContentScrapHandler           *content.ScrapHandler
 	ContentAPIArchiveHandler      *api.ArchiveHandler
 	ContentAPICategoryHandler     *api.CategoryHandler
 	ContentAPIJournalHandler      *api.JournalHandler
@@ -123,6 +126,7 @@ type ServerParams struct {
 	UserHandler                   *admin.UserHandler
 	EmailHandler                  *admin.EmailHandler
 	ApplicationPasswordHandler    *admin.ApplicationPasswordHandler
+	ScrapPageHandler              *admin.ScrapPageHandler
 	IndexHandler                  *content.IndexHandler
 	FeedHandler                   *content.FeedHandler
 	ArchiveHandler                *content.ArchiveHandler
@@ -134,6 +138,7 @@ type ServerParams struct {
 	ContentPhotoHandler           *content.PhotoHandler
 	ContentJournalHandler         *content.JournalHandler
 	ContentSearchHandler          *content.SearchHandler
+	ContentScrapHandler           *content.ScrapHandler
 	ContentAPIArchiveHandler      *api.ArchiveHandler
 	ContentAPICategoryHandler     *api.CategoryHandler
 	ContentAPIJournalHandler      *api.JournalHandler
@@ -183,6 +188,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		PhotoHandler:                  param.PhotoHandler,
 		PostHandler:                   param.PostHandler,
 		PostCommentHandler:            param.PostCommentHandler,
+		ScrapPageHandler:              param.ScrapPageHandler,
 		SheetHandler:                  param.SheetHandler,
 		SheetCommentHandler:           param.SheetCommentHandler,
 		StatisticHandler:              param.StatisticHandler,
@@ -211,6 +217,7 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		ContentAPISheetHandler:        param.ContentAPISheetHandler,
 		ContentAPIOptionHandler:       param.ContentAPIOptionHandler,
 		ContentSearchHandler:          param.ContentSearchHandler,
+		ContentScrapHandler:           param.ContentScrapHandler,
 		ContentAPIPhotoHandler:        param.ContentAPIPhotoHandler,
 		ApplicationPasswordHandler:    param.ApplicationPasswordHandler,
 		WpPostHandler:                 param.WpPostHandler,
@@ -230,7 +237,7 @@ func (s *Server) Run(ctx context.Context) error {
 		gin.SetMode(gin.DebugMode)
 	}
 	go func() {
-		if err := s.HTTPServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.HTTPServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			// print err info when httpServer start failed
 			s.logger.Error("unexpected error from ListenAndServe", zap.Error(err))
 			fmt.Printf("http server start error:%s\n", err.Error())
@@ -299,6 +306,8 @@ func (s *Server) wrapHTMLHandler(handler wrapperHTMLHandler) gin.HandlerFunc {
 		err = s.Template.ExecuteTemplate(ctx.Writer, templateName, model)
 		if err != nil {
 			s.logger.Error("render template err", zap.Error(err))
+			s.handleError(ctx, err)
+			return
 		}
 	}
 }

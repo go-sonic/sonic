@@ -26,5 +26,6 @@ func init() {
 		NewUserHandler,
 		NewEmailHandler,
 		NewApplicationPasswordHandler,
+		NewScrapPageHandler,
 	)
 }

@@ -41,5 +41,6 @@ func init() {
 		NewExportImport,
 		storage.NewFileStorageComposite,
 		NewApplicationPasswordService,
+		NewScrapService,
 	)
 }

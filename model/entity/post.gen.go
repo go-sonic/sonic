@@ -14,28 +14,28 @@ const TableNamePost = "post"
 
 // Post mapped from table <post>
 type Post struct {
-	ID              int32             `gorm:"column:id;type:integer;primaryKey" json:"id"`
-	Type            consts.PostType   `gorm:"column:type;type:bigint;not null" json:"type"`
-	CreateTime      time.Time         `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
-	UpdateTime      *time.Time        `gorm:"column:update_time;type:datetime" json:"update_time"`
+	ID              int32             `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	Type            consts.PostType   `gorm:"column:type;type:bigint(20);not null;index:post_type_status,priority:1" json:"type"`
+	CreateTime      time.Time         `gorm:"column:create_time;type:datetime(6);not null;index:post_create_time,priority:1" json:"create_time"`
+	UpdateTime      *time.Time        `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
 	DisallowComment bool              `gorm:"column:disallow_comment;type:tinyint(1);not null" json:"disallow_comment"`
-	EditTime        *time.Time        `gorm:"column:edit_time;type:datetime" json:"edit_time"`
-	EditorType      consts.EditorType `gorm:"column:editor_type;type:bigint;not null" json:"editor_type"`
+	EditTime        *time.Time        `gorm:"column:edit_time;type:datetime(6)" json:"edit_time"`
+	EditorType      consts.EditorType `gorm:"column:editor_type;type:bigint(20);not null" json:"editor_type"`
 	FormatContent   string            `gorm:"column:format_content;type:longtext;not null" json:"format_content"`
-	Likes           int64             `gorm:"column:likes;type:bigint;not null" json:"likes"`
+	Likes           int64             `gorm:"column:likes;type:bigint(20);not null" json:"likes"`
 	MetaDescription string            `gorm:"column:meta_description;type:varchar(1023);not null" json:"meta_description"`
 	MetaKeywords    string            `gorm:"column:meta_keywords;type:varchar(511);not null" json:"meta_keywords"`
 	OriginalContent string            `gorm:"column:original_content;type:longtext;not null" json:"original_content"`
 	Password        string            `gorm:"column:password;type:varchar(255);not null" json:"password"`
-	Slug            string            `gorm:"column:slug;type:varchar(255);not null" json:"slug"`
-	Status          consts.PostStatus `gorm:"column:status;type:bigint;not null;default:1" json:"status"`
+	Slug            string            `gorm:"column:slug;type:varchar(255);not null;uniqueIndex:uniq_post_slug,priority:1" json:"slug"`
+	Status          consts.PostStatus `gorm:"column:status;type:bigint(20);not null;index:post_type_status,priority:2;default:1" json:"status"`
 	Summary         string            `gorm:"column:summary;type:longtext;not null" json:"summary"`
 	Template        string            `gorm:"column:template;type:varchar(255);not null" json:"template"`
 	Thumbnail       string            `gorm:"column:thumbnail;type:varchar(1023);not null" json:"thumbnail"`
 	Title           string            `gorm:"column:title;type:varchar(255);not null" json:"title"`
-	TopPriority     int32             `gorm:"column:top_priority;type:integer;not null" json:"top_priority"`
-	Visits          int64             `gorm:"column:visits;type:bigint;not null" json:"visits"`
-	WordCount       int64             `gorm:"column:word_count;type:bigint;not null" json:"word_count"`
+	TopPriority     int32             `gorm:"column:top_priority;type:int(11);not null" json:"top_priority"`
+	Visits          int64             `gorm:"column:visits;type:bigint(20);not null" json:"visits"`
+	WordCount       int64             `gorm:"column:word_count;type:bigint(20);not null" json:"word_count"`
 }
 
 // TableName Post's table name
