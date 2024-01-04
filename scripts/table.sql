@@ -62,7 +62,7 @@ create table if not exists comment
     gravatar_md5       varchar(127) default '' not null,
     ip_address         varchar(127) default '' not null,
     is_admin           tinyint(1)   default 0  not null,
-    parent_id          int       default 0  not null,
+    parent_id          int          default 0  not null,
     post_id            int                     not null,
     status             int          default 0  not null,
     top_priority       int          default 0  not null,
@@ -72,24 +72,6 @@ create table if not exists comment
     index comment_type_status (type, status)
 ) ENGINE = INNODB
   DEFAULT charset = utf8mb4;
-
-create table if not exists flyway_schema_history
-(
-    installed_rank int                                 not null
-        primary key,
-    version        varchar(50)                         null,
-    description    varchar(200)                        not null,
-    type           varchar(20)                         not null,
-    script         varchar(1000)                       not null,
-    checksum       int                                 null,
-    installed_by   varchar(100)                        not null,
-    installed_on   timestamp default CURRENT_TIMESTAMP not null,
-    execution_time int                                 not null,
-    success        tinyint(1)                          not null,
-    index flyway_schema_history_s_idx (success)
-) ENGINE = INNODB
-  DEFAULT charset = utf8mb4;
-
 
 create table if not exists journal
 (
@@ -298,11 +280,11 @@ create table if not exists application_password
 (
     id                 int auto_increment primary key,
     create_time        datetime(6)             not null,
-    update_time        datetime(6)                 null,
+    update_time        datetime(6)             null,
     name               varchar(32)             not null,
     password           varchar(256)            not null,
     user_id            int                     not null,
-    last_activate_time datetime(6)                 null,
+    last_activate_time datetime(6)             null,
     last_activate_ip   varchar(128) default '' not null
 ) ENGINE = INNODB
   DEFAULT charset = utf8mb4;
