@@ -20,4 +20,5 @@ type TagService interface {
 	Update(ctx context.Context, id int32, tagParam *param.Tag) (*entity.Tag, error)
 	Delete(ctx context.Context, id int32) error
 	CountAllTag(ctx context.Context) (int64, error)
+	ListByOption(ctx context.Context, option *param.TagListParam) ([]*entity.Tag, error)
 }

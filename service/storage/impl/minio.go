@@ -138,9 +138,17 @@ func (m *MinIO) getMinioClient(ctx context.Context) (*minioClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := minio.New(endPoint, &minio.Options{
+
+	u, err := url.ParseRequestURI(endPoint)
+	if err != nil {
+		return nil, err
+	}
+
+	useSSL := u.Scheme == "https"
+	// u.Host like 127.0.0.1:9000 or hostname
+	client, err := minio.New(u.Host, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKey, accessSecret, ""),
-		Secure: true,
+		Secure: useSSL,
 		Region: region,
 	})
 	if err != nil {

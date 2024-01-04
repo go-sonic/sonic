@@ -47,6 +47,7 @@ func InitApp() *fx.App {
 			middleware.NewGinLoggerMiddleware,
 			middleware.NewRecoveryMiddleware,
 			middleware.NewInstallRedirectMiddleware,
+			middleware.NewApplicationPasswordMiddleware,
 		),
 		fx.Populate(&dal.DB),
 		fx.Populate(&eventBus),

@@ -8,18 +8,20 @@ import (
 	"context"
 	"database/sql"
 
-	"gorm.io/gen"
 	"gorm.io/gorm"
+
+	"gorm.io/gen"
+
 	"gorm.io/plugin/dbresolver"
 )
 
 var (
 	Q                   = new(Query)
+	ApplicationPassword *applicationPassword
 	Attachment          *attachment
 	Category            *category
 	Comment             *comment
 	CommentBlack        *commentBlack
-	FlywaySchemaHistory *flywaySchemaHistory
 	Journal             *journal
 	Link                *link
 	Log                 *log
@@ -30,6 +32,7 @@ var (
 	Post                *post
 	PostCategory        *postCategory
 	PostTag             *postTag
+	ScrapPage           *scrapPage
 	Tag                 *tag
 	ThemeSetting        *themeSetting
 	User                *user
@@ -37,11 +40,11 @@ var (
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	ApplicationPassword = &Q.ApplicationPassword
 	Attachment = &Q.Attachment
 	Category = &Q.Category
 	Comment = &Q.Comment
 	CommentBlack = &Q.CommentBlack
-	FlywaySchemaHistory = &Q.FlywaySchemaHistory
 	Journal = &Q.Journal
 	Link = &Q.Link
 	Log = &Q.Log
@@ -52,6 +55,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Post = &Q.Post
 	PostCategory = &Q.PostCategory
 	PostTag = &Q.PostTag
+	ScrapPage = &Q.ScrapPage
 	Tag = &Q.Tag
 	ThemeSetting = &Q.ThemeSetting
 	User = &Q.User
@@ -60,11 +64,11 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                  db,
+		ApplicationPassword: newApplicationPassword(db, opts...),
 		Attachment:          newAttachment(db, opts...),
 		Category:            newCategory(db, opts...),
 		Comment:             newComment(db, opts...),
 		CommentBlack:        newCommentBlack(db, opts...),
-		FlywaySchemaHistory: newFlywaySchemaHistory(db, opts...),
 		Journal:             newJournal(db, opts...),
 		Link:                newLink(db, opts...),
 		Log:                 newLog(db, opts...),
@@ -75,6 +79,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Post:                newPost(db, opts...),
 		PostCategory:        newPostCategory(db, opts...),
 		PostTag:             newPostTag(db, opts...),
+		ScrapPage:           newScrapPage(db, opts...),
 		Tag:                 newTag(db, opts...),
 		ThemeSetting:        newThemeSetting(db, opts...),
 		User:                newUser(db, opts...),
@@ -84,11 +89,11 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	ApplicationPassword applicationPassword
 	Attachment          attachment
 	Category            category
 	Comment             comment
 	CommentBlack        commentBlack
-	FlywaySchemaHistory flywaySchemaHistory
 	Journal             journal
 	Link                link
 	Log                 log
@@ -99,6 +104,7 @@ type Query struct {
 	Post                post
 	PostCategory        postCategory
 	PostTag             postTag
+	ScrapPage           scrapPage
 	Tag                 tag
 	ThemeSetting        themeSetting
 	User                user
@@ -109,11 +115,11 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                  db,
+		ApplicationPassword: q.ApplicationPassword.clone(db),
 		Attachment:          q.Attachment.clone(db),
 		Category:            q.Category.clone(db),
 		Comment:             q.Comment.clone(db),
 		CommentBlack:        q.CommentBlack.clone(db),
-		FlywaySchemaHistory: q.FlywaySchemaHistory.clone(db),
 		Journal:             q.Journal.clone(db),
 		Link:                q.Link.clone(db),
 		Log:                 q.Log.clone(db),
@@ -124,6 +130,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Post:                q.Post.clone(db),
 		PostCategory:        q.PostCategory.clone(db),
 		PostTag:             q.PostTag.clone(db),
+		ScrapPage:           q.ScrapPage.clone(db),
 		Tag:                 q.Tag.clone(db),
 		ThemeSetting:        q.ThemeSetting.clone(db),
 		User:                q.User.clone(db),
@@ -141,11 +148,11 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                  db,
+		ApplicationPassword: q.ApplicationPassword.replaceDB(db),
 		Attachment:          q.Attachment.replaceDB(db),
 		Category:            q.Category.replaceDB(db),
 		Comment:             q.Comment.replaceDB(db),
 		CommentBlack:        q.CommentBlack.replaceDB(db),
-		FlywaySchemaHistory: q.FlywaySchemaHistory.replaceDB(db),
 		Journal:             q.Journal.replaceDB(db),
 		Link:                q.Link.replaceDB(db),
 		Log:                 q.Log.replaceDB(db),
@@ -156,6 +163,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Post:                q.Post.replaceDB(db),
 		PostCategory:        q.PostCategory.replaceDB(db),
 		PostTag:             q.PostTag.replaceDB(db),
+		ScrapPage:           q.ScrapPage.replaceDB(db),
 		Tag:                 q.Tag.replaceDB(db),
 		ThemeSetting:        q.ThemeSetting.replaceDB(db),
 		User:                q.User.replaceDB(db),
@@ -163,11 +171,11 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 }
 
 type queryCtx struct {
+	ApplicationPassword *applicationPasswordDo
 	Attachment          *attachmentDo
 	Category            *categoryDo
 	Comment             *commentDo
 	CommentBlack        *commentBlackDo
-	FlywaySchemaHistory *flywaySchemaHistoryDo
 	Journal             *journalDo
 	Link                *linkDo
 	Log                 *logDo
@@ -178,6 +186,7 @@ type queryCtx struct {
 	Post                *postDo
 	PostCategory        *postCategoryDo
 	PostTag             *postTagDo
+	ScrapPage           *scrapPageDo
 	Tag                 *tagDo
 	ThemeSetting        *themeSettingDo
 	User                *userDo
@@ -185,11 +194,11 @@ type queryCtx struct {
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		ApplicationPassword: q.ApplicationPassword.WithContext(ctx),
 		Attachment:          q.Attachment.WithContext(ctx),
 		Category:            q.Category.WithContext(ctx),
 		Comment:             q.Comment.WithContext(ctx),
 		CommentBlack:        q.CommentBlack.WithContext(ctx),
-		FlywaySchemaHistory: q.FlywaySchemaHistory.WithContext(ctx),
 		Journal:             q.Journal.WithContext(ctx),
 		Link:                q.Link.WithContext(ctx),
 		Log:                 q.Log.WithContext(ctx),
@@ -200,6 +209,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Post:                q.Post.WithContext(ctx),
 		PostCategory:        q.PostCategory.WithContext(ctx),
 		PostTag:             q.PostTag.WithContext(ctx),
+		ScrapPage:           q.ScrapPage.WithContext(ctx),
 		Tag:                 q.Tag.WithContext(ctx),
 		ThemeSetting:        q.ThemeSetting.WithContext(ctx),
 		User:                q.User.WithContext(ctx),

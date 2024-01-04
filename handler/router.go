@@ -45,6 +45,34 @@ func (s *Server) RegisterRouters() {
 			staticRouter.StaticFS("/themes/", gin.Dir(s.Config.Sonic.ThemeDir, false))
 		}
 		{
+			wpCompatibleRouter := router.Group("/wp-json/wp/v2")
+			wpCompatibleRouter.Use(s.ApplicationPasswordMiddleware.GetWrapHandler())
+			{
+				wpCompatibleRouter.GET("/posts", s.wrapWpHandler(s.WpPostHandler.List))
+				wpCompatibleRouter.POST("/posts", s.wrapWpHandler(s.WpPostHandler.Create))
+				wpCompatibleRouter.POST("/posts/:postID", s.wrapWpHandler(s.WpPostHandler.Update))
+				wpCompatibleRouter.DELETE("/posts/:postID", s.wrapWpHandler(s.WpPostHandler.Delete))
+			}
+			{
+				wpCompatibleRouter.GET("/tags", s.wrapWpHandler(s.WpTagHandler.List))
+				wpCompatibleRouter.POST("/tags", s.wrapWpHandler(s.WpTagHandler.Create))
+			}
+			{
+				wpCompatibleRouter.GET("/users", s.wrapWpHandler(s.WpUserHandler.List))
+			}
+			{
+				wpCompatibleRouter.GET("/categories", s.wrapWpHandler(s.WpCategoryHandler.List))
+			}
+		}
+		{
+			restAPIRouter := router.Group("/rest-api/")
+			restAPIRouter.Use(s.ApplicationPasswordMiddleware.GetWrapHandler())
+			{
+				restAPIRouter.GET("/scrap_page/md5_list", s.wrapHandler(s.ScrapPageHandler.QueryMd5List))
+				restAPIRouter.POST("/scrap_page", s.wrapHandler(s.ScrapPageHandler.Create))
+			}
+		}
+		{
 			adminAPIRouter := router.Group("/api/admin")
 			adminAPIRouter.Use(s.LogMiddleware.LoggerWithConfig(middleware.GinLoggerConfig{}), s.RecoveryMiddleware.RecoveryWithLogger(), s.InstallRedirectMiddleware.InstallRedirect())
 			adminAPIRouter.GET("/is_installed", s.wrapHandler(s.AdminHandler.IsInstalled))
@@ -272,6 +300,12 @@ func (s *Server) RegisterRouters() {
 					themeRouter.GET("activation/template/exists", s.wrapHandler(s.ThemeHandler.TemplateExist))
 				}
 				{
+					appPwdRouter := authRouter.Group("application_password")
+					appPwdRouter.POST("", s.wrapHandler(s.ApplicationPasswordHandler.Create))
+					appPwdRouter.DELETE("/:name", s.wrapHandler(s.ApplicationPasswordHandler.Delete))
+					appPwdRouter.GET("", s.wrapHandler(s.ApplicationPasswordHandler.List))
+				}
+				{
 					emailRouter := authRouter.Group("/mails")
 					emailRouter.POST("/test", s.wrapHandler(s.EmailHandler.Test))
 				}
@@ -346,6 +380,11 @@ func (s *Server) RegisterRouters() {
 			contentAPIRouter.GET("/links/team_view", s.wrapHandler(s.ContentAPILinkHandler.LinkTeamVO))
 
 			contentAPIRouter.GET("/options/comment", s.wrapHandler(s.ContentAPIOptionHandler.Comment))
+		}
+		{
+			router.GET("/scrap_page/:id", s.ScrapPageHandler.Get)
+			router.GET("/api/scrap_page", s.wrapHandler(s.ScrapPageHandler.Query))
+			router.GET("/scrap_page", s.wrapHTMLHandler(s.ContentScrapHandler.Index))
 		}
 	}
 }

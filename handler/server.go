@@ -2,10 +2,13 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/go-sonic/sonic/handler/content/wp"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/dig"
@@ -25,113 +28,129 @@ import (
 )
 
 type Server struct {
-	logger                    *zap.Logger
-	Config                    *config.Config
-	HTTPServer                *http.Server
-	Router                    *gin.Engine
-	Template                  *template.Template
-	AuthMiddleware            *middleware.AuthMiddleware
-	LogMiddleware             *middleware.GinLoggerMiddleware
-	RecoveryMiddleware        *middleware.RecoveryMiddleware
-	InstallRedirectMiddleware *middleware.InstallRedirectMiddleware
-	OptionService             service.OptionService
-	ThemeService              service.ThemeService
-	SheetService              service.SheetService
-	AdminHandler              *admin.AdminHandler
-	AttachmentHandler         *admin.AttachmentHandler
-	BackupHandler             *admin.BackupHandler
-	CategoryHandler           *admin.CategoryHandler
-	InstallHandler            *admin.InstallHandler
-	JournalHandler            *admin.JournalHandler
-	JournalCommentHandler     *admin.JournalCommentHandler
-	LinkHandler               *admin.LinkHandler
-	LogHandler                *admin.LogHandler
-	MenuHandler               *admin.MenuHandler
-	OptionHandler             *admin.OptionHandler
-	PhotoHandler              *admin.PhotoHandler
-	PostHandler               *admin.PostHandler
-	PostCommentHandler        *admin.PostCommentHandler
-	SheetHandler              *admin.SheetHandler
-	SheetCommentHandler       *admin.SheetCommentHandler
-	StatisticHandler          *admin.StatisticHandler
-	TagHandler                *admin.TagHandler
-	ThemeHandler              *admin.ThemeHandler
-	UserHandler               *admin.UserHandler
-	EmailHandler              *admin.EmailHandler
-	IndexHandler              *content.IndexHandler
-	FeedHandler               *content.FeedHandler
-	ArchiveHandler            *content.ArchiveHandler
-	ViewHandler               *content.ViewHandler
-	ContentCategoryHandler    *content.CategoryHandler
-	ContentSheetHandler       *content.SheetHandler
-	ContentTagHandler         *content.TagHandler
-	ContentLinkHandler        *content.LinkHandler
-	ContentPhotoHandler       *content.PhotoHandler
-	ContentJournalHandler     *content.JournalHandler
-	ContentSearchHandler      *content.SearchHandler
-	ContentAPIArchiveHandler  *api.ArchiveHandler
-	ContentAPICategoryHandler *api.CategoryHandler
-	ContentAPIJournalHandler  *api.JournalHandler
-	ContentAPILinkHandler     *api.LinkHandler
-	ContentAPIPostHandler     *api.PostHandler
-	ContentAPISheetHandler    *api.SheetHandler
-	ContentAPIOptionHandler   *api.OptionHandler
-	ContentAPIPhotoHandler    *api.PhotoHandler
+	logger                        *zap.Logger
+	Config                        *config.Config
+	HTTPServer                    *http.Server
+	Router                        *gin.Engine
+	Template                      *template.Template
+	AuthMiddleware                *middleware.AuthMiddleware
+	LogMiddleware                 *middleware.GinLoggerMiddleware
+	RecoveryMiddleware            *middleware.RecoveryMiddleware
+	InstallRedirectMiddleware     *middleware.InstallRedirectMiddleware
+	ApplicationPasswordMiddleware *middleware.ApplicationPasswordMiddleware
+	OptionService                 service.OptionService
+	ThemeService                  service.ThemeService
+	SheetService                  service.SheetService
+	AdminHandler                  *admin.AdminHandler
+	AttachmentHandler             *admin.AttachmentHandler
+	BackupHandler                 *admin.BackupHandler
+	CategoryHandler               *admin.CategoryHandler
+	InstallHandler                *admin.InstallHandler
+	JournalHandler                *admin.JournalHandler
+	JournalCommentHandler         *admin.JournalCommentHandler
+	LinkHandler                   *admin.LinkHandler
+	LogHandler                    *admin.LogHandler
+	MenuHandler                   *admin.MenuHandler
+	OptionHandler                 *admin.OptionHandler
+	PhotoHandler                  *admin.PhotoHandler
+	PostHandler                   *admin.PostHandler
+	PostCommentHandler            *admin.PostCommentHandler
+	SheetHandler                  *admin.SheetHandler
+	SheetCommentHandler           *admin.SheetCommentHandler
+	StatisticHandler              *admin.StatisticHandler
+	TagHandler                    *admin.TagHandler
+	ThemeHandler                  *admin.ThemeHandler
+	UserHandler                   *admin.UserHandler
+	EmailHandler                  *admin.EmailHandler
+	ApplicationPasswordHandler    *admin.ApplicationPasswordHandler
+	ScrapPageHandler              *admin.ScrapPageHandler
+	IndexHandler                  *content.IndexHandler
+	FeedHandler                   *content.FeedHandler
+	ArchiveHandler                *content.ArchiveHandler
+	ViewHandler                   *content.ViewHandler
+	ContentCategoryHandler        *content.CategoryHandler
+	ContentSheetHandler           *content.SheetHandler
+	ContentTagHandler             *content.TagHandler
+	ContentLinkHandler            *content.LinkHandler
+	ContentPhotoHandler           *content.PhotoHandler
+	ContentJournalHandler         *content.JournalHandler
+	ContentSearchHandler          *content.SearchHandler
+	ContentScrapHandler           *content.ScrapHandler
+	ContentAPIArchiveHandler      *api.ArchiveHandler
+	ContentAPICategoryHandler     *api.CategoryHandler
+	ContentAPIJournalHandler      *api.JournalHandler
+	ContentAPILinkHandler         *api.LinkHandler
+	ContentAPIPostHandler         *api.PostHandler
+	ContentAPISheetHandler        *api.SheetHandler
+	ContentAPIOptionHandler       *api.OptionHandler
+	ContentAPIPhotoHandler        *api.PhotoHandler
+	WpPostHandler                 *wp.PostHandler
+	WpUserHandler                 *wp.UserHandler
+	WpCategoryHandler             *wp.CategoryHandler
+	WpTagHandler                  *wp.TagHandler
 }
 
 type ServerParams struct {
 	dig.In
-	Config                    *config.Config
-	Logger                    *zap.Logger
-	Event                     event.Bus
-	Template                  *template.Template
-	AuthMiddleware            *middleware.AuthMiddleware
-	LogMiddleware             *middleware.GinLoggerMiddleware
-	RecoveryMiddleware        *middleware.RecoveryMiddleware
-	InstallRedirectMiddleware *middleware.InstallRedirectMiddleware
-	OptionService             service.OptionService
-	ThemeService              service.ThemeService
-	SheetService              service.SheetService
-	AdminHandler              *admin.AdminHandler
-	AttachmentHandler         *admin.AttachmentHandler
-	BackupHandler             *admin.BackupHandler
-	CategoryHandler           *admin.CategoryHandler
-	InstallHandler            *admin.InstallHandler
-	JournalHandler            *admin.JournalHandler
-	JournalCommentHandler     *admin.JournalCommentHandler
-	LinkHandler               *admin.LinkHandler
-	LogHandler                *admin.LogHandler
-	MenuHandler               *admin.MenuHandler
-	OptionHandler             *admin.OptionHandler
-	PhotoHandler              *admin.PhotoHandler
-	PostHandler               *admin.PostHandler
-	PostCommentHandler        *admin.PostCommentHandler
-	SheetHandler              *admin.SheetHandler
-	SheetCommentHandler       *admin.SheetCommentHandler
-	StatisticHandler          *admin.StatisticHandler
-	TagHandler                *admin.TagHandler
-	ThemeHandler              *admin.ThemeHandler
-	UserHandler               *admin.UserHandler
-	EmailHandler              *admin.EmailHandler
-	IndexHandler              *content.IndexHandler
-	FeedHandler               *content.FeedHandler
-	ArchiveHandler            *content.ArchiveHandler
-	ViewHandler               *content.ViewHandler
-	ContentCategoryHandler    *content.CategoryHandler
-	ContentSheetHandler       *content.SheetHandler
-	ContentTagHandler         *content.TagHandler
-	ContentLinkHandler        *content.LinkHandler
-	ContentPhotoHandler       *content.PhotoHandler
-	ContentJournalHandler     *content.JournalHandler
-	ContentSearchHandler      *content.SearchHandler
-	ContentAPIArchiveHandler  *api.ArchiveHandler
-	ContentAPICategoryHandler *api.CategoryHandler
-	ContentAPIJournalHandler  *api.JournalHandler
-	ContentAPILinkHandler     *api.LinkHandler
-	ContentAPIPostHandler     *api.PostHandler
-	ContentAPISheetHandler    *api.SheetHandler
-	ContentAPIOptionHandler   *api.OptionHandler
-	ContentAPIPhotoHandler    *api.PhotoHandler
+	Config                        *config.Config
+	Logger                        *zap.Logger
+	Event                         event.Bus
+	Template                      *template.Template
+	AuthMiddleware                *middleware.AuthMiddleware
+	LogMiddleware                 *middleware.GinLoggerMiddleware
+	RecoveryMiddleware            *middleware.RecoveryMiddleware
+	InstallRedirectMiddleware     *middleware.InstallRedirectMiddleware
+	ApplicationPasswordMiddleware *middleware.ApplicationPasswordMiddleware
+	OptionService                 service.OptionService
+	ThemeService                  service.ThemeService
+	SheetService                  service.SheetService
+	AdminHandler                  *admin.AdminHandler
+	AttachmentHandler             *admin.AttachmentHandler
+	BackupHandler                 *admin.BackupHandler
+	CategoryHandler               *admin.CategoryHandler
+	InstallHandler                *admin.InstallHandler
+	JournalHandler                *admin.JournalHandler
+	JournalCommentHandler         *admin.JournalCommentHandler
+	LinkHandler                   *admin.LinkHandler
+	LogHandler                    *admin.LogHandler
+	MenuHandler                   *admin.MenuHandler
+	OptionHandler                 *admin.OptionHandler
+	PhotoHandler                  *admin.PhotoHandler
+	PostHandler                   *admin.PostHandler
+	PostCommentHandler            *admin.PostCommentHandler
+	SheetHandler                  *admin.SheetHandler
+	SheetCommentHandler           *admin.SheetCommentHandler
+	StatisticHandler              *admin.StatisticHandler
+	TagHandler                    *admin.TagHandler
+	ThemeHandler                  *admin.ThemeHandler
+	UserHandler                   *admin.UserHandler
+	EmailHandler                  *admin.EmailHandler
+	ApplicationPasswordHandler    *admin.ApplicationPasswordHandler
+	ScrapPageHandler              *admin.ScrapPageHandler
+	IndexHandler                  *content.IndexHandler
+	FeedHandler                   *content.FeedHandler
+	ArchiveHandler                *content.ArchiveHandler
+	ViewHandler                   *content.ViewHandler
+	ContentCategoryHandler        *content.CategoryHandler
+	ContentSheetHandler           *content.SheetHandler
+	ContentTagHandler             *content.TagHandler
+	ContentLinkHandler            *content.LinkHandler
+	ContentPhotoHandler           *content.PhotoHandler
+	ContentJournalHandler         *content.JournalHandler
+	ContentSearchHandler          *content.SearchHandler
+	ContentScrapHandler           *content.ScrapHandler
+	ContentAPIArchiveHandler      *api.ArchiveHandler
+	ContentAPICategoryHandler     *api.CategoryHandler
+	ContentAPIJournalHandler      *api.JournalHandler
+	ContentAPILinkHandler         *api.LinkHandler
+	ContentAPIPostHandler         *api.PostHandler
+	ContentAPISheetHandler        *api.SheetHandler
+	ContentAPIOptionHandler       *api.OptionHandler
+	ContentAPIPhotoHandler        *api.PhotoHandler
+	WpPostHandler                 *wp.PostHandler
+	WpUserHandler                 *wp.UserHandler
+	WpCategoryHandler             *wp.CategoryHandler
+	WpTagHandler                  *wp.TagHandler
 }
 
 func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
@@ -145,58 +164,66 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 	}
 
 	s := &Server{
-		logger:                    param.Logger,
-		Config:                    param.Config,
-		HTTPServer:                httpServer,
-		Router:                    router,
-		Template:                  param.Template,
-		AuthMiddleware:            param.AuthMiddleware,
-		LogMiddleware:             param.LogMiddleware,
-		RecoveryMiddleware:        param.RecoveryMiddleware,
-		InstallRedirectMiddleware: param.InstallRedirectMiddleware,
-		AdminHandler:              param.AdminHandler,
-		AttachmentHandler:         param.AttachmentHandler,
-		BackupHandler:             param.BackupHandler,
-		CategoryHandler:           param.CategoryHandler,
-		InstallHandler:            param.InstallHandler,
-		JournalHandler:            param.JournalHandler,
-		JournalCommentHandler:     param.JournalCommentHandler,
-		LinkHandler:               param.LinkHandler,
-		LogHandler:                param.LogHandler,
-		MenuHandler:               param.MenuHandler,
-		OptionHandler:             param.OptionHandler,
-		PhotoHandler:              param.PhotoHandler,
-		PostHandler:               param.PostHandler,
-		PostCommentHandler:        param.PostCommentHandler,
-		SheetHandler:              param.SheetHandler,
-		SheetCommentHandler:       param.SheetCommentHandler,
-		StatisticHandler:          param.StatisticHandler,
-		TagHandler:                param.TagHandler,
-		ThemeHandler:              param.ThemeHandler,
-		UserHandler:               param.UserHandler,
-		EmailHandler:              param.EmailHandler,
-		OptionService:             param.OptionService,
-		ThemeService:              param.ThemeService,
-		SheetService:              param.SheetService,
-		IndexHandler:              param.IndexHandler,
-		FeedHandler:               param.FeedHandler,
-		ArchiveHandler:            param.ArchiveHandler,
-		ViewHandler:               param.ViewHandler,
-		ContentCategoryHandler:    param.ContentCategoryHandler,
-		ContentSheetHandler:       param.ContentSheetHandler,
-		ContentTagHandler:         param.ContentTagHandler,
-		ContentLinkHandler:        param.ContentLinkHandler,
-		ContentPhotoHandler:       param.ContentPhotoHandler,
-		ContentJournalHandler:     param.ContentJournalHandler,
-		ContentAPIArchiveHandler:  param.ContentAPIArchiveHandler,
-		ContentAPICategoryHandler: param.ContentAPICategoryHandler,
-		ContentAPIJournalHandler:  param.ContentAPIJournalHandler,
-		ContentAPILinkHandler:     param.ContentAPILinkHandler,
-		ContentAPIPostHandler:     param.ContentAPIPostHandler,
-		ContentAPISheetHandler:    param.ContentAPISheetHandler,
-		ContentAPIOptionHandler:   param.ContentAPIOptionHandler,
-		ContentSearchHandler:      param.ContentSearchHandler,
-		ContentAPIPhotoHandler:    param.ContentAPIPhotoHandler,
+		logger:                        param.Logger,
+		Config:                        param.Config,
+		HTTPServer:                    httpServer,
+		Router:                        router,
+		Template:                      param.Template,
+		AuthMiddleware:                param.AuthMiddleware,
+		LogMiddleware:                 param.LogMiddleware,
+		RecoveryMiddleware:            param.RecoveryMiddleware,
+		InstallRedirectMiddleware:     param.InstallRedirectMiddleware,
+		ApplicationPasswordMiddleware: param.ApplicationPasswordMiddleware,
+		AdminHandler:                  param.AdminHandler,
+		AttachmentHandler:             param.AttachmentHandler,
+		BackupHandler:                 param.BackupHandler,
+		CategoryHandler:               param.CategoryHandler,
+		InstallHandler:                param.InstallHandler,
+		JournalHandler:                param.JournalHandler,
+		JournalCommentHandler:         param.JournalCommentHandler,
+		LinkHandler:                   param.LinkHandler,
+		LogHandler:                    param.LogHandler,
+		MenuHandler:                   param.MenuHandler,
+		OptionHandler:                 param.OptionHandler,
+		PhotoHandler:                  param.PhotoHandler,
+		PostHandler:                   param.PostHandler,
+		PostCommentHandler:            param.PostCommentHandler,
+		ScrapPageHandler:              param.ScrapPageHandler,
+		SheetHandler:                  param.SheetHandler,
+		SheetCommentHandler:           param.SheetCommentHandler,
+		StatisticHandler:              param.StatisticHandler,
+		TagHandler:                    param.TagHandler,
+		ThemeHandler:                  param.ThemeHandler,
+		UserHandler:                   param.UserHandler,
+		EmailHandler:                  param.EmailHandler,
+		OptionService:                 param.OptionService,
+		ThemeService:                  param.ThemeService,
+		SheetService:                  param.SheetService,
+		IndexHandler:                  param.IndexHandler,
+		FeedHandler:                   param.FeedHandler,
+		ArchiveHandler:                param.ArchiveHandler,
+		ViewHandler:                   param.ViewHandler,
+		ContentCategoryHandler:        param.ContentCategoryHandler,
+		ContentSheetHandler:           param.ContentSheetHandler,
+		ContentTagHandler:             param.ContentTagHandler,
+		ContentLinkHandler:            param.ContentLinkHandler,
+		ContentPhotoHandler:           param.ContentPhotoHandler,
+		ContentJournalHandler:         param.ContentJournalHandler,
+		ContentAPIArchiveHandler:      param.ContentAPIArchiveHandler,
+		ContentAPICategoryHandler:     param.ContentAPICategoryHandler,
+		ContentAPIJournalHandler:      param.ContentAPIJournalHandler,
+		ContentAPILinkHandler:         param.ContentAPILinkHandler,
+		ContentAPIPostHandler:         param.ContentAPIPostHandler,
+		ContentAPISheetHandler:        param.ContentAPISheetHandler,
+		ContentAPIOptionHandler:       param.ContentAPIOptionHandler,
+		ContentSearchHandler:          param.ContentSearchHandler,
+		ContentScrapHandler:           param.ContentScrapHandler,
+		ContentAPIPhotoHandler:        param.ContentAPIPhotoHandler,
+		ApplicationPasswordHandler:    param.ApplicationPasswordHandler,
+		WpPostHandler:                 param.WpPostHandler,
+		WpUserHandler:                 param.WpUserHandler,
+		WpCategoryHandler:             param.WpCategoryHandler,
+		WpTagHandler:                  param.WpTagHandler,
 	}
 	lifecycle.Append(fx.Hook{
 		OnStop:  httpServer.Shutdown,
@@ -210,7 +237,7 @@ func (s *Server) Run(ctx context.Context) error {
 		gin.SetMode(gin.DebugMode)
 	}
 	go func() {
-		if err := s.HTTPServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.HTTPServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			// print err info when httpServer start failed
 			s.logger.Error("unexpected error from ListenAndServe", zap.Error(err))
 			fmt.Printf("http server start error:%s\n", err.Error())
@@ -240,6 +267,20 @@ func (s *Server) wrapHandler(handler wrapperHandler) gin.HandlerFunc {
 	}
 }
 
+func (s *Server) wrapWpHandler(handler wrapperHandler) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		data, err := handler(ctx)
+		if err != nil {
+			s.logger.Error("handler error", zap.Error(err))
+			status := xerr.GetHTTPStatus(err)
+			ctx.JSON(status, &dto.BaseWpDTO{Code: status, Message: xerr.GetMessage(err), Data: map[string]interface{}{"status": status}})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, data)
+	}
+}
+
 type wrapperHTMLHandler func(ctx *gin.Context, model template.Model) (templateName string, err error)
 
 var (
@@ -265,6 +306,8 @@ func (s *Server) wrapHTMLHandler(handler wrapperHTMLHandler) gin.HandlerFunc {
 		err = s.Template.ExecuteTemplate(ctx.Writer, templateName, model)
 		if err != nil {
 			s.logger.Error("render template err", zap.Error(err))
+			s.handleError(ctx, err)
+			return
 		}
 	}
 }

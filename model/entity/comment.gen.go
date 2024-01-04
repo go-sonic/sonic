@@ -14,10 +14,10 @@ const TableNameComment = "comment"
 
 // Comment mapped from table <comment>
 type Comment struct {
-	ID                int32                `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
-	Type              consts.CommentType   `gorm:"column:type;type:bigint;not null;index:comment_type_status,priority:1" json:"type"`
-	CreateTime        time.Time            `gorm:"column:create_time;type:datetime;not null" json:"create_time"`
-	UpdateTime        *time.Time           `gorm:"column:update_time;type:datetime" json:"update_time"`
+	ID                int32                `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	Type              consts.CommentType   `gorm:"column:type;type:bigint(20);not null;index:comment_type_status,priority:1" json:"type"`
+	CreateTime        time.Time            `gorm:"column:create_time;type:datetime(6);not null" json:"create_time"`
+	UpdateTime        *time.Time           `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
 	AllowNotification bool                 `gorm:"column:allow_notification;type:tinyint(1);not null;default:1" json:"allow_notification"`
 	Author            string               `gorm:"column:author;type:varchar(50);not null" json:"author"`
 	AuthorURL         string               `gorm:"column:author_url;type:varchar(511);not null" json:"author_url"`
@@ -26,10 +26,10 @@ type Comment struct {
 	GravatarMd5       string               `gorm:"column:gravatar_md5;type:varchar(127);not null" json:"gravatar_md5"`
 	IPAddress         string               `gorm:"column:ip_address;type:varchar(127);not null" json:"ip_address"`
 	IsAdmin           bool                 `gorm:"column:is_admin;type:tinyint(1);not null" json:"is_admin"`
-	ParentID          int32                `gorm:"column:parent_id;type:int;not null;index:comment_parent_id,priority:1" json:"parent_id"`
-	PostID            int32                `gorm:"column:post_id;type:int;not null;index:comment_post_id,priority:1" json:"post_id"`
-	Status            consts.CommentStatus `gorm:"column:status;type:bigint;not null;index:comment_type_status,priority:2" json:"status"`
-	TopPriority       int32                `gorm:"column:top_priority;type:int;not null" json:"top_priority"`
+	ParentID          int32                `gorm:"column:parent_id;type:int(11);not null;index:comment_parent_id,priority:1" json:"parent_id"`
+	PostID            int32                `gorm:"column:post_id;type:int(11);not null;index:comment_post_id,priority:1" json:"post_id"`
+	Status            consts.CommentStatus `gorm:"column:status;type:bigint(20);not null;index:comment_type_status,priority:2" json:"status"`
+	TopPriority       int32                `gorm:"column:top_priority;type:int(11);not null" json:"top_priority"`
 	UserAgent         string               `gorm:"column:user_agent;type:varchar(511);not null" json:"user_agent"`
 }
 

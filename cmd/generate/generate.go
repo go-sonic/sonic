@@ -43,7 +43,6 @@ func main() {
 		g.GenerateModel("category", gen.FieldType("type", "consts.CategoryType")),
 		g.GenerateModel("comment", gen.FieldType("type", "consts.CommentType"), gen.FieldType("status", "consts.CommentStatus")),
 		g.GenerateModel("comment_black"),
-		g.GenerateModel("flyway_schema_history"),
 		g.GenerateModel("journal", gen.FieldType("type", "consts.JournalType")),
 		g.GenerateModel("link"),
 		g.GenerateModel("log", gen.FieldType("type", "consts.LogType")),
@@ -57,6 +56,8 @@ func main() {
 		g.GenerateModel("tag"),
 		g.GenerateModel("theme_setting"),
 		g.GenerateModel("user", gen.FieldType("mfa_type", "consts.MFAType")),
+		g.GenerateModel("application_password"),
+		g.GenerateModel("scrap_page"),
 	)
 
 	// apply diy interfaces on structs or table models

@@ -94,6 +94,18 @@ func GetQueryBool(ctx *gin.Context, key string, defaultValue bool) (bool, error)
 	return value, nil
 }
 
+func GetQueryInt32(ctx *gin.Context, key string, defaultValue int32) (int32, error) {
+	str, ok := ctx.GetQuery(key)
+	if !ok {
+		return defaultValue, nil
+	}
+	value, err := strconv.ParseInt(str, 10, 32)
+	if err != nil {
+		return 0, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg(fmt.Sprintf("The parameter %s type is incorrect", key))
+	}
+	return int32(value), nil
+}
+
 func ParamString(ctx *gin.Context, key string) (string, error) {
 	str := ctx.Param(key)
 	if str == "" {
