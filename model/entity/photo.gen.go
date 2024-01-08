@@ -12,7 +12,7 @@ const TableNamePhoto = "photo"
 
 // Photo mapped from table <photo>
 type Photo struct {
-	ID          int32      `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	ID          int32      `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
 	CreateTime  time.Time  `gorm:"column:create_time;type:datetime(6);not null;index:photo_create_time,priority:1" json:"create_time"`
 	UpdateTime  *time.Time `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
 	Description string     `gorm:"column:description;type:varchar(255);not null" json:"description"`
@@ -22,7 +22,7 @@ type Photo struct {
 	Team        string     `gorm:"column:team;type:varchar(255);not null;index:photo_team,priority:1" json:"team"`
 	Thumbnail   string     `gorm:"column:thumbnail;type:varchar(1023);not null" json:"thumbnail"`
 	URL         string     `gorm:"column:url;type:varchar(1023);not null" json:"url"`
-	Likes       int64      `gorm:"column:likes;type:bigint(20);not null" json:"likes"`
+	Likes       int64      `gorm:"column:likes;type:bigint;not null" json:"likes"`
 }
 
 // TableName Photo's table name

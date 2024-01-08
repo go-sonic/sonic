@@ -14,5 +14,5 @@ type ScrapPage struct {
 type ScrapPageQuery struct {
 	Page
 	*Sort
-	KeyWord string `json:"key_word"`
+	KeyWord string `json:"key_word" form:"key_word""`
 }

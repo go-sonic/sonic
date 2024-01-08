@@ -1,3 +1,6 @@
 [submodule "resources/template/theme/default-theme-anatole"]
 	path = resources/template/theme/default-theme-anatole
 	url = https://github.com/textworld/default-theme-anatole.git
+[submodule "resources/console"]
+	path = resources/console
+	url = git@github.com:textworld/sonic-console.git

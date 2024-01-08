@@ -306,6 +306,10 @@ func (s *Server) RegisterRouters() {
 					appPwdRouter.GET("", s.wrapHandler(s.ApplicationPasswordHandler.List))
 				}
 				{
+					scrapRouter := authRouter.Group("scrap_page")
+					scrapRouter.POST("/:pageID", s.wrapHandler(s.ScrapPageHandler.Update))
+				}
+				{
 					emailRouter := authRouter.Group("/mails")
 					emailRouter.POST("/test", s.wrapHandler(s.EmailHandler.Test))
 				}

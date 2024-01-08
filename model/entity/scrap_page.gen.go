@@ -12,10 +12,10 @@ const TableNameScrapPage = "scrap_page"
 
 // ScrapPage mapped from table <scrap_page>
 type ScrapPage struct {
-	ID         int32      `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	ID         int32      `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
 	CreateTime time.Time  `gorm:"column:create_time;type:datetime(6);not null" json:"create_time"`
 	UpdateTime *time.Time `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
-	Title      string     `gorm:"column:title;type:varchar(128);not null" json:"title"`
+	Title      string     `gorm:"column:title;type:text;not null" json:"title"`
 	Md5        string     `gorm:"column:md5;type:varchar(128);not null" json:"md5"`
 	URL        string     `gorm:"column:url;type:text;not null" json:"url"`
 	OriginURL  *string    `gorm:"column:origin_url;type:text" json:"origin_url"`
@@ -23,7 +23,7 @@ type ScrapPage struct {
 	Summary    *string    `gorm:"column:summary;type:text" json:"summary"`
 	Domain     string     `gorm:"column:domain;type:varchar(128);not null" json:"domain"`
 	Resource   *string    `gorm:"column:resource;type:text" json:"resource"`
-	Attachment *int32     `gorm:"column:attachment;type:int(11);comment:附件" json:"attachment"` // 附件
+	Attachment *int32     `gorm:"column:attachment;type:int;comment:附件" json:"attachment"` // 附件
 }
 
 // TableName ScrapPage's table name

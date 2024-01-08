@@ -14,12 +14,12 @@ const TableNameMeta = "meta"
 
 // Meta mapped from table <meta>
 type Meta struct {
-	ID         int32           `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
-	Type       consts.MetaType `gorm:"column:type;type:bigint(20);not null" json:"type"`
+	ID         int32           `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
+	Type       consts.MetaType `gorm:"column:type;type:bigint;not null" json:"type"`
 	CreateTime time.Time       `gorm:"column:create_time;type:datetime(6);not null" json:"create_time"`
 	UpdateTime *time.Time      `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
 	MetaKey    string          `gorm:"column:meta_key;type:varchar(255);not null" json:"meta_key"`
-	PostID     int32           `gorm:"column:post_id;type:int(11);not null" json:"post_id"`
+	PostID     int32           `gorm:"column:post_id;type:int;not null" json:"post_id"`
 	MetaValue  string          `gorm:"column:meta_value;type:varchar(1023);not null" json:"meta_value"`
 }
 

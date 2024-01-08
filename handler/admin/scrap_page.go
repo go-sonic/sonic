@@ -45,6 +45,22 @@ func (handler *ScrapPageHandler) Create(ctx *gin.Context) (interface{}, error) {
 	return pageDTO, nil
 }
 
+func (handler *ScrapPageHandler) Update(ctx *gin.Context) (interface{}, error) {
+	pageID, err := util.ParamInt32(ctx, "pageID")
+	scrapPageParam := param.ScrapPage{}
+	err = ctx.ShouldBindJSON(&scrapPageParam)
+	if err != nil {
+		return nil, xerr.BadParam.Wrap(err)
+	}
+
+	updatePage, err := handler.ScrapService.Update(ctx, pageID, &scrapPageParam)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatePage, nil
+}
+
 func (handler *ScrapPageHandler) Get(ctx *gin.Context) {
 	pageID, err := util.ParamInt32(ctx, "id")
 	if err != nil {

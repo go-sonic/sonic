@@ -12,11 +12,11 @@ const TableNamePostTag = "post_tag"
 
 // PostTag mapped from table <post_tag>
 type PostTag struct {
-	ID         int32      `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	ID         int32      `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
 	CreateTime time.Time  `gorm:"column:create_time;type:datetime(6);not null" json:"create_time"`
 	UpdateTime *time.Time `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
-	PostID     int32      `gorm:"column:post_id;type:int(11);not null;index:post_tag_post_id,priority:1" json:"post_id"`
-	TagID      int32      `gorm:"column:tag_id;type:int(11);not null;index:post_tag_tag_id,priority:1" json:"tag_id"`
+	PostID     int32      `gorm:"column:post_id;type:int;not null;index:post_tag_post_id,priority:1" json:"post_id"`
+	TagID      int32      `gorm:"column:tag_id;type:int;not null;index:post_tag_tag_id,priority:1" json:"tag_id"`
 }
 
 // TableName PostTag's table name

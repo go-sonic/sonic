@@ -12,7 +12,7 @@ const TableNameThemeSetting = "theme_setting"
 
 // ThemeSetting mapped from table <theme_setting>
 type ThemeSetting struct {
-	ID           int32      `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	ID           int32      `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
 	CreateTime   time.Time  `gorm:"column:create_time;type:datetime(6);not null" json:"create_time"`
 	UpdateTime   *time.Time `gorm:"column:update_time;type:datetime(6)" json:"update_time"`
 	SettingKey   string     `gorm:"column:setting_key;type:varchar(255);not null;index:theme_setting_setting_key,priority:1" json:"setting_key"`
