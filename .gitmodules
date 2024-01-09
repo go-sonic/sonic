@@ -3,5 +3,5 @@
 	url = https://github.com/textworld/default-theme-anatole.git
 [submodule "resources/console"]
 	path = resources/console
-	url = git@github.com:textworld/sonic-console.git
+	url = https://github.com/textworld/sonic-console.git
 	branch = main
