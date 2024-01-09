@@ -101,7 +101,7 @@ func (impl *scrapServiceImpl) Query(ctx context.Context, query *param.ScrapPageQ
 		db = db.Where("scrap_page.title like ?", "%"+query.KeyWord+"%")
 	}
 
-	db.Scan(&dtoList)
+	db.Offset((query.PageNum - 1) * query.PageSize).Limit(query.PageSize).Scan(&dtoList)
 
 	return dtoList, total, nil
 }

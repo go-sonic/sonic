@@ -4,3 +4,4 @@
 [submodule "resources/console"]
 	path = resources/console
 	url = git@github.com:textworld/sonic-console.git
+	branch = main
