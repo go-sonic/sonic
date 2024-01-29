@@ -106,7 +106,7 @@ func (e *exportImport) CreateByMarkdown(ctx context.Context, filename string, re
 			if s, ok := value.(string); ok {
 				date, err := cast.StringToDate(s)
 				if err != nil {
-					log.CtxWarnf(ctx, "CreateByMarkdown convert lastmod time err=%v", err)
+					log.CtxWarnf(ctx, "CreateByMarkdown convert updated time err=%v", err)
 				} else {
 					post.UpdateTime = util.Int64Ptr(date.UnixMilli())
 				}
@@ -114,10 +114,10 @@ func (e *exportImport) CreateByMarkdown(ctx context.Context, filename string, re
 		case "lastmod":
 			if s, ok := value.(string); ok {
 				date, err := cast.StringToDate(s)
-				if err == nil {
-					post.EditTime = util.Int64Ptr(date.UnixMilli())
-				} else {
+				if err != nil {
 					log.CtxWarnf(ctx, "CreateByMarkdown convert lastmod time err=%v", err)
+				} else {
+					post.EditTime = util.Int64Ptr(date.UnixMilli())
 				}
 			}
 		case "keywords":
@@ -266,7 +266,7 @@ func (e *exportImport) ExportMarkdown(ctx context.Context, needFrontMatter bool)
 		markdown.WriteString(post.OriginalContent)
 
 		fileName := post.CreateTime.Format("2006-01-02") + "-" + post.Slug + ".md"
-		file, err := os.OpenFile(filepath.Join(backupFilePath, fileName), os.O_WRONLY|os.O_CREATE, 0o666)
+		file, err := os.OpenFile(filepath.Join(backupFilePath, fileName), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o666)
 		if err != nil {
 			return "", xerr.WithStatus(err, xerr.StatusInternalServerError).WithMsg("create file err")
 		}
@@ -306,15 +306,15 @@ func (e *exportImport) getFrontMatterYaml(ctx context.Context, post *entity.Post
 	frontMatter := make(map[string]any)
 	frontMatter["title"] = post.Title
 	frontMatter["draft"] = post.Status == consts.PostStatusDraft
-	frontMatter["date"] = post.CreateTime.Format("2006-01-02 15:04")
+	frontMatter["date"] = post.CreateTime.Format("2006-01-02 15:04:05 MST")
 	frontMatter["comments"] = !post.DisallowComment
 	frontMatter["slug"] = post.Slug
 	if post.EditTime != nil {
-		frontMatter["lastmod"] = post.EditTime.Format("2006-01-02 15:04")
+		frontMatter["lastmod"] = post.EditTime.Format("2006-01-02 15:04:05 MST")
 	}
 
 	if post.UpdateTime != nil && post.UpdateTime != (&time.Time{}) {
-		frontMatter["updated"] = post.UpdateTime.Format("2006-01-02 15:04")
+		frontMatter["updated"] = post.UpdateTime.Format("2006-01-02 15:04:05 MST")
 	}
 	if post.Summary != "" {
 		frontMatter["summary"] = post.Summary
@@ -355,7 +355,7 @@ func convertJekyllMetaData(metadata map[string]any, postName string, postDate ti
 			}
 		case "date":
 			date, err := cast.StringToDate(value.(string))
-			if err == nil {
+			if err != nil {
 				log.Errorf("convertJekyllMetaData date parse err date=%v err=%v", value.(string), err)
 			} else {
 				postDate = date
