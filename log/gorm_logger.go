@@ -28,7 +28,7 @@ func NewGormLogger(conf *config.Config, zapLogger *zap.Logger) logger.Interface 
 		SlowThreshold:             200 * time.Millisecond,
 		LogLevel:                  GetGormLogLevel(conf.Log.Levels.Gorm),
 		IgnoreRecordNotFoundError: true,
-		Colorful:                  config.IsDev(),
+		Colorful:                  config.LogToConsole(),
 	}
 	gl := &gormLogger{
 		Config:       logConfig,
