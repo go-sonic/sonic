@@ -113,8 +113,8 @@ func (s statisticServiceImpl) Statistic(ctx context.Context) (*dto.Statistic, er
 	statistic.LinkCount = linkCount
 	statistic.VisitCount = postVisitCount + sheetVisitCount
 	statistic.LikeCount = postLikeCount + sheetLikeCount
-	statistic.Birthday = int64(birthday.(int))
-	statistic.EstablishDays = (time.Now().UnixMilli() - int64(birthday.(int))) / (1000 * 24 * 3600)
+	statistic.Birthday = birthday.(int64)
+	statistic.EstablishDays = (time.Now().UnixMilli() - birthday.(int64)) / (1000 * 24 * 3600)
 	return &statistic, nil
 }
 
