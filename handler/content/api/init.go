@@ -12,5 +12,6 @@ func init() {
 		NewSheetHandler,
 		NewOptionHandler,
 		NewPhotoHandler,
+		NewCommentHandler,
 	)
 }

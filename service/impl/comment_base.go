@@ -341,3 +341,15 @@ func (b *baseCommentServiceImpl) GetChildren(ctx context.Context, parentCommentI
 	}
 	return children, nil
 }
+
+func (b baseCommentServiceImpl) IncreaseLike(ctx context.Context, commentID int32) error {
+	commentDAL := dal.GetQueryByCtx(ctx).Comment
+	info, err := commentDAL.WithContext(ctx).Where(commentDAL.ID.Eq(commentID)).UpdateSimple(commentDAL.Likes.Add(1))
+	if err != nil {
+		return WrapDBErr(err)
+	}
+	if info.RowsAffected != 1 {
+		return xerr.NoType.New("increase comment like failed postID=%v", commentID).WithStatus(xerr.StatusBadRequest).WithMsg("failed to like comment")
+	}
+	return nil
+}

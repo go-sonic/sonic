@@ -5,7 +5,7 @@ import "reflect"
 var (
 	CommentGravatarDefault = Property{
 		KeyValue:     "comment_gravatar_default",
-		DefaultValue: "mm",
+		DefaultValue: "identicon",
 		Kind:         reflect.String,
 	}
 	CommentNewNeedCheck = Property{
@@ -40,12 +40,12 @@ var (
 	}
 	CommentInternalPluginJs = Property{
 		KeyValue:     "comment_internal_plugin_js",
-		DefaultValue: "//cdn.jsdelivr.net/npm/halo-comment@latest/dist/halo-comment.min.js",
+		DefaultValue: "https://cdn.jsdelivr.net/npm/halo-comment@latest/dist/halo-comment.min.js",
 		Kind:         reflect.String,
 	}
 	CommentGravatarSource = Property{
 		KeyValue:     "gravatar_source",
-		DefaultValue: "//gravatar.com/avatar/",
+		DefaultValue: "https://gravatar.com/avatar/",
 		Kind:         reflect.String,
 	}
 	CommentBanTime = Property{
