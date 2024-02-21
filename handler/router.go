@@ -226,7 +226,7 @@ func (s *Server) RegisterRouters() {
 					photoRouter.GET("/latest", s.wrapHandler(s.PhotoHandler.ListPhoto))
 					photoRouter.GET("", s.wrapHandler(s.PhotoHandler.PagePhotos))
 					photoRouter.GET("/:id", s.wrapHandler(s.PhotoHandler.GetPhotoByID))
-					photoRouter.DELETE("/:id", s.wrapHandler(s.PhotoHandler.DeletePhoto))
+					photoRouter.DELETE("/batch", s.wrapHandler(s.PhotoHandler.DeletePhotoBatch))
 					photoRouter.POST("", s.wrapHandler(s.PhotoHandler.CreatePhoto))
 					photoRouter.POST("/batch", s.wrapHandler(s.PhotoHandler.CreatePhotoBatch))
 					photoRouter.PUT("/:id", s.wrapHandler(s.PhotoHandler.UpdatePhoto))
