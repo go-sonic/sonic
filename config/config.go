@@ -104,8 +104,10 @@ func initDirectory(conf *Config) {
 	}
 }
 
-var mode string
-var logMode LogMode
+var (
+	mode    string
+	logMode LogMode
+)
 
 func IsDev() bool {
 	return mode == "development"

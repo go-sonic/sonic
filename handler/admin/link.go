@@ -78,7 +78,6 @@ func (l *LinkHandler) UpdateLink(ctx *gin.Context) (interface{}, error) {
 	}
 	linkParam := &param.Link{}
 	err = ctx.ShouldBindJSON(linkParam)
-
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
