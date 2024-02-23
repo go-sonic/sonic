@@ -81,7 +81,6 @@ func (t *TagHandler) UpdateTag(ctx *gin.Context) (interface{}, error) {
 	}
 	tagParam := &param.Tag{}
 	err = ctx.ShouldBindJSON(tagParam)
-
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {

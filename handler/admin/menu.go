@@ -136,7 +136,6 @@ func (m *MenuHandler) UpdateMenu(ctx *gin.Context) (interface{}, error) {
 	}
 	menuParam := &param.Menu{}
 	err = ctx.ShouldBindJSON(menuParam)
-
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
