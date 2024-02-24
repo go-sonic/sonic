@@ -29,7 +29,7 @@ type Page struct {
 }
 
 func NewPage(content interface{}, totalCount int64, page param.Page) *Page {
-	contentLen := 0
+	var contentLen int
 	r := reflect.ValueOf(content)
 
 	if !r.IsNil() && r.Kind() != reflect.Slice {

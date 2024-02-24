@@ -3,7 +3,6 @@ package extension
 import (
 	"context"
 	"math/rand"
-	"time"
 
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/service"
@@ -45,7 +44,6 @@ func (l *linkExtension) addListLinksRandom() {
 		if err != nil {
 			return nil, err
 		}
-		rand.Seed(time.Now().UnixNano())
 		rand.Shuffle(len(links), func(i, j int) {
 			links[i], links[j] = links[j], links[i]
 		})
