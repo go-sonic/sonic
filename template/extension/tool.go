@@ -2,7 +2,6 @@ package extension
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/go-sonic/sonic/template"
 	"github.com/go-sonic/sonic/util"
@@ -26,7 +25,6 @@ func (t *toolExtension) addRainbow() {
 }
 
 func (t *toolExtension) addRandom() {
-	rand.Seed(time.Now().UnixNano())
 	random := func(min, max int) int {
 		return min + rand.Intn(max-min)
 	}

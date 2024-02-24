@@ -119,7 +119,7 @@ func (t *TemplateConfigListener) loadThemeConfig(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	themeBasePath := ""
+	var themeBasePath string
 	if isEnabledAbsolutePath {
 		themeBasePath = blogBaseURL + "/themes/" + theme.FolderName
 	} else {

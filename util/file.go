@@ -40,7 +40,7 @@ func ZipFile(dst string, srcs ...string) (err error) {
 			// 通过文件信息，创建 zip 的文件信息
 			fh, err := zip.FileInfoHeader(fi)
 			if err != nil {
-				return
+				return err
 			}
 			if path == src {
 				fh.Name = filepath.Base(src)
@@ -58,7 +58,7 @@ func ZipFile(dst string, srcs ...string) (err error) {
 			// 写入文件信息，并返回一个 Write 结构
 			w, err := zw.CreateHeader(fh)
 			if err != nil {
-				return
+				return err
 			}
 
 			// 检测，如果不是标准文件就只写入头信息，不写入文件数据到 w
@@ -70,14 +70,14 @@ func ZipFile(dst string, srcs ...string) (err error) {
 			// 打开要压缩的文件
 			fr, err := os.Open(path)
 			if err != nil {
-				return
+				return err
 			}
 			defer fr.Close()
 
 			// 将打开的文件 Copy 到 w
 			_, err = io.Copy(w, fr)
 			if err != nil {
-				return
+				return err
 			}
 			// 输出压缩的内容
 
