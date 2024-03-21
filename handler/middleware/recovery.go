@@ -1,14 +1,15 @@
 package middleware
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/model/dto"
 )
 
@@ -22,10 +23,10 @@ func NewRecoveryMiddleware(logger *zap.Logger) *RecoveryMiddleware {
 	}
 }
 
-func (r *RecoveryMiddleware) RecoveryWithLogger() gin.HandlerFunc {
+func (r *RecoveryMiddleware) RecoveryWithLogger() app.HandlerFunc {
 	logger := r.logger.WithOptions(zap.AddCallerSkip(2))
 
-	return func(ctx *gin.Context) {
+	return func(_ctx context.Context, ctx *app.RequestContext) {
 		defer func() {
 			if err := recover(); err != nil {
 				// Check for a broken connection, as it is not really a
@@ -42,9 +43,7 @@ func (r *RecoveryMiddleware) RecoveryWithLogger() gin.HandlerFunc {
 				}
 
 				if brokenPipe {
-					logger.Error(ctx.Request.URL.Path,
-						zap.Any("error", err),
-					)
+					logger.Error(string(ctx.URI().Path()), zap.Any("error", err))
 				} else {
 					logger.DPanic("[Recovery]  panic recovered", zap.Any("error", err))
 				}
@@ -59,6 +58,7 @@ func (r *RecoveryMiddleware) RecoveryWithLogger() gin.HandlerFunc {
 				}
 			}
 		}()
-		ctx.Next()
+		ctx.Next(_ctx)
+
 	}
 }

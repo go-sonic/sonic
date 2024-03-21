@@ -1,9 +1,11 @@
 package admin
 
 import (
+	"context"
 	"errors"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
+
 	"github.com/go-playground/validator/v10"
 
 	"github.com/go-sonic/sonic/handler/trans"
@@ -22,9 +24,9 @@ func NewInstallHandler(installService service.InstallService) *InstallHandler {
 	}
 }
 
-func (i *InstallHandler) InstallBlog(ctx *gin.Context) (interface{}, error) {
+func (i *InstallHandler) InstallBlog(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	var installParam param.Install
-	err := ctx.ShouldBindJSON(&installParam)
+	err := ctx.BindAndValidate(&installParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -32,7 +34,7 @@ func (i *InstallHandler) InstallBlog(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest)
 	}
-	err = i.InstallService.InstallBlog(ctx, installParam)
+	err = i.InstallService.InstallBlog(_ctx, installParam)
 	if err != nil {
 		return nil, err
 	}

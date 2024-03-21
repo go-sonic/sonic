@@ -1,10 +1,10 @@
 package content
 
 import (
+	"context"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/cache"
 	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/handler/content/model"
@@ -46,31 +46,31 @@ func NewArchiveHandler(
 	}
 }
 
-func (a *ArchiveHandler) Archives(ctx *gin.Context, model template.Model) (string, error) {
-	return a.PostModel.Archives(ctx, 0, model)
+func (a *ArchiveHandler) Archives(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	return a.PostModel.Archives(_ctx, 0, model)
 }
 
-func (a *ArchiveHandler) ArchivesPage(ctx *gin.Context, model template.Model) (string, error) {
-	page, err := util.ParamInt32(ctx, "page")
+func (a *ArchiveHandler) ArchivesPage(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	page, err := util.ParamInt32(_ctx, ctx, "page")
 	if err != nil {
 		return "", err
 	}
-	return a.PostModel.Archives(ctx, int(page-1), model)
+	return a.PostModel.Archives(_ctx, int(page-1), model)
 }
 
-func (a *ArchiveHandler) ArchivesBySlug(ctx *gin.Context, model template.Model) (string, error) {
-	slug, err := util.ParamString(ctx, "slug")
+func (a *ArchiveHandler) ArchivesBySlug(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	slug, err := util.ParamString(_ctx, ctx, "slug")
 	if err != nil {
 		return "", err
 	}
 
-	postPermalinkType, err := a.OptionService.GetPostPermalinkType(ctx)
+	postPermalinkType, err := a.OptionService.GetPostPermalinkType(_ctx)
 	if err != nil {
 		return "", err
 	}
 	var post *entity.Post
 	if postPermalinkType == consts.PostPermalinkTypeDefault {
-		post, err = a.PostService.GetBySlug(ctx, slug)
+		post, err = a.PostService.GetBySlug(_ctx, slug)
 		if err != nil {
 			return "", err
 		}
@@ -79,22 +79,22 @@ func (a *ArchiveHandler) ArchivesBySlug(ctx *gin.Context, model template.Model) 
 		if err != nil {
 			return "", err
 		}
-		post, err = a.PostService.GetByPostID(ctx, int32(postID))
+		post, err = a.PostService.GetByPostID(_ctx, int32(postID))
 		if err != nil {
 			return "", err
 		}
 	}
-	token, _ := ctx.Cookie("authentication")
-	return a.PostModel.Content(ctx, post, token, model)
+	token := string(ctx.Cookie("authentication"))
+	return a.PostModel.Content(_ctx, post, token, model)
 }
 
 // AdminArchivesBySlug It can only be used in the console  to preview articles
-func (a *ArchiveHandler) AdminArchivesBySlug(ctx *gin.Context, model template.Model) (string, error) {
-	slug, err := util.ParamString(ctx, "slug")
+func (a *ArchiveHandler) AdminArchivesBySlug(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	slug, err := util.ParamString(_ctx, ctx, "slug")
 	if err != nil {
 		return "", err
 	}
-	token, err := util.MustGetQueryString(ctx, "token")
+	token, err := util.MustGetQueryString(_ctx, ctx, "token")
 	if err != nil {
 		return "", err
 	}
@@ -106,13 +106,13 @@ func (a *ArchiveHandler) AdminArchivesBySlug(ctx *gin.Context, model template.Mo
 		return "", xerr.WithStatus(nil, xerr.StatusBadRequest).WithMsg("token已过期或者不存在")
 	}
 
-	postPermalinkType, err := a.OptionService.GetPostPermalinkType(ctx)
+	postPermalinkType, err := a.OptionService.GetPostPermalinkType(_ctx)
 	if err != nil {
 		return "", err
 	}
 	var post *entity.Post
 	if postPermalinkType == consts.PostPermalinkTypeDefault {
-		post, err = a.PostService.GetBySlug(ctx, slug)
+		post, err = a.PostService.GetBySlug(_ctx, slug)
 		if err != nil {
 			return "", err
 		}
@@ -121,10 +121,10 @@ func (a *ArchiveHandler) AdminArchivesBySlug(ctx *gin.Context, model template.Mo
 		if err != nil {
 			return "", err
 		}
-		post, err = a.PostService.GetByPostID(ctx, int32(postID))
+		post, err = a.PostService.GetByPostID(_ctx, int32(postID))
 		if err != nil {
 			return "", err
 		}
 	}
-	return a.PostModel.AdminPreview(ctx, post, model)
+	return a.PostModel.AdminPreview(_ctx, post, model)
 }

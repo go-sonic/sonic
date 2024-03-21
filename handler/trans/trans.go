@@ -2,9 +2,9 @@ package trans
 
 import (
 	"fmt"
+	"github.com/hertz-contrib/binding/go_playground"
 	"strings"
 
-	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
@@ -16,7 +16,8 @@ var trans ut.Translator
 
 func init() {
 	local := "zh"
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+	vd := go_playground.NewValidator()
+	if v, ok := vd.Engine().(*validator.Validate); ok {
 		zhT := zh.New() // chinese
 		enT := en.New() // english
 		uni := ut.New(enT, zhT, enT)

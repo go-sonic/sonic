@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/consts"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/service/assembler"
@@ -20,18 +21,18 @@ func NewArchiveHandler(postService service.PostService, postAssemeber assembler.
 	}
 }
 
-func (a *ArchiveHandler) ListYearArchives(ctx *gin.Context) (interface{}, error) {
-	posts, err := a.PostService.GetByStatus(ctx, []consts.PostStatus{consts.PostStatusPublished}, consts.PostTypePost, nil)
+func (a *ArchiveHandler) ListYearArchives(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	posts, err := a.PostService.GetByStatus(_ctx, []consts.PostStatus{consts.PostStatusPublished}, consts.PostTypePost, nil)
 	if err != nil {
 		return nil, err
 	}
-	return a.PostAssembler.ConvertToArchiveYearVOs(ctx, posts)
+	return a.PostAssembler.ConvertToArchiveYearVOs(_ctx, posts)
 }
 
-func (a *ArchiveHandler) ListMonthArchives(ctx *gin.Context) (interface{}, error) {
-	posts, err := a.PostService.GetByStatus(ctx, []consts.PostStatus{consts.PostStatusPublished}, consts.PostTypePost, nil)
+func (a *ArchiveHandler) ListMonthArchives(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	posts, err := a.PostService.GetByStatus(_ctx, []consts.PostStatus{consts.PostStatusPublished}, consts.PostTypePost, nil)
 	if err != nil {
 		return nil, err
 	}
-	return a.PostAssembler.ConvertTOArchiveMonthVOs(ctx, posts)
+	return a.PostAssembler.ConvertTOArchiveMonthVOs(_ctx, posts)
 }

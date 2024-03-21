@@ -1,8 +1,9 @@
 package admin
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/service"
 )
 
@@ -16,10 +17,10 @@ func NewStatisticHandler(l service.StatisticService) *StatisticHandler {
 	}
 }
 
-func (s *StatisticHandler) Statistics(ctx *gin.Context) (interface{}, error) {
-	return s.StatisticService.Statistic(ctx)
+func (s *StatisticHandler) Statistics(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	return s.StatisticService.Statistic(_ctx)
 }
 
-func (s *StatisticHandler) StatisticsWithUser(ctx *gin.Context) (interface{}, error) {
-	return s.StatisticService.StatisticWithUser(ctx)
+func (s *StatisticHandler) StatisticsWithUser(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	return s.StatisticService.StatisticWithUser(_ctx)
 }

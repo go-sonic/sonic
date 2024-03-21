@@ -1,9 +1,10 @@
 package admin
 
 import (
+	"context"
 	"errors"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-playground/validator/v10"
 
 	"github.com/go-sonic/sonic/handler/trans"
@@ -23,9 +24,9 @@ func NewMenuHandler(menuService service.MenuService) *MenuHandler {
 	}
 }
 
-func (m *MenuHandler) ListMenus(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) ListMenus(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	sort := param.Sort{}
-	err := ctx.ShouldBindQuery(&sort)
+	err := ctx.BindAndValidate(&sort)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "sort parameter error").WithStatus(xerr.StatusBadRequest)
 	}
@@ -34,16 +35,16 @@ func (m *MenuHandler) ListMenus(ctx *gin.Context) (interface{}, error) {
 	} else {
 		sort.Fields = append(sort.Fields, "priority,asc")
 	}
-	menus, err := m.MenuService.List(ctx, &sort)
+	menus, err := m.MenuService.List(_ctx, &sort)
 	if err != nil {
 		return nil, err
 	}
-	return m.MenuService.ConvertToDTOs(ctx, menus), nil
+	return m.MenuService.ConvertToDTOs(_ctx, menus), nil
 }
 
-func (m *MenuHandler) ListMenusAsTree(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) ListMenusAsTree(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	sort := param.Sort{}
-	err := ctx.ShouldBindQuery(&sort)
+	err := ctx.BindAndValidate(&sort)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "sort parameter error").WithStatus(xerr.StatusBadRequest)
 	}
@@ -52,52 +53,52 @@ func (m *MenuHandler) ListMenusAsTree(ctx *gin.Context) (interface{}, error) {
 	} else {
 		sort.Fields = append(sort.Fields, "priority,asc")
 	}
-	menus, err := m.MenuService.ListAsTree(ctx, &sort)
+	menus, err := m.MenuService.ListAsTree(_ctx, &sort)
 	if err != nil {
 		return nil, err
 	}
 	return menus, nil
 }
 
-func (m *MenuHandler) ListMenusAsTreeByTeam(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) ListMenusAsTreeByTeam(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	sort := param.Sort{}
-	err := ctx.ShouldBindQuery(&sort)
+	err := ctx.BindAndValidate(&sort)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "sort parameter error").WithStatus(xerr.StatusBadRequest)
 	}
 	if len(sort.Fields) == 0 {
 		sort.Fields = append(sort.Fields, "priority,asc")
 	}
-	team, _ := util.MustGetQueryString(ctx, "team")
+	team, _ := util.MustGetQueryString(_ctx, ctx, "team")
 	if team == "" {
-		menus, err := m.MenuService.ListAsTree(ctx, &sort)
+		menus, err := m.MenuService.ListAsTree(_ctx, &sort)
 		if err != nil {
 			return nil, err
 		}
 		return menus, nil
 	}
-	menus, err := m.MenuService.ListAsTreeByTeam(ctx, team, &sort)
+	menus, err := m.MenuService.ListAsTreeByTeam(_ctx, team, &sort)
 	if err != nil {
 		return nil, err
 	}
 	return menus, nil
 }
 
-func (m *MenuHandler) GetMenuByID(ctx *gin.Context) (interface{}, error) {
-	id, err := util.ParamInt32(ctx, "id")
+func (m *MenuHandler) GetMenuByID(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	id, err := util.ParamInt32(_ctx, ctx, "id")
 	if err != nil {
 		return nil, err
 	}
-	menu, err := m.MenuService.GetByID(ctx, id)
+	menu, err := m.MenuService.GetByID(_ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	return m.MenuService.ConvertToDTO(ctx, menu), nil
+	return m.MenuService.ConvertToDTO(_ctx, menu), nil
 }
 
-func (m *MenuHandler) CreateMenu(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) CreateMenu(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	menuParam := &param.Menu{}
-	err := ctx.ShouldBindJSON(menuParam)
+	err := ctx.BindAndValidate(menuParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -105,16 +106,16 @@ func (m *MenuHandler) CreateMenu(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	menu, err := m.MenuService.Create(ctx, menuParam)
+	menu, err := m.MenuService.Create(_ctx, menuParam)
 	if err != nil {
 		return nil, err
 	}
-	return m.MenuService.ConvertToDTO(ctx, menu), nil
+	return m.MenuService.ConvertToDTO(_ctx, menu), nil
 }
 
-func (m *MenuHandler) CreateMenuBatch(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) CreateMenuBatch(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	menuParams := make([]*param.Menu, 0)
-	err := ctx.ShouldBindJSON(&menuParams)
+	err := ctx.BindAndValidate(&menuParams)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -122,20 +123,20 @@ func (m *MenuHandler) CreateMenuBatch(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	menus, err := m.MenuService.CreateBatch(ctx, menuParams)
+	menus, err := m.MenuService.CreateBatch(_ctx, menuParams)
 	if err != nil {
 		return nil, err
 	}
-	return m.MenuService.ConvertToDTOs(ctx, menus), nil
+	return m.MenuService.ConvertToDTOs(_ctx, menus), nil
 }
 
-func (m *MenuHandler) UpdateMenu(ctx *gin.Context) (interface{}, error) {
-	id, err := util.ParamInt32(ctx, "id")
+func (m *MenuHandler) UpdateMenu(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	id, err := util.ParamInt32(_ctx, ctx, "id")
 	if err != nil {
 		return nil, err
 	}
 	menuParam := &param.Menu{}
-	err = ctx.ShouldBindJSON(menuParam)
+	err = ctx.BindAndValidate(menuParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -143,16 +144,16 @@ func (m *MenuHandler) UpdateMenu(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	menu, err := m.MenuService.Update(ctx, id, menuParam)
+	menu, err := m.MenuService.Update(_ctx, id, menuParam)
 	if err != nil {
 		return nil, err
 	}
-	return m.MenuService.ConvertToDTO(ctx, menu), nil
+	return m.MenuService.ConvertToDTO(_ctx, menu), nil
 }
 
-func (m *MenuHandler) UpdateMenuBatch(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) UpdateMenuBatch(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	menuParams := make([]*param.Menu, 0)
-	err := ctx.ShouldBindJSON(&menuParams)
+	err := ctx.BindAndValidate(&menuParams)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -160,30 +161,30 @@ func (m *MenuHandler) UpdateMenuBatch(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	menus, err := m.MenuService.UpdateBatch(ctx, menuParams)
+	menus, err := m.MenuService.UpdateBatch(_ctx, menuParams)
 	if err != nil {
 		return nil, err
 	}
-	return m.MenuService.ConvertToDTOs(ctx, menus), nil
+	return m.MenuService.ConvertToDTOs(_ctx, menus), nil
 }
 
-func (m *MenuHandler) DeleteMenu(ctx *gin.Context) (interface{}, error) {
-	id, err := util.ParamInt32(ctx, "id")
+func (m *MenuHandler) DeleteMenu(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	id, err := util.ParamInt32(_ctx, ctx, "id")
 	if err != nil {
 		return nil, err
 	}
-	return nil, m.MenuService.Delete(ctx, id)
+	return nil, m.MenuService.Delete(_ctx, id)
 }
 
-func (m *MenuHandler) DeleteMenuBatch(ctx *gin.Context) (interface{}, error) {
+func (m *MenuHandler) DeleteMenuBatch(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	menuIDs := make([]int32, 0)
-	err := ctx.ShouldBind(&menuIDs)
+	err := ctx.BindAndValidate(&menuIDs)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "menuIDs error").WithStatus(xerr.StatusBadRequest)
 	}
-	return nil, m.MenuService.DeleteBatch(ctx, menuIDs)
+	return nil, m.MenuService.DeleteBatch(_ctx, menuIDs)
 }
 
-func (m *MenuHandler) ListMenuTeams(ctx *gin.Context) (interface{}, error) {
-	return m.MenuService.ListTeams(ctx)
+func (m *MenuHandler) ListMenuTeams(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	return m.MenuService.ListTeams(_ctx)
 }

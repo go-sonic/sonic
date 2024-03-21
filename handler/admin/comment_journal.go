@@ -1,13 +1,13 @@
 package admin
 
 import (
+	"context"
 	"errors"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-playground/validator/v10"
 
 	"github.com/go-sonic/sonic/consts"
-	"github.com/go-sonic/sonic/handler/binding"
 	"github.com/go-sonic/sonic/handler/trans"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/model/param"
@@ -35,28 +35,28 @@ func NewJournalCommentHandler(journalCommentService service.JournalCommentServic
 	}
 }
 
-func (j *JournalCommentHandler) ListJournalComment(ctx *gin.Context) (interface{}, error) {
-	var commentQuery param.CommentQuery
-	err := ctx.ShouldBindWith(&commentQuery, binding.CustomFormBinding)
+func (j *JournalCommentHandler) ListJournalComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	var commentQuery param.CommentQueryNoEnum
+	err := ctx.BindAndValidate(&commentQuery)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
 	commentQuery.Sort = &param.Sort{
 		Fields: []string{"createTime,desc"},
 	}
-	comments, totalCount, err := j.JournalCommentService.Page(ctx, commentQuery, consts.CommentTypeJournal)
+	comments, totalCount, err := j.JournalCommentService.Page(_ctx, param.AssertCommentQuery(commentQuery), consts.CommentTypeJournal)
 	if err != nil {
 		return nil, err
 	}
-	commentDTOs, err := j.JournalCommentAssembler.ConvertToWithJournal(ctx, comments)
+	commentDTOs, err := j.JournalCommentAssembler.ConvertToWithJournal(_ctx, comments)
 	if err != nil {
 		return nil, err
 	}
 	return dto.NewPage(commentDTOs, totalCount, commentQuery.Page), nil
 }
 
-func (j *JournalCommentHandler) ListJournalCommentLatest(ctx *gin.Context) (interface{}, error) {
-	top, err := util.MustGetQueryInt32(ctx, "top")
+func (j *JournalCommentHandler) ListJournalCommentLatest(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	top, err := util.MustGetQueryInt32(_ctx, ctx, "top")
 	if err != nil {
 		return nil, err
 	}
@@ -64,58 +64,58 @@ func (j *JournalCommentHandler) ListJournalCommentLatest(ctx *gin.Context) (inte
 		Sort: &param.Sort{Fields: []string{"createTime,desc"}},
 		Page: param.Page{PageNum: 0, PageSize: int(top)},
 	}
-	comments, _, err := j.JournalCommentService.Page(ctx, commentQuery, consts.CommentTypeSheet)
+	comments, _, err := j.JournalCommentService.Page(_ctx, commentQuery, consts.CommentTypeSheet)
 	if err != nil {
 		return nil, err
 	}
-	return j.JournalCommentAssembler.ConvertToWithJournal(ctx, comments)
+	return j.JournalCommentAssembler.ConvertToWithJournal(_ctx, comments)
 }
 
-func (j *JournalCommentHandler) ListJournalCommentAsTree(ctx *gin.Context) (interface{}, error) {
-	journalID, err := util.ParamInt32(ctx, "journalID")
+func (j *JournalCommentHandler) ListJournalCommentAsTree(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	journalID, err := util.ParamInt32(_ctx, ctx, "journalID")
 	if err != nil {
 		return nil, err
 	}
-	pageNum, err := util.MustGetQueryInt32(ctx, "page")
+	pageNum, err := util.MustGetQueryInt32(_ctx, ctx, "page")
 	if err != nil {
 		return nil, err
 	}
-	pageSize, err := j.OptionService.GetOrByDefaultWithErr(ctx, property.CommentPageSize, property.CommentPageSize.DefaultValue)
+	pageSize, err := j.OptionService.GetOrByDefaultWithErr(_ctx, property.CommentPageSize, property.CommentPageSize.DefaultValue)
 	if err != nil {
 		return nil, err
 	}
 	page := param.Page{PageSize: pageSize.(int), PageNum: int(pageNum)}
 
-	allComments, err := j.JournalCommentService.GetByContentID(ctx, journalID, consts.CommentTypeJournal, &param.Sort{Fields: []string{"createTime,desc"}})
+	allComments, err := j.JournalCommentService.GetByContentID(_ctx, journalID, consts.CommentTypeJournal, &param.Sort{Fields: []string{"createTime,desc"}})
 	if err != nil {
 		return nil, err
 	}
 
-	commentVOs, totalCount, err := j.JournalCommentAssembler.PageConvertToVOs(ctx, allComments, page)
+	commentVOs, totalCount, err := j.JournalCommentAssembler.PageConvertToVOs(_ctx, allComments, page)
 	if err != nil {
 		return nil, err
 	}
 	return dto.NewPage(commentVOs, totalCount, page), nil
 }
 
-func (j *JournalCommentHandler) ListJournalCommentWithParent(ctx *gin.Context) (interface{}, error) {
-	journalID, err := util.ParamInt32(ctx, "journalID")
+func (j *JournalCommentHandler) ListJournalCommentWithParent(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	journalID, err := util.ParamInt32(_ctx, ctx, "journalID")
 	if err != nil {
 		return nil, err
 	}
-	pageNum, err := util.MustGetQueryInt32(ctx, "page")
+	pageNum, err := util.MustGetQueryInt32(_ctx, ctx, "page")
 	if err != nil {
 		return nil, err
 	}
 
-	pageSize, err := j.OptionService.GetOrByDefaultWithErr(ctx, property.CommentPageSize, property.CommentPageSize.DefaultValue)
+	pageSize, err := j.OptionService.GetOrByDefaultWithErr(_ctx, property.CommentPageSize, property.CommentPageSize.DefaultValue)
 	if err != nil {
 		return nil, err
 	}
 
 	page := param.Page{PageSize: pageSize.(int), PageNum: int(pageNum)}
 
-	comments, totalCount, err := j.JournalCommentService.Page(ctx, param.CommentQuery{
+	comments, totalCount, err := j.JournalCommentService.Page(_ctx, param.CommentQuery{
 		ContentID: &journalID,
 		Page:      page,
 		Sort:      &param.Sort{Fields: []string{"createTime,desc"}},
@@ -124,16 +124,16 @@ func (j *JournalCommentHandler) ListJournalCommentWithParent(ctx *gin.Context) (
 		return nil, err
 	}
 
-	commentsWithParent, err := j.JournalCommentAssembler.ConvertToWithParentVO(ctx, comments)
+	commentsWithParent, err := j.JournalCommentAssembler.ConvertToWithParentVO(_ctx, comments)
 	if err != nil {
 		return nil, err
 	}
 	return dto.NewPage(commentsWithParent, totalCount, page), nil
 }
 
-func (j *JournalCommentHandler) CreateJournalComment(ctx *gin.Context) (interface{}, error) {
+func (j *JournalCommentHandler) CreateJournalComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	var commentParam *param.AdminComment
-	err := ctx.ShouldBindJSON(&commentParam)
+	err := ctx.BindAndValidate(&commentParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -141,11 +141,11 @@ func (j *JournalCommentHandler) CreateJournalComment(ctx *gin.Context) (interfac
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	user, err := impl.MustGetAuthorizedUser(ctx)
+	user, err := impl.MustGetAuthorizedUser(_ctx)
 	if err != nil || user == nil {
 		return nil, err
 	}
-	blogURL, err := j.OptionService.GetBlogBaseURL(ctx)
+	blogURL, err := j.OptionService.GetBlogBaseURL(_ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -159,19 +159,19 @@ func (j *JournalCommentHandler) CreateJournalComment(ctx *gin.Context) (interfac
 		AllowNotification: true,
 		CommentType:       consts.CommentTypeJournal,
 	}
-	comment, err := j.JournalCommentService.CreateBy(ctx, &commonParam)
+	comment, err := j.JournalCommentService.CreateBy(_ctx, &commonParam)
 	if err != nil {
 		return nil, err
 	}
-	return j.JournalCommentAssembler.ConvertToDTO(ctx, comment)
+	return j.JournalCommentAssembler.ConvertToDTO(_ctx, comment)
 }
 
-func (j *JournalCommentHandler) UpdateJournalCommentStatus(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt32(ctx, "commentID")
+func (j *JournalCommentHandler) UpdateJournalCommentStatus(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	commentID, err := util.ParamInt32(_ctx, ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
-	strStatus, err := util.ParamString(ctx, "status")
+	strStatus, err := util.ParamString(_ctx, ctx, "status")
 	if err != nil {
 		return nil, err
 	}
@@ -179,16 +179,16 @@ func (j *JournalCommentHandler) UpdateJournalCommentStatus(ctx *gin.Context) (in
 	if err != nil {
 		return nil, err
 	}
-	return j.JournalCommentService.UpdateStatus(ctx, commentID, status)
+	return j.JournalCommentService.UpdateStatus(_ctx, commentID, status)
 }
 
-func (j *JournalCommentHandler) UpdateJournalComment(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt32(ctx, "commentID")
+func (j *JournalCommentHandler) UpdateJournalComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	commentID, err := util.ParamInt32(_ctx, ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
 	var commentParam *param.Comment
-	err = ctx.ShouldBindJSON(&commentParam)
+	err = ctx.BindAndValidate(&commentParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -202,44 +202,44 @@ func (j *JournalCommentHandler) UpdateJournalComment(ctx *gin.Context) (interfac
 			return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("url is not available")
 		}
 	}
-	comment, err := j.JournalCommentService.UpdateBy(ctx, commentID, commentParam)
+	comment, err := j.JournalCommentService.UpdateBy(_ctx, commentID, commentParam)
 	if err != nil {
 		return nil, err
 	}
-	return j.JournalCommentAssembler.ConvertToDTO(ctx, comment)
+	return j.JournalCommentAssembler.ConvertToDTO(_ctx, comment)
 }
 
-func (j *JournalCommentHandler) UpdateJournalStatusBatch(ctx *gin.Context) (interface{}, error) {
-	status, err := util.ParamInt32(ctx, "status")
+func (j *JournalCommentHandler) UpdateJournalStatusBatch(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	status, err := util.ParamInt32(_ctx, ctx, "status")
 	if err != nil {
 		return nil, err
 	}
 
 	ids := make([]int32, 0)
-	err = ctx.ShouldBindJSON(&ids)
+	err = ctx.BindAndValidate(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
 	}
-	comments, err := j.JournalCommentService.UpdateStatusBatch(ctx, ids, consts.CommentStatus(status))
+	comments, err := j.JournalCommentService.UpdateStatusBatch(_ctx, ids, consts.CommentStatus(status))
 	if err != nil {
 		return nil, err
 	}
-	return j.JournalCommentAssembler.ConvertToDTOList(ctx, comments)
+	return j.JournalCommentAssembler.ConvertToDTOList(_ctx, comments)
 }
 
-func (j *JournalCommentHandler) DeleteJournalComment(ctx *gin.Context) (interface{}, error) {
-	commentID, err := util.ParamInt32(ctx, "commentID")
+func (j *JournalCommentHandler) DeleteJournalComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	commentID, err := util.ParamInt32(_ctx, ctx, "commentID")
 	if err != nil {
 		return nil, err
 	}
-	return nil, j.JournalCommentService.Delete(ctx, commentID)
+	return nil, j.JournalCommentService.Delete(_ctx, commentID)
 }
 
-func (j *JournalCommentHandler) DeleteJournalCommentBatch(ctx *gin.Context) (interface{}, error) {
+func (j *JournalCommentHandler) DeleteJournalCommentBatch(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	ids := make([]int32, 0)
-	err := ctx.ShouldBindJSON(&ids)
+	err := ctx.BindAndValidate(&ids)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("post ids error")
 	}
-	return nil, j.JournalCommentService.DeleteBatch(ctx, ids)
+	return nil, j.JournalCommentService.DeleteBatch(_ctx, ids)
 }

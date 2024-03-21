@@ -30,6 +30,17 @@ type PostContent struct {
 	OriginalContent string `json:"originalContent" form:"orginalContent"`
 }
 
+type PostQueryNoEnum struct {
+	Page
+	*Sort
+	Keyword      *string  `json:"keyword" form:"keyword"`
+	Statuses     []string `json:"statuses" form:"statuses"`
+	CategoryID   *int32   `json:"categoryId" form:"categoryId"`
+	More         *bool    `json:"more" form:"more"`
+	TagID        *int32   `json:"tagId" form:"tagId"`
+	WithPassword *bool    `json:"-" form:"-"`
+}
+
 type PostQuery struct {
 	Page
 	*Sort
@@ -39,4 +50,31 @@ type PostQuery struct {
 	More         *bool                `json:"more" form:"more"`
 	TagID        *int32               `json:"tagId" form:"tagId"`
 	WithPassword *bool                `json:"-" form:"-"`
+}
+
+func AssertPostQuery(t PostQueryNoEnum) PostQuery {
+	res := PostQuery{
+		Page:         t.Page,
+		Sort:         t.Sort,
+		Keyword:      t.Keyword,
+		CategoryID:   t.CategoryID,
+		More:         t.More,
+		TagID:        t.TagID,
+		WithPassword: t.WithPassword,
+	}
+	var statues []*consts.PostStatus
+	for _, str := range t.Statuses {
+		var status consts.PostStatus
+		switch str {
+		case "PUBLISHED":
+			status = consts.PostStatusPublished
+		case "DRAFT":
+			status = consts.PostStatusDraft
+		case "INTIMATE":
+			status = consts.PostStatusIntimate
+		}
+		statues = append(statues, &status)
+	}
+	res.Statuses = statues
+	return res
 }

@@ -1,8 +1,9 @@
 package content
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/handler/content/model"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/template"
@@ -27,14 +28,14 @@ func NewJournalHandler(
 	}
 }
 
-func (p *JournalHandler) JournalsPage(ctx *gin.Context, model template.Model) (string, error) {
-	page, err := util.ParamInt32(ctx, "page")
+func (p *JournalHandler) JournalsPage(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	page, err := util.ParamInt32(_ctx, ctx, "page")
 	if err != nil {
 		return "", err
 	}
-	return p.JournalModel.Journals(ctx, model, int(page-1))
+	return p.JournalModel.Journals(_ctx, model, int(page-1))
 }
 
-func (p *JournalHandler) Journals(ctx *gin.Context, model template.Model) (string, error) {
-	return p.JournalModel.Journals(ctx, model, 0)
+func (p *JournalHandler) Journals(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	return p.JournalModel.Journals(_ctx, model, 0)
 }

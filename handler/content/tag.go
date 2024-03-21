@@ -1,8 +1,9 @@
 package content
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/handler/content/model"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/template"
@@ -30,26 +31,26 @@ func NewTagHandler(
 	}
 }
 
-func (t *TagHandler) Tags(ctx *gin.Context, model template.Model) (string, error) {
-	return t.TagModel.Tags(ctx, model)
+func (t *TagHandler) Tags(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	return t.TagModel.Tags(_ctx, model)
 }
 
-func (t *TagHandler) TagPost(ctx *gin.Context, model template.Model) (string, error) {
-	slug, err := util.ParamString(ctx, "slug")
+func (t *TagHandler) TagPost(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	slug, err := util.ParamString(_ctx, ctx, "slug")
 	if err != nil {
 		return "", err
 	}
-	return t.TagModel.TagPosts(ctx, model, slug, 0)
+	return t.TagModel.TagPosts(_ctx, model, slug, 0)
 }
 
-func (t *TagHandler) TagPostPage(ctx *gin.Context, model template.Model) (string, error) {
-	slug, err := util.ParamString(ctx, "slug")
+func (t *TagHandler) TagPostPage(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	slug, err := util.ParamString(_ctx, ctx, "slug")
 	if err != nil {
 		return "", err
 	}
-	page, err := util.ParamInt32(ctx, "page")
+	page, err := util.ParamInt32(_ctx, ctx, "page")
 	if err != nil {
 		return "", err
 	}
-	return t.TagModel.TagPosts(ctx, model, slug, int(page-1))
+	return t.TagModel.TagPosts(_ctx, model, slug, int(page-1))
 }
