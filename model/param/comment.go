@@ -11,6 +11,15 @@ type CommentQuery struct {
 	ParentID      *int32                `json:"parentID" form:"parentID"`
 }
 
+type CommentQueryNoEnum struct {
+	Page
+	*Sort
+	ContentID     *int32
+	Keyword       *string `json:"keyword" form:"keyword"`
+	CommentStatus string  `json:"status" form:"status"`
+	ParentID      *int32  `json:"parentID" form:"parentID"`
+}
+
 type Comment struct {
 	Author            string             `json:"author" form:"author" binding:"gte=1,lte=50"`
 	Email             string             `json:"email" form:"email" binding:"email,lte=255"`
@@ -31,4 +40,24 @@ type AdminComment struct {
 	ParentID          int32              `json:"parentId" form:"parentId"`
 	AllowNotification bool               `json:"allowNotification"`
 	CommentType       consts.CommentType `json:"-"`
+}
+
+func AssertCommentQuery(t CommentQueryNoEnum) CommentQuery {
+	str := t.CommentStatus
+	res := CommentQuery{
+		Page:      t.Page,
+		Sort:      t.Sort,
+		ContentID: t.ContentID,
+		Keyword:   t.Keyword,
+		ParentID:  t.ParentID,
+	}
+	switch str {
+	case `"PUBLISHED"`:
+		*res.CommentStatus = consts.CommentStatusPublished
+	case `"AUDITING"`:
+		*res.CommentStatus = consts.CommentStatusAuditing
+	case `"RECYCLE"`:
+		*res.CommentStatus = consts.CommentStatusRecycle
+	}
+	return res
 }

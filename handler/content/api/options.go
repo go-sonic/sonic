@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/model/property"
 	"github.com/go-sonic/sonic/service"
 )
@@ -19,11 +20,11 @@ func NewOptionHandler(
 	}
 }
 
-func (o *OptionHandler) Comment(ctx *gin.Context) (interface{}, error) {
+func (o *OptionHandler) Comment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	result := make(map[string]interface{})
 
-	result[property.CommentGravatarSource.KeyValue] = o.OptionService.GetOrByDefault(ctx, property.CommentGravatarSource)
-	result[property.CommentGravatarDefault.KeyValue] = o.OptionService.GetOrByDefault(ctx, property.CommentGravatarDefault)
-	result[property.CommentContentPlaceholder.KeyValue] = o.OptionService.GetOrByDefault(ctx, property.CommentContentPlaceholder)
+	result[property.CommentGravatarSource.KeyValue] = o.OptionService.GetOrByDefault(_ctx, property.CommentGravatarSource)
+	result[property.CommentGravatarDefault.KeyValue] = o.OptionService.GetOrByDefault(_ctx, property.CommentGravatarDefault)
+	result[property.CommentContentPlaceholder.KeyValue] = o.OptionService.GetOrByDefault(_ctx, property.CommentContentPlaceholder)
 	return result, nil
 }

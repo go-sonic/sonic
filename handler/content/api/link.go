@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/service"
 )
@@ -21,9 +22,9 @@ type linkParam struct {
 	*param.Sort
 }
 
-func (l *LinkHandler) ListLinks(ctx *gin.Context) (interface{}, error) {
+func (l *LinkHandler) ListLinks(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	p := linkParam{}
-	if err := ctx.ShouldBindQuery(&p); err != nil {
+	if err := ctx.BindAndValidate(&p); err != nil {
 		return nil, err
 	}
 
@@ -32,16 +33,16 @@ func (l *LinkHandler) ListLinks(ctx *gin.Context) (interface{}, error) {
 			Fields: []string{"createTime,desc"},
 		}
 	}
-	links, err := l.LinkService.List(ctx, p.Sort)
+	links, err := l.LinkService.List(_ctx, p.Sort)
 	if err != nil {
 		return nil, err
 	}
-	return l.LinkService.ConvertToDTOs(ctx, links), nil
+	return l.LinkService.ConvertToDTOs(_ctx, links), nil
 }
 
-func (l *LinkHandler) LinkTeamVO(ctx *gin.Context) (interface{}, error) {
+func (l *LinkHandler) LinkTeamVO(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	p := linkParam{}
-	if err := ctx.ShouldBindQuery(&p); err != nil {
+	if err := ctx.BindAndValidate(&p); err != nil {
 		return nil, err
 	}
 
@@ -50,9 +51,9 @@ func (l *LinkHandler) LinkTeamVO(ctx *gin.Context) (interface{}, error) {
 			Fields: []string{"createTime,desc"},
 		}
 	}
-	links, err := l.LinkService.List(ctx, p.Sort)
+	links, err := l.LinkService.List(_ctx, p.Sort)
 	if err != nil {
 		return nil, err
 	}
-	return l.LinkService.ConvertToLinkTeamVO(ctx, links), nil
+	return l.LinkService.ConvertToLinkTeamVO(_ctx, links), nil
 }

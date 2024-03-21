@@ -1,9 +1,10 @@
 package admin
 
 import (
+	"context"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/service"
@@ -20,13 +21,13 @@ func NewOptionHandler(optionService service.OptionService) *OptionHandler {
 	}
 }
 
-func (o *OptionHandler) ListAllOptions(ctx *gin.Context) (interface{}, error) {
-	return o.OptionService.ListAllOption(ctx)
+func (o *OptionHandler) ListAllOptions(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	return o.OptionService.ListAllOption(_ctx)
 }
 
-func (o *OptionHandler) SaveOption(ctx *gin.Context) (interface{}, error) {
+func (o *OptionHandler) SaveOption(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	optionParams := make([]*param.Option, 0)
-	err := ctx.ShouldBindJSON(&optionParams)
+	err := ctx.BindAndValidate(&optionParams)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "param error").WithStatus(xerr.StatusBadRequest)
 	}
@@ -34,11 +35,11 @@ func (o *OptionHandler) SaveOption(ctx *gin.Context) (interface{}, error) {
 	for _, option := range optionParams {
 		optionMap[option.Key] = option.Value
 	}
-	return nil, o.OptionService.Save(ctx, optionMap)
+	return nil, o.OptionService.Save(_ctx, optionMap)
 }
 
-func (o *OptionHandler) ListAllOptionsAsMap(ctx *gin.Context) (interface{}, error) {
-	options, err := o.OptionService.ListAllOption(ctx)
+func (o *OptionHandler) ListAllOptionsAsMap(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	options, err := o.OptionService.ListAllOption(_ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -49,13 +50,13 @@ func (o *OptionHandler) ListAllOptionsAsMap(ctx *gin.Context) (interface{}, erro
 	return result, nil
 }
 
-func (o *OptionHandler) ListAllOptionsAsMapWithKey(ctx *gin.Context) (interface{}, error) {
+func (o *OptionHandler) ListAllOptionsAsMapWithKey(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	keys := make([]string, 0)
-	err := ctx.ShouldBindJSON(&keys)
+	err := ctx.BindAndValidate(&keys)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "option key error").WithStatus(xerr.StatusBadRequest)
 	}
-	options, err := o.OptionService.ListAllOption(ctx)
+	options, err := o.OptionService.ListAllOption(_ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -72,9 +73,9 @@ func (o *OptionHandler) ListAllOptionsAsMapWithKey(ctx *gin.Context) (interface{
 	return result, nil
 }
 
-func (o *OptionHandler) SaveOptionWithMap(ctx *gin.Context) (interface{}, error) {
+func (o *OptionHandler) SaveOptionWithMap(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	optionMap := make(map[string]interface{}, 0)
-	err := ctx.ShouldBind(&optionMap)
+	err := ctx.BindAndValidate(&optionMap)
 	if err != nil {
 		return nil, xerr.WithMsg(err, "parameter error").WithStatus(xerr.StatusBadRequest)
 	}
@@ -101,5 +102,5 @@ func (o *OptionHandler) SaveOptionWithMap(ctx *gin.Context) (interface{}, error)
 		}
 		temp[key] = v
 	}
-	return nil, o.OptionService.Save(ctx, temp)
+	return nil, o.OptionService.Save(_ctx, temp)
 }

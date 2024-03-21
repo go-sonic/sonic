@@ -7,7 +7,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hertz-contrib/binding/go_playground"
+
+	hzserver "github.com/cloudwego/hertz/pkg/app/server"
 	"go.uber.org/dig"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -27,8 +30,7 @@ import (
 type Server struct {
 	logger                    *zap.Logger
 	Config                    *config.Config
-	HTTPServer                *http.Server
-	Router                    *gin.Engine
+	Router                    *hzserver.Hertz
 	Template                  *template.Template
 	AuthMiddleware            *middleware.AuthMiddleware
 	LogMiddleware             *middleware.GinLoggerMiddleware
@@ -137,19 +139,18 @@ type ServerParams struct {
 }
 
 func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
-	gin.SetMode(gin.ReleaseMode)
-	router := gin.New()
 	conf := param.Config
 
-	httpServer := &http.Server{
-		Addr:    fmt.Sprintf("%s:%s", conf.Server.Host, conf.Server.Port),
-		Handler: router,
-	}
+	router := hzserver.New(
+		hzserver.WithDisablePrintRoute(true),
+		hzserver.WithHostPorts(fmt.Sprintf("%s:%s", conf.Server.Host, conf.Server.Port)),
+		hzserver.WithDisablePrintRoute(true),
+		hzserver.WithCustomValidator(go_playground.NewValidator()),
+	)
 
 	s := &Server{
 		logger:                    param.Logger,
 		Config:                    param.Config,
-		HTTPServer:                httpServer,
 		Router:                    router,
 		Template:                  param.Template,
 		AuthMiddleware:            param.AuthMiddleware,
@@ -202,18 +203,15 @@ func NewServer(param ServerParams, lifecycle fx.Lifecycle) *Server {
 		ContentAPICommentHandler:  param.ContentAPICommentHandler,
 	}
 	lifecycle.Append(fx.Hook{
-		OnStop:  httpServer.Shutdown,
+		OnStop:  router.Shutdown,
 		OnStart: s.Run,
 	})
 	return s
 }
 
 func (s *Server) Run(ctx context.Context) error {
-	if config.IsDev() {
-		gin.SetMode(gin.DebugMode)
-	}
 	go func() {
-		if err := s.HTTPServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.Router.Run(); err != nil {
 			// print err info when httpServer start failed
 			s.logger.Error("unexpected error from ListenAndServe", zap.Error(err))
 			fmt.Printf("http server start error:%s\n", err.Error())
@@ -223,11 +221,11 @@ func (s *Server) Run(ctx context.Context) error {
 	return nil
 }
 
-type wrapperHandler func(ctx *gin.Context) (interface{}, error)
+type wrapperHandler func(_ctx context.Context, ctx *app.RequestContext) (interface{}, error)
 
-func (s *Server) wrapHandler(handler wrapperHandler) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		data, err := handler(ctx)
+func (s *Server) wrapHandler(handler wrapperHandler) app.HandlerFunc {
+	return func(_ctx context.Context, ctx *app.RequestContext) {
+		data, err := handler(_ctx, ctx)
 		if err != nil {
 			s.logger.Error("handler error", zap.Error(err))
 			status := xerr.GetHTTPStatus(err)
@@ -243,75 +241,67 @@ func (s *Server) wrapHandler(handler wrapperHandler) gin.HandlerFunc {
 	}
 }
 
-type wrapperHTMLHandler func(ctx *gin.Context, model template.Model) (templateName string, err error)
+type wrapperHTMLHandler func(_ctx context.Context, ctx *app.RequestContext, model template.Model) (templateName string, err error)
 
 var (
-	htmlContentType = []string{"text/html; charset=utf-8"}
-	xmlContentType  = []string{"application/xml; charset=utf-8"}
+	htmlContentType = "text/html; charset=utf-8"
+	xmlContentType  = "application/xml; charset=utf-8"
 )
 
-func (s *Server) wrapHTMLHandler(handler wrapperHTMLHandler) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (s *Server) wrapHTMLHandler(handler wrapperHTMLHandler) app.HandlerFunc {
+	return func(_ctx context.Context, ctx *app.RequestContext) {
 		model := template.Model{}
-		templateName, err := handler(ctx, model)
+		templateName, err := handler(_ctx, ctx, model)
 		if err != nil {
-			s.handleError(ctx, err)
+			s.handleError(_ctx, ctx, err)
 			return
 		}
 		if templateName == "" {
 			return
 		}
-		header := ctx.Writer.Header()
-		if val := header["Content-Type"]; len(val) == 0 {
-			header["Content-Type"] = htmlContentType
-		}
-		err = s.Template.ExecuteTemplate(ctx.Writer, templateName, model)
+
+		ctx.Response.Header.SetContentType(htmlContentType)
+		err = s.Template.ExecuteTemplate(ctx.Response.BodyWriter(), templateName, model)
 		if err != nil {
 			s.logger.Error("render template err", zap.Error(err))
 		}
 	}
 }
 
-func (s *Server) wrapTextHandler(handler wrapperHTMLHandler) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (s *Server) wrapTextHandler(handler wrapperHTMLHandler) app.HandlerFunc {
+	return func(_ctx context.Context, ctx *app.RequestContext) {
 		model := template.Model{}
-		templateName, err := handler(ctx, model)
+		templateName, err := handler(_ctx, ctx, model)
 		if err != nil {
-			s.handleError(ctx, err)
+			s.handleError(_ctx, ctx, err)
 			return
 		}
-		header := ctx.Writer.Header()
-		if val := header["Content-Type"]; len(val) == 0 {
-			header["Content-Type"] = xmlContentType
-		}
-		err = s.Template.ExecuteTextTemplate(ctx.Writer, templateName, model)
+
+		ctx.Response.Header.SetContentType(xmlContentType)
+		err = s.Template.ExecuteTextTemplate(ctx.Response.BodyWriter(), templateName, model)
 		if err != nil {
 			s.logger.Error("render template err", zap.Error(err))
 		}
 	}
 }
 
-func (s *Server) handleError(ctx *gin.Context, err error) {
+func (s *Server) handleError(_ctx context.Context, ctx *app.RequestContext, err error) {
 	status := xerr.GetHTTPStatus(err)
 	message := xerr.GetMessage(err)
 	model := template.Model{}
 
-	templateName, _ := s.ThemeService.Render(ctx, strconv.Itoa(status))
+	templateName, _ := s.ThemeService.Render(_ctx, strconv.Itoa(status))
 	t := s.Template.HTMLTemplate.Lookup(templateName)
 	if t == nil {
 		templateName = "common/error/error"
 	}
 
-	header := ctx.Writer.Header()
-	if val := header["Content-Type"]; len(val) == 0 {
-		header["Content-Type"] = htmlContentType
-	}
-
+	ctx.Response.Header.SetContentType(htmlContentType)
 	model["status"] = status
 	model["message"] = message
 	model["err"] = err
 
-	err = s.Template.ExecuteTemplate(ctx.Writer, templateName, model)
+	err = s.Template.ExecuteTemplate(ctx.Response.BodyWriter(), templateName, model)
 	if err != nil {
 		s.logger.Error("render error template err", zap.Error(err))
 	}

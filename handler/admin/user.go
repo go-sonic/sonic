@@ -1,9 +1,10 @@
 package admin
 
 import (
+	"context"
 	"errors"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-playground/validator/v10"
 
 	"github.com/go-sonic/sonic/consts"
@@ -27,17 +28,17 @@ func NewUserHandler(userService service.UserService, twoFactorMFAService service
 	}
 }
 
-func (u *UserHandler) GetCurrentUserProfile(ctx *gin.Context) (interface{}, error) {
-	user, ok := impl.GetAuthorizedUser(ctx)
+func (u *UserHandler) GetCurrentUserProfile(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	user, ok := impl.GetAuthorizedUser(_ctx)
 	if !ok {
 		return nil, xerr.Forbidden.New("authorized user nil").WithStatus(xerr.StatusForbidden)
 	}
-	return u.UserService.ConvertToDTO(ctx, user), nil
+	return u.UserService.ConvertToDTO(_ctx, user), nil
 }
 
-func (u *UserHandler) UpdateUserProfile(ctx *gin.Context) (interface{}, error) {
+func (u *UserHandler) UpdateUserProfile(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	userParam := &param.User{}
-	err := ctx.ShouldBindJSON(userParam)
+	err := ctx.BindAndValidate(userParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -45,20 +46,20 @@ func (u *UserHandler) UpdateUserProfile(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	user, err := u.UserService.Update(ctx, userParam)
+	user, err := u.UserService.Update(_ctx, userParam)
 	if err != nil {
 		return nil, err
 	}
-	return u.UserService.ConvertToDTO(ctx, user), nil
+	return u.UserService.ConvertToDTO(_ctx, user), nil
 }
 
-func (u *UserHandler) UpdatePassword(ctx *gin.Context) (interface{}, error) {
+func (u *UserHandler) UpdatePassword(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	type Password struct {
 		OldPassword string `json:"oldPassword" form:"oldPassword" binding:"gte=1,lte=100"`
 		NewPassword string `json:"newPassword" form:"newPassword" binding:"gte=1,lte=100"`
 	}
 	passwordParam := &Password{}
-	err := ctx.ShouldBindJSON(passwordParam)
+	err := ctx.BindAndValidate(passwordParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -66,15 +67,15 @@ func (u *UserHandler) UpdatePassword(ctx *gin.Context) (interface{}, error) {
 		}
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	return nil, u.UserService.UpdatePassword(ctx, passwordParam.OldPassword, passwordParam.NewPassword)
+	return nil, u.UserService.UpdatePassword(_ctx, passwordParam.OldPassword, passwordParam.NewPassword)
 }
 
-func (u *UserHandler) GenerateMFAQRCode(ctx *gin.Context) (interface{}, error) {
+func (u *UserHandler) GenerateMFAQRCode(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	type Param struct {
 		MFAType *consts.MFAType `json:"mfaType"`
 	}
 	param := &Param{}
-	err := ctx.ShouldBindJSON(param)
+	err := ctx.BindAndValidate(param)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -85,21 +86,21 @@ func (u *UserHandler) GenerateMFAQRCode(ctx *gin.Context) (interface{}, error) {
 	if param.MFAType == nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	user, ok := impl.GetAuthorizedUser(ctx)
+	user, ok := impl.GetAuthorizedUser(_ctx)
 	if !ok || user == nil {
 		return nil, xerr.Forbidden.New("").WithMsg("unauthorized").WithStatus(xerr.StatusForbidden)
 	}
 
 	mfaFactorAuthDTO := &vo.MFAFactorAuth{}
 	if *param.MFAType == consts.MFATFATotp {
-		key, url, err := u.TwoFactorMFAService.GenerateOTPKey(ctx, user.Nickname)
+		key, url, err := u.TwoFactorMFAService.GenerateOTPKey(_ctx, user.Nickname)
 		if err != nil {
 			return nil, err
 		}
 		mfaFactorAuthDTO.MFAType = consts.MFATFATotp
 		mfaFactorAuthDTO.OptAuthURL = url
 		mfaFactorAuthDTO.MFAKey = key
-		qrCode, err := u.TwoFactorMFAService.GenerateMFAQRCode(ctx, url)
+		qrCode, err := u.TwoFactorMFAService.GenerateMFAQRCode(_ctx, url)
 		if err != nil {
 			return nil, err
 		}
@@ -110,14 +111,14 @@ func (u *UserHandler) GenerateMFAQRCode(ctx *gin.Context) (interface{}, error) {
 	}
 }
 
-func (u *UserHandler) UpdateMFA(ctx *gin.Context) (interface{}, error) {
+func (u *UserHandler) UpdateMFA(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	type Param struct {
 		MFAType  *consts.MFAType `json:"mfaType" form:"mfaType"`
 		MFAKey   string          `json:"mfaKey" form:"mfaKey"`
 		AuthCode string          `json:"authcode" form:"authcode" binding:"gte=6,lte=6"`
 	}
 	mfaParam := &Param{}
-	err := ctx.ShouldBindJSON(mfaParam)
+	err := ctx.BindAndValidate(mfaParam)
 	if err != nil {
 		e := validator.ValidationErrors{}
 		if errors.As(err, &e) {
@@ -128,5 +129,5 @@ func (u *UserHandler) UpdateMFA(ctx *gin.Context) (interface{}, error) {
 	if mfaParam.MFAType == nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("parameter error")
 	}
-	return nil, u.UserService.UpdateMFA(ctx, mfaParam.MFAKey, *mfaParam.MFAType, mfaParam.AuthCode)
+	return nil, u.UserService.UpdateMFA(_ctx, mfaParam.MFAKey, *mfaParam.MFAType, mfaParam.AuthCode)
 }

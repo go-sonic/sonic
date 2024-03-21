@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"context"
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 type CacheControlMiddleware struct {
@@ -22,7 +23,7 @@ func NewCacheControlMiddleware(opts ...CacheControlOption) *CacheControlMiddlewa
 	return c
 }
 
-func (c *CacheControlMiddleware) CacheControl() gin.HandlerFunc {
+func (c *CacheControlMiddleware) CacheControl() app.HandlerFunc {
 	value := ""
 	if c.Public {
 		value = "public,"
@@ -30,7 +31,7 @@ func (c *CacheControlMiddleware) CacheControl() gin.HandlerFunc {
 	if c.MaxAge > 0 {
 		value = "max-age=" + strconv.FormatInt(int64(c.MaxAge.Seconds()), 10)
 	}
-	return func(ctx *gin.Context) {
+	return func(_ctx context.Context, ctx *app.RequestContext) {
 		ctx.Header("Cache-Control", value)
 	}
 }

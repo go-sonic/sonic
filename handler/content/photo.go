@@ -1,8 +1,9 @@
 package content
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/handler/content/model"
 	"github.com/go-sonic/sonic/service"
 	"github.com/go-sonic/sonic/template"
@@ -27,14 +28,14 @@ func NewPhotoHandler(
 	}
 }
 
-func (p *PhotoHandler) PhotosPage(ctx *gin.Context, model template.Model) (string, error) {
-	page, err := util.ParamInt32(ctx, "page")
+func (p *PhotoHandler) PhotosPage(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	page, err := util.ParamInt32(_ctx, ctx, "page")
 	if err != nil {
 		return "", err
 	}
-	return p.PhotoModel.Photos(ctx, model, int(page-1))
+	return p.PhotoModel.Photos(_ctx, model, int(page-1))
 }
 
-func (p *PhotoHandler) Phtotos(ctx *gin.Context, model template.Model) (string, error) {
-	return p.PhotoModel.Photos(ctx, model, 0)
+func (p *PhotoHandler) Phtotos(_ctx context.Context, ctx *app.RequestContext, model template.Model) (string, error) {
+	return p.PhotoModel.Photos(_ctx, model, 0)
 }

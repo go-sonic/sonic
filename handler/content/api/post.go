@@ -1,12 +1,11 @@
 package api
 
 import (
+	"context"
 	"html/template"
 
-	"github.com/gin-gonic/gin"
-
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/go-sonic/sonic/consts"
-	"github.com/go-sonic/sonic/handler/binding"
 	"github.com/go-sonic/sonic/model/dto"
 	"github.com/go-sonic/sonic/model/param"
 	"github.com/go-sonic/sonic/model/property"
@@ -37,15 +36,15 @@ func NewPostHandler(
 	}
 }
 
-func (p *PostHandler) ListTopComment(ctx *gin.Context) (interface{}, error) {
-	postID, err := util.ParamInt32(ctx, "postID")
+func (p *PostHandler) ListTopComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	postID, err := util.ParamInt32(_ctx, ctx, "postID")
 	if err != nil {
 		return nil, err
 	}
-	pageSize := p.OptionService.GetOrByDefault(ctx, property.CommentPageSize).(int)
+	pageSize := p.OptionService.GetOrByDefault(_ctx, property.CommentPageSize).(int)
 
 	commentQuery := param.CommentQuery{}
-	err = ctx.ShouldBindWith(&commentQuery, binding.CustomFormBinding)
+	err = ctx.BindAndValidate(&commentQuery)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
@@ -60,44 +59,44 @@ func (p *PostHandler) ListTopComment(ctx *gin.Context) (interface{}, error) {
 	commentQuery.PageSize = pageSize
 	commentQuery.ParentID = util.Int32Ptr(0)
 
-	comments, totalCount, err := p.PostCommentService.Page(ctx, commentQuery, consts.CommentTypePost)
+	comments, totalCount, err := p.PostCommentService.Page(_ctx, commentQuery, consts.CommentTypePost)
 	if err != nil {
 		return nil, err
 	}
-	_ = p.PostCommentAssembler.ClearSensitiveField(ctx, comments)
-	commenVOs, err := p.PostCommentAssembler.ConvertToWithHasChildren(ctx, comments)
+	_ = p.PostCommentAssembler.ClearSensitiveField(_ctx, comments)
+	commenVOs, err := p.PostCommentAssembler.ConvertToWithHasChildren(_ctx, comments)
 	if err != nil {
 		return nil, err
 	}
 	return dto.NewPage(commenVOs, totalCount, commentQuery.Page), nil
 }
 
-func (p *PostHandler) ListChildren(ctx *gin.Context) (interface{}, error) {
-	postID, err := util.ParamInt32(ctx, "postID")
+func (p *PostHandler) ListChildren(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	postID, err := util.ParamInt32(_ctx, ctx, "postID")
 	if err != nil {
 		return nil, err
 	}
-	parentID, err := util.ParamInt32(ctx, "parentID")
+	parentID, err := util.ParamInt32(_ctx, ctx, "parentID")
 	if err != nil {
 		return nil, err
 	}
-	children, err := p.PostCommentService.GetChildren(ctx, parentID, postID, consts.CommentTypePost)
+	children, err := p.PostCommentService.GetChildren(_ctx, parentID, postID, consts.CommentTypePost)
 	if err != nil {
 		return nil, err
 	}
-	_ = p.PostCommentAssembler.ClearSensitiveField(ctx, children)
-	return p.PostCommentAssembler.ConvertToDTOList(ctx, children)
+	_ = p.PostCommentAssembler.ClearSensitiveField(_ctx, children)
+	return p.PostCommentAssembler.ConvertToDTOList(_ctx, children)
 }
 
-func (p *PostHandler) ListCommentTree(ctx *gin.Context) (interface{}, error) {
-	postID, err := util.ParamInt32(ctx, "postID")
+func (p *PostHandler) ListCommentTree(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	postID, err := util.ParamInt32(_ctx, ctx, "postID")
 	if err != nil {
 		return nil, err
 	}
-	pageSize := p.OptionService.GetOrByDefault(ctx, property.CommentPageSize).(int)
+	pageSize := p.OptionService.GetOrByDefault(_ctx, property.CommentPageSize).(int)
 
 	commentQuery := param.CommentQuery{}
-	err = ctx.ShouldBindWith(&commentQuery, binding.CustomFormBinding)
+	err = ctx.BindAndValidate(&commentQuery)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
@@ -112,27 +111,27 @@ func (p *PostHandler) ListCommentTree(ctx *gin.Context) (interface{}, error) {
 	commentQuery.PageSize = pageSize
 	commentQuery.ParentID = util.Int32Ptr(0)
 
-	allComments, err := p.PostCommentService.GetByContentID(ctx, postID, consts.CommentTypePost, commentQuery.Sort)
+	allComments, err := p.PostCommentService.GetByContentID(_ctx, postID, consts.CommentTypePost, commentQuery.Sort)
 	if err != nil {
 		return nil, err
 	}
-	_ = p.PostCommentAssembler.ClearSensitiveField(ctx, allComments)
-	commentVOs, total, err := p.PostCommentAssembler.PageConvertToVOs(ctx, allComments, commentQuery.Page)
+	_ = p.PostCommentAssembler.ClearSensitiveField(_ctx, allComments)
+	commentVOs, total, err := p.PostCommentAssembler.PageConvertToVOs(_ctx, allComments, commentQuery.Page)
 	if err != nil {
 		return nil, err
 	}
 	return dto.NewPage(commentVOs, total, commentQuery.Page), nil
 }
 
-func (p *PostHandler) ListComment(ctx *gin.Context) (interface{}, error) {
-	postID, err := util.ParamInt32(ctx, "postID")
+func (p *PostHandler) ListComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	postID, err := util.ParamInt32(_ctx, ctx, "postID")
 	if err != nil {
 		return nil, err
 	}
-	pageSize := p.OptionService.GetOrByDefault(ctx, property.CommentPageSize).(int)
+	pageSize := p.OptionService.GetOrByDefault(_ctx, property.CommentPageSize).(int)
 
 	commentQuery := param.CommentQuery{}
-	err = ctx.ShouldBindWith(&commentQuery, binding.CustomFormBinding)
+	err = ctx.BindAndValidate(&commentQuery)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
@@ -147,21 +146,21 @@ func (p *PostHandler) ListComment(ctx *gin.Context) (interface{}, error) {
 	commentQuery.PageSize = pageSize
 	commentQuery.ParentID = util.Int32Ptr(0)
 
-	comments, total, err := p.PostCommentService.Page(ctx, commentQuery, consts.CommentTypePost)
+	comments, total, err := p.PostCommentService.Page(_ctx, commentQuery, consts.CommentTypePost)
 	if err != nil {
 		return nil, err
 	}
-	_ = p.PostCommentAssembler.ClearSensitiveField(ctx, comments)
-	result, err := p.PostCommentAssembler.ConvertToWithParentVO(ctx, comments)
+	_ = p.PostCommentAssembler.ClearSensitiveField(_ctx, comments)
+	result, err := p.PostCommentAssembler.ConvertToWithParentVO(_ctx, comments)
 	if err != nil {
 		return nil, err
 	}
 	return dto.NewPage(result, total, commentQuery.Page), nil
 }
 
-func (p *PostHandler) CreateComment(ctx *gin.Context) (interface{}, error) {
+func (p *PostHandler) CreateComment(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
 	comment := param.Comment{}
-	err := ctx.ShouldBindJSON(&comment)
+	err := ctx.BindAndValidate(&comment)
 	if err != nil {
 		return nil, xerr.WithStatus(err, xerr.StatusBadRequest).WithMsg("Parameter error")
 	}
@@ -176,17 +175,17 @@ func (p *PostHandler) CreateComment(ctx *gin.Context) (interface{}, error) {
 	comment.Content = template.HTMLEscapeString(comment.Content)
 	comment.Email = template.HTMLEscapeString(comment.Email)
 	comment.CommentType = consts.CommentTypePost
-	result, err := p.PostCommentService.CreateBy(ctx, &comment)
+	result, err := p.PostCommentService.CreateBy(_ctx, &comment)
 	if err != nil {
 		return nil, err
 	}
-	return p.PostCommentAssembler.ConvertToDTO(ctx, result)
+	return p.PostCommentAssembler.ConvertToDTO(_ctx, result)
 }
 
-func (p *PostHandler) Like(ctx *gin.Context) (interface{}, error) {
-	postID, err := util.ParamInt32(ctx, "postID")
+func (p *PostHandler) Like(_ctx context.Context, ctx *app.RequestContext) (interface{}, error) {
+	postID, err := util.ParamInt32(_ctx, ctx, "postID")
 	if err != nil {
 		return nil, err
 	}
-	return nil, p.PostService.IncreaseLike(ctx, postID)
+	return nil, p.PostService.IncreaseLike(_ctx, postID)
 }
